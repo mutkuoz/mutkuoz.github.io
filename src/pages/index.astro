@@ -1,17 +1,902 @@
 ---
-
+// src/pages/index.astro
+import '../styles/global.css';
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+<!doctype html>
+<html lang="en" data-theme="light" data-accent="stone">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta name="description" content="Portfolio of Mehmet Utku Öztürk" />
+	<title>mehmet utku öztürk</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<!-- ═══ NAVBAR ════════════════════════════════════════════════════════════ -->
+<nav id="navbar">
+	<div class="nav-inner">
+		<span class="nav-name">mutkuoz</span>
+		<div class="nav-controls">
+			<!-- Single colour cycle button -->
+			<button class="color-cycle-btn" id="colorCycleBtn" aria-label="cycle color theme" title="cycle color theme">
+				<span class="color-cycle-swatch" id="colorCycleSwatch"></span>
+				<svg class="color-cycle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+					<polyline points="1 4 1 10 7 10"></polyline>
+					<path d="M3.51 15a9 9 0 1 0 .49-3.03"></path>
+				</svg>
+			</button>
+			<!-- Dark/light toggle -->
+			<button class="mode-toggle" id="modeToggle" aria-label="toggle dark mode">
+				<svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+					<circle cx="12" cy="12" r="5"></circle>
+					<line x1="12" y1="1" x2="12" y2="3"></line>
+					<line x1="12" y1="21" x2="12" y2="23"></line>
+					<line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+					<line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+					<line x1="1" y1="12" x2="3" y2="12"></line>
+					<line x1="21" y1="12" x2="23" y2="12"></line>
+					<line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+					<line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+				</svg>
+				<svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+					<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+				</svg>
+			</button>
+		</div>
+	</div>
+</nav>
+
+<!-- ═══ MAIN ══════════════════════════════════════════════════════════════ -->
+<main>
+
+	<!-- ── HEADER ─────────────────────────────────────────────────────── -->
+	<header class="site-header reveal">
+		<p class="eyebrow">portfolio</p>
+		<h1>mehmet utku öztürk</h1>
+		<p class="subtitle-line">
+			<span class="subtitle-static"></span><span id="typewriter" class="typewriter-text"></span><span class="typewriter-cursor">|</span>
+		</p>
+	</header>
+
+	<!-- ── ABOUT ──────────────────────────────────────────────────────── -->
+	<section class="site-section reveal">
+		<p class="section-label">about</p>
+		<div class="card-grid">
+
+			<button class="exp-card" aria-expanded="false" onclick="toggleCard(this)">
+				<div class="exp-card-header">
+					<div class="exp-icon">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+							<polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline>
+						</svg>
+					</div>
+					<div class="exp-text">
+						<span class="exp-label">lifelong software developer</span>
+						<span class="exp-tag">work</span>
+					</div>
+					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+				</div>
+				<div class="exp-detail"><p>started writing code at age 8, building small games and tools. learned cpp at 12 and met with artificial intelligence at age 14.</p></div>
+			</button>
+
+			<button class="exp-card" aria-expanded="false" onclick="toggleCard(this)">
+				<div class="exp-card-header">
+					<div class="exp-icon">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+							<circle cx="12" cy="12" r="3"></circle>
+							<path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"></path>
+						</svg>
+					</div>
+					<div class="exp-text">
+						<span class="exp-label">machine learning specialist</span>
+						<span class="exp-tag">field</span>
+					</div>
+					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+				</div>
+				<div class="exp-detail"><p>deep expertise in machine learning, NLP, and agentic AI systems. built and shipped production systems across startups. currently focusing on neuro-symbolic ai & artificial cognitive intelligence.</p></div>
+			</button>
+
+			<button class="exp-card" aria-expanded="false" onclick="toggleCard(this)">
+				<div class="exp-card-header">
+					<div class="exp-icon">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M6 5v14M18 5v14M2 9h4M18 9h4M2 15h4M18 15h4M6 12h12"></path>
+						</svg>
+					</div>
+					<div class="exp-text">
+						<span class="exp-label">class ii powerlifter</span>
+						<span class="exp-tag">physical</span>
+					</div>
+					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+				</div>
+				<div class="exp-detail"><p>competitive powerlifter at class II level with 1000+ lbs total. applying a hybrid training program combining multiple disciplines such as strongman, bodybuilding, street workout, and kick boxing.</p></div>
+			</button>
+
+			<button class="exp-card" aria-expanded="false" onclick="toggleCard(this)">
+				<div class="exp-card-header">
+					<div class="exp-icon">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+						</svg>
+					</div>
+					<div class="exp-text">
+						<span class="exp-label">founder @ 23rd the company</span>
+						<span class="exp-tag">social</span>
+					</div>
+					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+				</div>
+				<div class="exp-detail"><p>founder of 23rd the company of open innovation, a decentralized organization built on ethereum chain with the vision of conducting&openly publishing impactful and meaningful work, particularly on the field of machine learning.</p></div>
+			</button>
+
+			<button class="exp-card" aria-expanded="false" onclick="toggleCard(this)">
+				<div class="exp-card-header">
+					<div class="exp-icon">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+							<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+						</svg>
+					</div>
+					<div class="exp-text">
+						<span class="exp-label">member @ mensa international</span>
+						<span class="exp-tag">community</span>
+					</div>
+					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+				</div>
+				<div class="exp-detail"><p>member of Mensa High IQ Society. a fun credential, and a good place to meet and hang out with cool people.</p></div>
+			</button>
+
+			<button class="exp-card" aria-expanded="false" onclick="toggleCard(this)">
+				<div class="exp-card-header">
+					<div class="exp-icon">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+							<path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+						</svg>
+					</div>
+					<div class="exp-text">
+						<span class="exp-label">mathematics, psychoanalysis, kinesiology, neuroscience</span>
+						<span class="exp-tag">interests</span>
+					</div>
+					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+				</div>
+				<div class="exp-detail"><p>other topics that i have interest in, without expert-level knowledge.</p></div>
+			</button>
+
+		</div>
+	</section>
+
+	<!-- ── PROJECTS ───────────────────────────────────────────────────── -->
+	<section class="site-section reveal">
+		<p class="section-label">projects</p>
+		<div class="card-grid">
+
+			<button class="exp-card proj-card" aria-expanded="false" onclick="toggleCard(this)">
+				<div class="exp-card-header">
+					<div class="exp-icon">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M3 21h18"></path>
+							<path d="M9 21V7l3-3 3 3v14"></path>
+							<path d="M5 9H3l9-9 9 9h-2"></path>
+							<line x1="9" y1="12" x2="15" y2="12"></line>
+						</svg>
+					</div>
+					<div class="exp-text">
+						<span class="exp-label">turkhukuk.ai</span>
+						<span class="exp-tag">technical co-founder · 2026+</span>
+					</div>
+					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+				</div>
+				<div class="exp-detail"><p>a legaltech platform built to help lawyers with case research and litigation strategy planning. trained and fine-tuned domain-specific language models on turkish legal corpora, and experimented with neuro-symbolic representations to bridge statistical learning with structured legal reasoning.</p></div>
+			</button>
+			<button class="exp-card proj-card" aria-expanded="false" onclick="toggleCard(this)">
+				<div class="exp-card-header">
+					<div class="exp-icon">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle>
+							<path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+						</svg>
+					</div>
+					<div class="exp-text">
+						<span class="exp-label">octapar</span>
+						<span class="exp-tag">founder &amp; core dev · 2025</span>
+					</div>
+					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+				</div>
+				<div class="exp-detail"><p>an ai-powered platform that matches like-minded individuals into 8-person reference groups (tribes) for authentic connection and mutual growth. created a multi-layered algorithm for the clustering. published a paper through 23rd.</p></div>
+			</button>
+
+			<button class="exp-card proj-card" aria-expanded="false" onclick="toggleCard(this)">
+				<div class="exp-card-header">
+					<div class="exp-icon">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+							<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+						</svg>
+					</div>
+					<div class="exp-text">
+						<span class="exp-label">clade ai</span>
+						<span class="exp-tag">co-founder, ai dev · 2023–24</span>
+					</div>
+					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+				</div>
+				<div class="exp-detail"><p>an ai assistant with multi-purpose task execution, extensive integrations, and personalized interaction. ran a $21m funding round. left the project on july 2024 and it was shelved shortly afterwards. built a custom self-deciding, multi-agent ai framework in the early stages of ai agents. finetuned a llm for better user interaction & created custom systems from scratch for smart memory management, decision making&initiative, seamless integrations and more.</p></div>
+			</button>
+
+			<button class="exp-card proj-card" aria-expanded="false" onclick="toggleCard(this)">
+				<div class="exp-card-header">
+					<div class="exp-icon">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+						</svg>
+					</div>
+					<div class="exp-text">
+						<span class="exp-label">sorubot</span>
+						<span class="exp-tag">developer · 2022–23</span>
+					</div>
+					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+				</div>
+				<div class="exp-detail"><p>an ai platform that crafts test questions and manages students' study sessions. very unsuccessfully finetuned a llm. had fun and learned a lot. amateur work but not bad for a 14-year-old.</p></div>
+			</button>
+
+			<button class="exp-card proj-card" aria-expanded="false" onclick="toggleCard(this)">
+				<div class="exp-card-header">
+					<div class="exp-icon">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+							<path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+							<line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line>
+						</svg>
+					</div>
+					<div class="exp-text">
+						<span class="exp-label">styrk</span>
+						<span class="exp-tag">co-founder, backend dev · 2025</span>
+					</div>
+					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+				</div>
+				<div class="exp-detail"><p>a platform offering sports supplements with ai-powered personalization and ai-created packaging. a fun little weekend project. shelved.</p></div>
+			</button>
+
+		</div>
+	</section>
+
+	<!-- ── RESEARCH ───────────────────────────────────────────────── -->
+	<section class="site-section reveal">
+		<p class="section-label">research</p>
+		<div class="card-grid single-col">
+
+			<button class="exp-card pub-card" aria-expanded="false" onclick="toggleCard(this)">
+				<div class="exp-card-header">
+					<div class="exp-icon">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+							<path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+						</svg>
+					</div>
+					<div class="exp-text">
+						<span class="exp-label">HukukBERT Domain-Specific Language Model for Turkish Law</span>
+						<span class="exp-tag">turkhukuk.ai · 2026</span>
+					</div>
+					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+				</div>
+				<div class="exp-detail"><p>Recent advances in natural language processing (NLP) have opened significant doors for LegalTech applications; however, existing studies specific to Turkish law have been severely limited by data constraints. While extensive models like LEGAL-BERT have been developed for English legal texts, the Turkish legal domain lacks a high-volume, domain-specific counterpart. In this paper, we introduce HukukBERT, the most comprehensive legal language model for Turkish, trained on a 18 GB cleaned legal corpus using advanced masking strategies. We systematically compare our 48K WordPiece tokenizer and Domain-Adaptive Pre-Training (DAPT) approach against general-purpose and existing domain-specific Turkish models. Evaluated on a novel Legal Cloze Test benchmark, HukukBERT achieves state-of-the-art performance with 84.40\% Top-1 accuracy, substantially outperforming existing models such as BERTurk-Legal. We release HukukBERT to serve as a foundational model for downstream Turkish legal tasks.</p></div>
+			</button>
+			<button class="exp-card pub-card" aria-expanded="false" onclick="toggleCard(this)">
+				<div class="exp-card-header">
+					<div class="exp-icon">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+							<path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+						</svg>
+					</div>
+					<div class="exp-text">
+						<span class="exp-label">Octapar: A Framework for Multi-Modal, Balanced User Grouping using Weighted Attentional Embeddings and Assignment-Based Clustering</span>
+						<span class="exp-tag">23rd the company · 2025</span>
+					</div>
+					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+				</div>
+				<div class="exp-detail"><p>The formation of coherent, effective, and equitably sized user groups is a critical and persistent challenge in the design of online social platforms, collaborative learning environments, and enterprise-level teamwork tools. Existing automated methods, while scalable, often fail to produce groups of a consistent, predetermined size, leading to significant logistical issues and imbalanced user experiences. Furthermore, they often rely on shallow or easily manipulated user data. This paper introduces Octapar, a novel, multi-stage algorithmic framework designed to generate semantically coherent, perfectly balanced user clusters from deep, multi-modal user profiles. The framework pioneers a conversational onboarding process, using specialized chatbots and Large Language Models (LLMs) to extract nuanced user characteristics across both skill and philosophical domains. These characteristics are formalized as a rich set of semantic tags. The core technical innovation is a custom weighted attention mechanism that generates a sophisticated user vector by incorporating not only global tag rarity (IDF) but also a novel metric of local, intra-user tag uniqueness. This allows the model to identify and amplify a user's most distinctive traits. Final group formation is achieved via an iterative, assignment-based clustering algorithm that utilizes the Hungarian method to guarantee perfectly balanced clusters. This approach ensures structural consistency and fairness in group formation, a critical and often unmet requirement for many practical applications. We provide a detailed walkthrough of the architecture, the mathematical foundations of its components, and a discussion of its implications for the future of computational group formation. <a href="https://zenodo.org/records/17360220" class="link-btn"><strong>click here to view the paper</strong></a></p></div>
+			
+			</button>
+			<button class="exp-card pub-card" aria-expanded="false" onclick="toggleCard(this)">
+				<div class="exp-card-header">
+					<div class="exp-icon">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+							<path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+						</svg>
+					</div>
+					<div class="exp-text">
+						<span class="exp-label">Streaming Intelligence: Harnessing AI and Big Data in the Competitive Landscape of Digital Content Platforms</span>
+						<span class="exp-tag">Plawlabs · 2024</span>
+					</div>
+					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+				</div>
+				<div class="exp-detail"><p>In the rapidly evolving realm of digital entertainment, Artificial Intelligence (AI) and Big Data stand at the forefront, reshaping the future of content consumption and curation. Esteemed global streaming giants such as Netflix, YouTube, Hulu, Amazon Prime Video, HBO Max, Disney+, and even social platforms like Instagram and TikTok, are skillfully leveraging these technologies to transform content recommendation, presentation, and personalization processes. This not only elevates the user experience but also sets unprecedented standards for operational efficiency across the industry. Our article delves into the intricate use of AI and Big Data by these leading platforms, highlighting their critical role in captivating audiences and streamlining content strategies. Furthermore, our research offers concrete insights and forward-looking strategies for one of the Turkey's emerging digital platform, in collaboration with PlawLabs, on surpassing its global competitors with the development of advanced AI technology. This initiative is aimed at overcoming unique challenges brought forth by these technological advancements and seizing expansive opportunities. By capitalizing on the technological expertise and strategic foresights of current industry leaders, this platform is poised to gain a significant competitive edge in the rapidly growing market of digital streaming services, both domestically and internationally. Adopting our technology foresights will not only enhance the quality of content and increase user engagement but will also seamlessly align with the changing preferences and demands of today's diverse digital audience, supporting the platform's financial outcomes. Through this comprehensive analysis, we aim to illuminate a path for our national platform to leverage AI and Big Data, catalyze its growth, and redefine content maturity in the digital space.</p></div>
+			</button>
+		</div>
+		<p class="empty-note">more coming.</p>
+	</section>
+
+
+
+	<!-- ── CONTACT ────────────────────────────────────────────────────── -->
+	<section class="site-section reveal">
+		<p class="section-label">contact</p>
+		<p class="contact-intro">interested in working together? i'd love to hear from you.</p>
+		<div class="contact-links">
+			<a href="mailto:mutkuoz@proton.me" class="contact-link">mutkuoz@proton.me</a>
+			<a href="https://github.com/mutkuoz" target="_blank" class="contact-link">github · @mutkuoz</a>
+		</div>
+	</section>
+
+</main>
+
+<!-- ═══ STYLES ════════════════════════════════════════════════════════════ -->
+<style>
+/* ── Reset ─────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Accent + background palettes ───────────────────────────────── */
+/* Each accent defines: accent color, soft tint, bg, bg2, nav-bg   */
+
+/* stone (neutral) */
+[data-theme="light"][data-accent="stone"] { --bg: #ffffff; --bg2: #f7f7f7; --nav-bg: rgba(255,255,255,0.85); }
+[data-theme="dark"][data-accent="stone"] { --bg: #111111; --bg2: #1a1a1a; --nav-bg: rgba(17,17,17,0.88); }
+
+/* indigo */
+[data-theme="light"][data-accent="indigo"] { --bg: #f4f4ff; --bg2: #ebebff; --nav-bg: rgba(244,244,255,0.88); }
+[data-theme="dark"][data-accent="indigo"] { --bg: #0c0c18; --bg2: #13132a; --nav-bg: rgba(12,12,24,0.90); }
+
+/* rose */
+[data-theme="light"][data-accent="rose"] { --bg: #fff4f5; --bg2: #ffebee; --nav-bg: rgba(255,244,245,0.88); }
+[data-theme="dark"][data-accent="rose"] { --bg: #170c0e; --bg2: #231015; --nav-bg: rgba(23,12,14,0.90); }
+
+/* amber */
+[data-theme="light"][data-accent="amber"] { --bg: #fffdf0; --bg2: #fff8da; --nav-bg: rgba(255,253,240,0.88); }
+[data-theme="dark"][data-accent="amber"] { --bg: #160f00; --bg2: #231700; --nav-bg: rgba(22,15,0,0.90); }
+
+/* emerald */
+[data-theme="light"][data-accent="emerald"] { --bg: #f0fff8; --bg2: #e2ffef; --nav-bg: rgba(240,255,248,0.88); }
+[data-theme="dark"][data-accent="emerald"] { --bg: #071410; --bg2: #0d2018; --nav-bg: rgba(7,20,16,0.90); }
+
+/* sky */
+[data-theme="light"][data-accent="sky"] { --bg: #f0f9ff; --bg2: #e0f2ff; --nav-bg: rgba(240,249,255,0.88); }
+[data-theme="dark"][data-accent="sky"] { --bg: #060e18; --bg2: #0c1a28; --nav-bg: rgba(6,14,24,0.90); }
+
+/* violet */
+[data-theme="light"][data-accent="violet"] { --bg: #f6f3ff; --bg2: #ede8ff; --nav-bg: rgba(246,243,255,0.88); }
+[data-theme="dark"][data-accent="violet"] { --bg: #0d0918; --bg2: #160f28; --nav-bg: rgba(13,9,24,0.90); }
+
+/* ── Accent colours (fg-level) & soft tints ─────────────────────── */
+:root                   { --accent: #737373; --accent-soft: rgba(115,115,115,0.10); }
+[data-accent="indigo"]  { --accent: #6366f1; --accent-soft: rgba(99,102,241,0.12); }
+[data-accent="rose"]    { --accent: #f43f5e; --accent-soft: rgba(244,63,94,0.12); }
+[data-accent="amber"]   { --accent: #f59e0b; --accent-soft: rgba(245,158,11,0.12); }
+[data-accent="emerald"] { --accent: #10b981; --accent-soft: rgba(16,185,129,0.12); }
+[data-accent="sky"]     { --accent: #0ea5e9; --accent-soft: rgba(14,165,233,0.12); }
+[data-accent="violet"]  { --accent: #8b5cf6; --accent-soft: rgba(139,92,246,0.12); }
+
+/* ── Light theme shared tokens ──────────────────────────────────── */
+[data-theme="light"] {
+	--fg:      #111111;
+	--fg2:     #404040;
+	--muted:   #888888;
+	--muted2:  #b5b5b5;
+	--border:  #e2e2e2;
+	--border2: #eeeeee;
+}
+
+/* ── Dark theme shared tokens ───────────────────────────────────── */
+[data-theme="dark"] {
+	--fg:      #f0f0f0;
+	--fg2:     #d0d0d0;
+	--muted:   #888888;
+	--muted2:  #505050;
+	--border:  #282828;
+	--border2: #1e1e1e;
+}
+
+/* ── Base ───────────────────────────────────────────────────────── */
+html { scroll-behavior: smooth; }
+
+body {
+	font-family: 'Inter', system-ui, sans-serif;
+	background: var(--bg);
+	color: var(--fg);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* ── Navbar ─────────────────────────────────────────────────────── */
+#navbar {
+	position: fixed;
+	top: 0; left: 0; right: 0;
+	z-index: 100;
+	background: var(--nav-bg);
+	border-bottom: 1px solid var(--border2);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.nav-inner {
+	max-width: 72rem;
+	margin: 0 auto;
+	padding: 0 2rem;
+	height: 3.5rem;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+@media (min-width: 640px)  { .nav-inner { padding: 0 3rem; } }
+@media (min-width: 1024px) { .nav-inner { padding: 0 4rem; } }
+
+.nav-name {
+	font-family: 'JetBrains Mono', monospace;
+	font-size: 0.875rem;
+	font-weight: 500;
+	color: var(--accent);
+	letter-spacing: 0.04em;
+	transition: color 0.3s ease;
+}
+
+.nav-controls {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+}
+
+/* ── Color cycle button ─────────────────────────────────────────── */
+.color-cycle-btn {
+	display: flex;
+	align-items: center;
+	gap: 0.45rem;
+	padding: 0.3rem 0.65rem 0.3rem 0.45rem;
+	border-radius: 2rem;
+	border: 1px solid var(--border);
+	background: transparent;
+	cursor: pointer;
+	color: var(--muted);
+	transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+	outline: none;
+}
+.color-cycle-btn:hover { color: var(--fg); background: var(--bg2); }
+.color-cycle-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.color-cycle-swatch {
+	width: 0.8rem;
+	height: 0.8rem;
+	border-radius: 50%;
+	background: var(--accent);
+	transition: background 0.3s ease;
+	flex-shrink: 0;
+}
+
+.color-cycle-icon { width: 0.875rem; height: 0.875rem; }
+
+/* ── Dark/light toggle ──────────────────────────────────────────── */
+.mode-toggle {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.1rem;
+	height: 2.1rem;
+	border-radius: 50%;
+	border: 1px solid var(--border);
+	background: transparent;
+	cursor: pointer;
+	color: var(--muted);
+	transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+.mode-toggle:hover { color: var(--fg); background: var(--bg2); }
+.mode-toggle svg { width: 1rem; height: 1rem; }
+
+[data-theme="light"] .icon-moon { display: none; }
+[data-theme="dark"]  .icon-sun  { display: none; }
+
+/* ── Layout ─────────────────────────────────────────────────────── */
+main {
+	max-width: 72rem;
+	margin: 0 auto;
+	padding: 7rem 2rem 5rem;
+}
+@media (min-width: 640px)  { main { padding: 8rem 3rem 6rem; } }
+@media (min-width: 1024px) { main { padding: 9rem 4rem 7rem; } }
+
+/* ── Header ─────────────────────────────────────────────────────── */
+.site-header {
+	margin-bottom: 5.5rem;
+	padding-bottom: 3.5rem;
+	border-bottom: 1px solid var(--border2);
+}
+
+.eyebrow {
+	font-family: 'JetBrains Mono', monospace;
+	font-size: 0.7rem;
+	font-weight: 500;
+	letter-spacing: 0.18em;
+	text-transform: uppercase;
+	color: var(--muted);
+	margin-bottom: 1.25rem;
+}
+
+h1 {
+	font-size: clamp(2.4rem, 6vw, 4rem);
+	font-weight: 700;
+	letter-spacing: -0.035em;
+	line-height: 1.07;
+	color: var(--fg);
+	margin-bottom: 1.25rem;
+}
+
+/* ── Typewriter ─────────────────────────────────────────────────── */
+.subtitle-line {
+	font-size: 1.0625rem;
+	color: var(--muted);
+	min-height: 1.6em;
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 0.25rem;
+}
+@media (min-width: 640px) { .subtitle-line { font-size: 1.125rem; } }
+
+.subtitle-static { color: var(--muted2); }
+
+.typewriter-text {
+	color: var(--accent);
+	font-weight: 500;
+	transition: color 0.3s ease;
+}
+
+.typewriter-cursor {
+	color: var(--accent);
+	font-weight: 300;
+	animation: blink 1s step-end infinite;
+	transition: color 0.3s ease;
+}
+
+@keyframes blink {
+	0%, 100% { opacity: 1; }
+	50%       { opacity: 0; }
+}
+
+/* ── Section label ──────────────────────────────────────────────── */
+.section-label {
+	font-family: 'JetBrains Mono', monospace;
+	font-size: 0.7rem;
+	font-weight: 500;
+	letter-spacing: 0.15em;
+	text-transform: uppercase;
+	color: var(--muted);
+	margin-bottom: 1.75rem;
+}
+
+.section-label-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 1.75rem;
+}
+.section-label-row .section-label { margin-bottom: 0; }
+
+/* ── Site section ───────────────────────────────────────────────── */
+.site-section {
+	margin-bottom: 5rem;
+	padding-bottom: 5rem;
+	border-bottom: 1px solid var(--border2);
+	transition: border-color 0.3s ease;
+}
+.site-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+/* ── Card grid ──────────────────────────────────────────────────── */
+.card-grid {
+	border-top: 1px solid var(--border);
+	display: grid;
+	grid-template-columns: 1fr;
+	transition: border-color 0.3s ease;
+}
+
+@media (min-width: 640px) {
+	.card-grid:not(.single-col) { grid-template-columns: 1fr 1fr; }
+	.card-grid:not(.single-col) .exp-card { border-right: 1px solid var(--border); }
+	.card-grid:not(.single-col) .exp-card:nth-child(even) { border-right: none; }
+}
+
+/* ── Expandable card ────────────────────────────────────────────── */
+.exp-card {
+	display: block;
+	width: 100%;
+	text-align: left;
+	background: transparent;
+	border: none;
+	border-bottom: 1px solid var(--border);
+	padding: 1.375rem 0.375rem;
+	cursor: pointer;
+	transition: background 0.15s ease, border-color 0.3s ease;
+	outline: none;
+	font-family: inherit;
+}
+
+.exp-card:hover { background: var(--bg2); }
+.exp-card[aria-expanded="true"] { background: var(--accent-soft); }
+
+.exp-card:focus-visible {
+	outline: 2px solid var(--accent);
+	outline-offset: -2px;
+	border-radius: 3px;
+}
+
+/* ── Card header ────────────────────────────────────────────────── */
+.exp-card-header {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+}
+
+/* ── Icon ───────────────────────────────────────────────────────── */
+.exp-icon {
+	flex-shrink: 0;
+	width: 2.25rem;
+	height: 2.25rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--muted2);
+	transition: color 0.18s ease;
+}
+.exp-icon svg { width: 1.0625rem; height: 1.0625rem; }
+
+.exp-card:hover .exp-icon,
+.exp-card[aria-expanded="true"] .exp-icon { color: var(--accent); }
+
+/* ── Text block ─────────────────────────────────────────────────── */
+.exp-text {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 0.3rem;
+}
+
+.exp-label {
+	font-size: 0.9375rem;
+	font-weight: 500;
+	color: var(--fg);
+	line-height: 1.35;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.pub-card .exp-label { white-space: normal; }
+
+.exp-tag {
+	font-family: 'JetBrains Mono', monospace;
+	font-size: 0.67rem;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--muted2);
+	transition: color 0.15s ease;
+}
+
+.exp-card:hover .exp-tag,
+.exp-card[aria-expanded="true"] .exp-tag { color: var(--muted); }
+
+/* ── Chevron ────────────────────────────────────────────────────── */
+.exp-chevron {
+	flex-shrink: 0;
+	width: 1.125rem;
+	height: 1.125rem;
+	color: var(--muted2);
+	transition: transform 0.25s cubic-bezier(0.4,0,0.2,1), color 0.18s ease;
+}
+.exp-chevron svg { width: 1.125rem; height: 1.125rem; }
+
+.exp-card[aria-expanded="true"] .exp-chevron {
+	transform: rotate(180deg);
+	color: var(--accent);
+}
+
+/* ── Detail panel ───────────────────────────────────────────────── */
+.exp-detail {
+	display: grid;
+	grid-template-rows: 0fr;
+	transition: grid-template-rows 0.28s cubic-bezier(0.4,0,0.2,1);
+	overflow: hidden;
+}
+.exp-detail > p {
+	overflow: hidden;
+	font-size: 0.9rem;
+	line-height: 1.75;
+	color: var(--muted);
+	padding-left: 3.25rem;
+	padding-top: 0;
+	transition: padding-top 0.28s ease;
+}
+.exp-card[aria-expanded="true"] .exp-detail { grid-template-rows: 1fr; }
+.exp-card[aria-expanded="true"] .exp-detail > p { padding-top: 0.7rem; }
+
+/* ── Project: bold name ─────────────────────────────────────────── */
+.proj-card .exp-label { font-weight: 600; letter-spacing: -0.01em; }
+
+/* ── Gallery ────────────────────────────────────────────────────── */
+.gallery-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 1rem;
+}
+.gallery-item {
+	aspect-ratio: 1;
+	background: var(--bg2);
+	border: 1px solid var(--border);
+	border-radius: 0.875rem;
+	transition: background 0.2s ease, border-color 0.3s ease;
+}
+.gallery-item:hover { background: var(--border); }
+
+/* ── Contact ────────────────────────────────────────────────────── */
+.contact-intro {
+	font-size: 0.9375rem;
+	color: var(--muted);
+	margin-bottom: 1.5rem;
+	line-height: 1.6;
+}
+.contact-links { display: flex; flex-direction: column; gap: 0.625rem; }
+.contact-link {
+	font-size: 0.9375rem;
+	font-weight: 500;
+	color: var(--fg2);
+	text-decoration: none;
+	width: fit-content;
+	border-bottom: 1px solid var(--border);
+	padding-bottom: 2px;
+	transition: border-color 0.15s ease, color 0.15s ease;
+}
+.contact-link:hover { border-color: var(--accent); color: var(--fg); }
+
+/* ── View all link ──────────────────────────────────────────────── */
+.view-all-link {
+	font-family: 'JetBrains Mono', monospace;
+	font-size: 0.67rem;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--muted2);
+	text-decoration: none;
+	transition: color 0.15s ease;
+}
+.view-all-link:hover { color: var(--fg); }
+
+/* ── Empty note ─────────────────────────────────────────────────── */
+.empty-note {
+	font-size: 0.875rem;
+	color: var(--muted2);
+	font-style: italic;
+	margin-top: 1.25rem;
+}
+
+/* ── Reveal animations ──────────────────────────────────────────── */
+.reveal {
+	opacity: 0;
+	transform: translateY(20px);
+	transition: opacity 0.55s cubic-bezier(0.4,0,0.2,1), transform 0.55s cubic-bezier(0.4,0,0.2,1);
+}
+.reveal.visible {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+/* ── Selection ──────────────────────────────────────────────────── */
+::selection { background: var(--accent-soft); color: var(--fg); }
+</style>
+
+<!-- ═══ SCRIPT ════════════════════════════════════════════════════════════ -->
+<script is:inline>
+/* ── Accordion ──────────────────────────────────────────────────── */
+function toggleCard(btn) {
+	const isOpen = btn.getAttribute('aria-expanded') === 'true';
+	btn.setAttribute('aria-expanded', String(!isOpen));
+}
+
+/* ── Typewriter ─────────────────────────────────────────────────── */
+(function() {
+	const words = [
+		'machine learning specialist',
+		'open source enjoyer',
+		'software developer',
+		'athlete',
+		'nerd'
+	];
+	let wordIdx = 0, charIdx = 0, deleting = false;
+	const el = document.getElementById('typewriter');
+	if (!el) return;
+
+	function tick() {
+		const current = words[wordIdx];
+		if (deleting) {
+			charIdx--;
+			el.textContent = current.slice(0, charIdx);
+			if (charIdx === 0) {
+				deleting = false;
+				wordIdx = (wordIdx + 1) % words.length;
+				setTimeout(tick, 420);
+				return;
+			}
+			setTimeout(tick, 42);
+		} else {
+			charIdx++;
+			el.textContent = current.slice(0, charIdx);
+			if (charIdx === current.length) {
+				deleting = true;
+				setTimeout(tick, 1800);
+				return;
+			}
+			setTimeout(tick, 68);
+		}
+	}
+	setTimeout(tick, 600);
+})();
+
+/* ── Dark / light toggle ────────────────────────────────────────── */
+(function() {
+	const html = document.documentElement;
+	const btn  = document.getElementById('modeToggle');
+	const saved = localStorage.getItem('theme') ||
+		(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+	html.setAttribute('data-theme', saved);
+
+	btn.addEventListener('click', () => {
+		const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+		html.setAttribute('data-theme', next);
+		localStorage.setItem('theme', next);
+	});
+})();
+
+/* ── Accent colour cycle ────────────────────────────────────────── */
+(function() {
+	const ACCENTS = ['stone','indigo','rose','amber','emerald','sky','violet'];
+	const html    = document.documentElement;
+	const btn     = document.getElementById('colorCycleBtn');
+	const saved   = localStorage.getItem('accent') || 'stone';
+	let   idx     = ACCENTS.indexOf(saved);
+	if (idx < 0) idx = 0;
+
+	function apply(i) {
+		html.setAttribute('data-accent', ACCENTS[i]);
+		localStorage.setItem('accent', ACCENTS[i]);
+	}
+
+	apply(idx);
+
+	btn.addEventListener('click', () => {
+		idx = (idx + 1) % ACCENTS.length;
+		apply(idx);
+		/* brief spin animation */
+		const icon = btn.querySelector('.color-cycle-icon');
+		icon.animate([{transform:'rotate(0deg)'},{transform:'rotate(360deg)'}],
+			{duration: 380, easing: 'cubic-bezier(0.4,0,0.2,1)' });
+	});
+})();
+
+/* ── Scroll reveal ──────────────────────────────────────────────── */
+(function() {
+	const els = document.querySelectorAll('.reveal');
+	const io  = new IntersectionObserver((entries) => {
+		entries.forEach(e => {
+			if (e.isIntersecting) {
+				e.target.classList.add('visible');
+				io.unobserve(e.target);
+			}
+		});
+	}, { threshold: 0.07 });
+	els.forEach((el, i) => {
+		el.style.transitionDelay = (i * 0.07) + 's';
+		io.observe(el);
+	});
+})();
+</script>
+
+</body>
 </html>
