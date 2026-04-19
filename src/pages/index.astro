@@ -20,9 +20,15 @@ import '../styles/global.css';
 	<meta name="twitter:description" content="Portfolio of Mehmet Utku Öztürk — machine learning specialist, software developer, founder." />
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+	<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300..700&family=Bricolage+Grotesque:opsz,wght@12..96,400..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 </head>
 <body>
+
+<!-- ═══ SCROLL PROGRESS ═══════════════════════════════════════════════════ -->
+<div id="scrollProgress" aria-hidden="true"></div>
+
+<!-- ═══ GRAIN OVERLAY ═════════════════════════════════════════════════════ -->
+<div class="grain" aria-hidden="true"></div>
 
 <!-- ═══ NAVBAR ════════════════════════════════════════════════════════════ -->
 <nav id="navbar">
@@ -94,7 +100,7 @@ import '../styles/global.css';
 					</div>
 					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
 				</div>
-				<div class="exp-detail"><p>started writing code at age 8, building small games and tools. learned cpp at 12 and met with artificial intelligence at age 14.</p></div>
+				<div class="exp-detail"><p>writing code since age 8 — small games, tools, experiments. picked up c++ at 12 and fell into machine learning at 14. haven't stopped since.</p></div>
 			</button>
 
 			<button class="exp-card" aria-expanded="false" onclick="toggleCard(this)">
@@ -111,7 +117,7 @@ import '../styles/global.css';
 					</div>
 					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
 				</div>
-				<div class="exp-detail"><p>deep expertise in machine learning, NLP, and agentic AI systems. built and shipped production systems across startups. currently focusing on neuro-symbolic ai & artificial cognitive intelligence.</p></div>
+				<div class="exp-detail"><p>deep work in nlp, agentic systems, and production ml. shipped systems across several startups. currently researching neuro-symbolic ai and artificial cognitive intelligence.</p></div>
 			</button>
 
 			<button class="exp-card" aria-expanded="false" onclick="toggleCard(this)">
@@ -127,7 +133,7 @@ import '../styles/global.css';
 					</div>
 					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
 				</div>
-				<div class="exp-detail"><p>competitive powerlifter at class II level with 1000+ lbs total. applying a hybrid training program combining multiple disciplines such as strongman, bodybuilding, street workout, and kick boxing.</p></div>
+				<div class="exp-detail"><p>competitive class II powerlifter — 1000+ lb total. training hybrid: powerlifting, strongman, bodybuilding, calisthenics, and kickboxing.</p></div>
 			</button>
 
 			<button class="exp-card" aria-expanded="false" onclick="toggleCard(this)">
@@ -143,7 +149,7 @@ import '../styles/global.css';
 					</div>
 					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
 				</div>
-				<div class="exp-detail"><p>founder of 23rd the company of open innovation, a decentralized organization built on ethereum chain with the vision of conducting&openly publishing impactful and meaningful work, particularly on the field of machine learning.</p></div>
+				<div class="exp-detail"><p>founder of 23rd — a decentralized open-innovation collective on ethereum, conducting and openly publishing meaningful work, mostly in machine learning.</p></div>
 			</button>
 
 			<button class="exp-card" aria-expanded="false" onclick="toggleCard(this)">
@@ -159,7 +165,7 @@ import '../styles/global.css';
 					</div>
 					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
 				</div>
-				<div class="exp-detail"><p>member of Mensa High IQ Society. a fun credential, and a good place to meet and hang out with cool people.</p></div>
+				<div class="exp-detail"><p>member of the mensa high iq society. a fun credential — and a good place to meet sharp, curious people.</p></div>
 			</button>
 
 			<button class="exp-card" aria-expanded="false" onclick="toggleCard(this)">
@@ -176,7 +182,7 @@ import '../styles/global.css';
 					</div>
 					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
 				</div>
-				<div class="exp-detail"><p>other topics that i have interest in, without expert-level knowledge.</p></div>
+				<div class="exp-detail"><p>topics i keep reading about — curious, not expert.</p></div>
 			</button>
 
 		</div>
@@ -199,12 +205,30 @@ import '../styles/global.css';
 					</div>
 					<div class="exp-text">
 						<span class="exp-label">turkhukuk.ai</span>
-						<span class="exp-tag">technical co-founder · 2026+</span>
+						<span class="exp-tag"><span class="status-dot status-live" aria-hidden="true"></span>technical co-founder · 2026 —</span>
 					</div>
 					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
 				</div>
-				<div class="exp-detail"><p>a legaltech platform built to help lawyers with case research and litigation strategy planning. trained and fine-tuned domain-specific language models on turkish legal corpora, and experimented with neuro-symbolic representations to bridge statistical learning with structured legal reasoning.</p></div>
+				<div class="exp-detail"><p>a legaltech platform for turkish lawyers — case research and litigation strategy. trained and fine-tuned domain-specific language models on turkish legal corpora, and experimented with neuro-symbolic representations to bridge statistical learning with structured legal reasoning.</p></div>
 			</button>
+
+			<button class="exp-card proj-card" aria-expanded="false" onclick="toggleCard(this)">
+				<div class="exp-card-header">
+					<div class="exp-icon">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+							<path d="m9 12 2 2 4-4"></path>
+						</svg>
+					</div>
+					<div class="exp-text">
+						<span class="exp-label">007captcha</span>
+						<span class="exp-tag"><span class="status-dot status-live" aria-hidden="true"></span>creator · 2026 — <span class="tag-sep">·</span> open source</span>
+					</div>
+					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+				</div>
+				<div class="exp-detail"><p>a robophobic verification framework that defends websites against ai agents. an open-source take on captcha built for the post-llm web, where classical challenges no longer hold. typescript. mit licensed. <a href="https://github.com/mutkuoz/007captcha" target="_blank" rel="noopener" class="link-chip"><span>github</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M7 7h10v10"/></svg></a></p></div>
+			</button>
+
 			<button class="exp-card proj-card" aria-expanded="false" onclick="toggleCard(this)">
 				<div class="exp-card-header">
 					<div class="exp-icon">
@@ -215,11 +239,11 @@ import '../styles/global.css';
 					</div>
 					<div class="exp-text">
 						<span class="exp-label">octapar</span>
-						<span class="exp-tag">founder &amp; core dev · 2025</span>
+						<span class="exp-tag"><span class="status-dot status-paused" aria-hidden="true"></span>founder &amp; core dev · 2025</span>
 					</div>
 					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
 				</div>
-				<div class="exp-detail"><p>an ai-powered platform that matches like-minded individuals into 8-person reference groups (tribes) for authentic connection and mutual growth. created a multi-layered algorithm for the clustering. published a paper through 23rd.</p></div>
+				<div class="exp-detail"><p>an ai platform that clusters people into 8-person "tribes" — balanced, semantically coherent groups for authentic connection and mutual growth. designed a multi-stage clustering algorithm around weighted attentional embeddings and the hungarian method. paper published via 23rd.</p></div>
 			</button>
 
 			<button class="exp-card proj-card" aria-expanded="false" onclick="toggleCard(this)">
@@ -231,11 +255,11 @@ import '../styles/global.css';
 					</div>
 					<div class="exp-text">
 						<span class="exp-label">clade ai</span>
-						<span class="exp-tag">co-founder, ai dev · 2023–24</span>
+						<span class="exp-tag"><span class="status-dot status-shelved" aria-hidden="true"></span>co-founder, ai dev · 2023–24</span>
 					</div>
 					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
 				</div>
-				<div class="exp-detail"><p>an ai assistant with multi-purpose task execution, extensive integrations, and personalized interaction. ran a $21m funding round. left the project on july 2024 and it was shelved shortly afterwards. built a custom self-deciding, multi-agent ai framework in the early stages of ai agents. finetuned a llm for better user interaction & created custom systems from scratch for smart memory management, decision making&initiative, seamless integrations and more.</p></div>
+				<div class="exp-detail"><p>a personal ai assistant with task execution, extensive integrations, and personalized interaction. raised a $21m round. built a self-deciding multi-agent framework in the early days of ai agents, fine-tuned an llm for natural interaction, and shipped custom systems for smart memory, decision-making, and seamless integrations. left in july 2024; shelved shortly after.</p></div>
 			</button>
 
 			<button class="exp-card proj-card" aria-expanded="false" onclick="toggleCard(this)">
@@ -247,11 +271,11 @@ import '../styles/global.css';
 					</div>
 					<div class="exp-text">
 						<span class="exp-label">sorubot</span>
-						<span class="exp-tag">developer · 2022–23</span>
+						<span class="exp-tag"><span class="status-dot status-shelved" aria-hidden="true"></span>developer · 2022–23</span>
 					</div>
 					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
 				</div>
-				<div class="exp-detail"><p>an ai platform that crafts test questions and manages students' study sessions. very unsuccessfully finetuned a llm. had fun and learned a lot. amateur work but not bad for a 14-year-old.</p></div>
+				<div class="exp-detail"><p>an ai platform that generates exam questions and manages students' study sessions. very unsuccessfully fine-tuned an llm. amateur work — but not bad for a 14-year-old.</p></div>
 			</button>
 
 			<button class="exp-card proj-card" aria-expanded="false" onclick="toggleCard(this)">
@@ -265,11 +289,11 @@ import '../styles/global.css';
 					</div>
 					<div class="exp-text">
 						<span class="exp-label">styrk</span>
-						<span class="exp-tag">co-founder, backend dev · 2025</span>
+						<span class="exp-tag"><span class="status-dot status-shelved" aria-hidden="true"></span>co-founder, backend dev · 2025</span>
 					</div>
 					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
 				</div>
-				<div class="exp-detail"><p>a platform offering sports supplements with ai-powered personalization and ai-created packaging. a fun little weekend project. shelved.</p></div>
+				<div class="exp-detail"><p>sports supplements with ai-driven personalization and ai-generated packaging. a fun weekend project. shelved.</p></div>
 			</button>
 
 			<button class="exp-card proj-card" aria-expanded="false" onclick="toggleCard(this)">
@@ -311,7 +335,7 @@ import '../styles/global.css';
 					</div>
 					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
 				</div>
-				<div class="exp-detail"><p>Recent advances in natural language processing (NLP) have opened significant doors for LegalTech applications; however, existing studies specific to Turkish law have been severely limited by data constraints. While extensive models like LEGAL-BERT have been developed for English legal texts, the Turkish legal domain lacks a high-volume, domain-specific counterpart. In this paper, we introduce HukukBERT, the most comprehensive legal language model for Turkish, trained on a 18 GB cleaned legal corpus using advanced masking strategies. We systematically compare our 48K WordPiece tokenizer and Domain-Adaptive Pre-Training (DAPT) approach against general-purpose and existing domain-specific Turkish models. Evaluated on a novel Legal Cloze Test benchmark, HukukBERT achieves state-of-the-art performance with 84.40\% Top-1 accuracy, substantially outperforming existing models such as BERTurk-Legal. We release HukukBERT to serve as a foundational model for downstream Turkish legal tasks.</p></div>
+				<div class="exp-detail"><p>Recent advances in natural language processing (NLP) have opened significant doors for LegalTech applications; however, existing studies specific to Turkish law have been severely limited by data constraints. While extensive models like LEGAL-BERT have been developed for English legal texts, the Turkish legal domain lacks a high-volume, domain-specific counterpart. In this paper, we introduce HukukBERT, the most comprehensive legal language model for Turkish, trained on an 18 GB cleaned legal corpus using advanced masking strategies. We systematically compare our 48K WordPiece tokenizer and Domain-Adaptive Pre-Training (DAPT) approach against general-purpose and existing domain-specific Turkish models. Evaluated on a novel Legal Cloze Test benchmark, HukukBERT achieves state-of-the-art performance with 84.40% Top-1 accuracy, substantially outperforming existing models such as BERTurk-Legal. We release HukukBERT to serve as a foundational model for downstream Turkish legal tasks. <a href="https://arxiv.org/abs/2604.04790" target="_blank" rel="noopener" class="link-chip"><span>arxiv</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M7 7h10v10"/></svg></a></p></div>
 			</button>
 			<button class="exp-card pub-card" aria-expanded="false" onclick="toggleCard(this)">
 				<div class="exp-card-header">
@@ -327,8 +351,7 @@ import '../styles/global.css';
 					</div>
 					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
 				</div>
-				<div class="exp-detail"><p>The formation of coherent, effective, and equitably sized user groups is a critical and persistent challenge in the design of online social platforms, collaborative learning environments, and enterprise-level teamwork tools. Existing automated methods, while scalable, often fail to produce groups of a consistent, predetermined size, leading to significant logistical issues and imbalanced user experiences. Furthermore, they often rely on shallow or easily manipulated user data. This paper introduces Octapar, a novel, multi-stage algorithmic framework designed to generate semantically coherent, perfectly balanced user clusters from deep, multi-modal user profiles. The framework pioneers a conversational onboarding process, using specialized chatbots and Large Language Models (LLMs) to extract nuanced user characteristics across both skill and philosophical domains. These characteristics are formalized as a rich set of semantic tags. The core technical innovation is a custom weighted attention mechanism that generates a sophisticated user vector by incorporating not only global tag rarity (IDF) but also a novel metric of local, intra-user tag uniqueness. This allows the model to identify and amplify a user's most distinctive traits. Final group formation is achieved via an iterative, assignment-based clustering algorithm that utilizes the Hungarian method to guarantee perfectly balanced clusters. This approach ensures structural consistency and fairness in group formation, a critical and often unmet requirement for many practical applications. We provide a detailed walkthrough of the architecture, the mathematical foundations of its components, and a discussion of its implications for the future of computational group formation. <a href="https://zenodo.org/records/17360220" class="link-btn"><strong>click here to view the paper</strong></a></p></div>
-			
+				<div class="exp-detail"><p>The formation of coherent, effective, and equitably sized user groups is a critical and persistent challenge in the design of online social platforms, collaborative learning environments, and enterprise-level teamwork tools. Existing automated methods, while scalable, often fail to produce groups of a consistent, predetermined size, leading to significant logistical issues and imbalanced user experiences. Furthermore, they often rely on shallow or easily manipulated user data. This paper introduces Octapar, a novel, multi-stage algorithmic framework designed to generate semantically coherent, perfectly balanced user clusters from deep, multi-modal user profiles. The framework pioneers a conversational onboarding process, using specialized chatbots and Large Language Models (LLMs) to extract nuanced user characteristics across both skill and philosophical domains. These characteristics are formalized as a rich set of semantic tags. The core technical innovation is a custom weighted attention mechanism that generates a sophisticated user vector by incorporating not only global tag rarity (IDF) but also a novel metric of local, intra-user tag uniqueness. This allows the model to identify and amplify a user's most distinctive traits. Final group formation is achieved via an iterative, assignment-based clustering algorithm that utilizes the Hungarian method to guarantee perfectly balanced clusters. This approach ensures structural consistency and fairness in group formation, a critical and often unmet requirement for many practical applications. We provide a detailed walkthrough of the architecture, the mathematical foundations of its components, and a discussion of its implications for the future of computational group formation. <a href="https://zenodo.org/records/17360220" target="_blank" rel="noopener" class="link-chip"><span>zenodo</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M7 7h10v10"/></svg></a></p></div>
 			</button>
 			<button class="exp-card pub-card" aria-expanded="false" onclick="toggleCard(this)">
 				<div class="exp-card-header">
@@ -355,16 +378,29 @@ import '../styles/global.css';
 	<!-- ── CONTACT ────────────────────────────────────────────────────── -->
 	<section id="contact" class="site-section reveal">
 		<p class="section-label">contact</p>
-		<p class="contact-intro">interested in working together? i'd love to hear from you.</p>
+		<p class="contact-intro">open to collaboration, research, and good conversation.</p>
 		<p class="contact-location">ankara, türkiye · GMT+3</p>
 		<div class="contact-links">
-			<a href="mailto:mutkuoz@proton.me" class="contact-link">mutkuoz@proton.me</a>
-			<a href="https://github.com/mutkuoz" target="_blank" class="contact-link">github · @mutkuoz</a>
-			<a href="https://linkedin.com/in/mutkuoz" target="_blank" class="contact-link">linkedin · @mutkuoz</a>
+			<a href="mailto:mutkuoz@proton.me" class="contact-link"><span class="contact-key">email</span><span class="contact-val">mutkuoz@proton.me</span></a>
+			<a href="mailto:utku.ozturk@member.mensa.org" class="contact-link"><span class="contact-key">mensa</span><span class="contact-val">utku.ozturk@member.mensa.org</span></a>
+			<a href="https://github.com/mutkuoz" target="_blank" rel="noopener" class="contact-link"><span class="contact-key">github</span><span class="contact-val">@mutkuoz</span></a>
+			<a href="https://linkedin.com/in/mutkuoz" target="_blank" rel="noopener" class="contact-link"><span class="contact-key">linkedin</span><span class="contact-val">@mutkuoz</span></a>
 		</div>
 	</section>
 
 </main>
+
+<!-- ═══ FOOTER ════════════════════════════════════════════════════════════ -->
+<footer class="site-footer">
+	<div class="footer-inner">
+		<p class="footer-line">
+			<span class="footer-mark">*</span> designed &amp; built by mutkuoz · last updated 2026
+		</p>
+		<p class="footer-line footer-muted">
+			<kbd>T</kbd> cycle accent · <kbd>D</kbd> toggle theme
+		</p>
+	</div>
+</footer>
 
 <!-- ═══ STYLES ════════════════════════════════════════════════════════════ -->
 <style>
@@ -435,7 +471,8 @@ import '../styles/global.css';
 html { scroll-behavior: smooth; }
 
 body {
-	font-family: 'Inter', system-ui, sans-serif;
+	font-family: 'Archivo', system-ui, sans-serif;
+	font-feature-settings: 'ss01' on, 'cv01' on;
 	background: var(--bg);
 	color: var(--fg);
 	-webkit-font-smoothing: antialiased;
@@ -443,10 +480,35 @@ body {
 	transition: background 0.3s ease, color 0.3s ease;
 }
 
+/* ── Grain overlay ──────────────────────────────────────────────── */
+.grain {
+	position: fixed;
+	inset: 0;
+	z-index: 50;
+	pointer-events: none;
+	opacity: 0.5;
+	mix-blend-mode: multiply;
+	background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.09 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+	background-size: 220px 220px;
+}
+[data-theme="dark"] .grain { opacity: 0.6; mix-blend-mode: screen; }
+
+/* ── Scroll progress ────────────────────────────────────────────── */
+#scrollProgress {
+	position: fixed;
+	top: 0; left: 0;
+	height: 2px;
+	width: 0;
+	background: var(--accent);
+	z-index: 200;
+	pointer-events: none;
+	transition: background 0.3s ease;
+}
+
 /* ── Navbar ─────────────────────────────────────────────────────── */
 #navbar {
 	position: fixed;
-	top: 0; left: 0; right: 0;
+	top: 2px; left: 0; right: 0;
 	z-index: 100;
 	background: var(--nav-bg);
 	border-bottom: 1px solid var(--border2);
@@ -551,9 +613,12 @@ body {
 
 /* ── Layout ─────────────────────────────────────────────────────── */
 main {
+	position: relative;
+	z-index: 2;
 	max-width: 72rem;
 	margin: 0 auto;
 	padding: 7rem 2rem 5rem;
+	counter-reset: section;
 }
 @media (min-width: 640px)  { main { padding: 8rem 3rem 6rem; } }
 @media (min-width: 1024px) { main { padding: 9rem 4rem 7rem; } }
@@ -563,6 +628,7 @@ main {
 	margin-bottom: 5.5rem;
 	padding-bottom: 3.5rem;
 	border-bottom: 1px solid var(--border2);
+	position: relative;
 }
 
 .eyebrow {
@@ -576,10 +642,12 @@ main {
 }
 
 h1 {
+	font-family: 'Bricolage Grotesque', 'Archivo', system-ui, sans-serif;
+	font-variation-settings: 'opsz' 96;
 	font-size: clamp(2.4rem, 6vw, 4rem);
-	font-weight: 700;
-	letter-spacing: -0.035em;
-	line-height: 1.07;
+	font-weight: 500;
+	letter-spacing: -0.04em;
+	line-height: 1.02;
 	color: var(--fg);
 	margin-bottom: 1.25rem;
 }
@@ -625,6 +693,17 @@ h1 {
 	text-transform: uppercase;
 	color: var(--muted);
 	margin-bottom: 1.75rem;
+	display: flex;
+	align-items: baseline;
+	gap: 0.7rem;
+}
+.site-section { counter-increment: section; }
+.site-section .section-label::before {
+	content: counter(section, decimal-leading-zero);
+	color: var(--accent);
+	font-weight: 500;
+	opacity: 0.85;
+	transition: color 0.3s ease;
 }
 
 .section-label-row {
@@ -650,12 +729,11 @@ h1 {
 .card-grid {
 	display: grid;
 	grid-template-columns: 1fr;
+	gap: 0.25rem;
 }
 
 @media (min-width: 640px) {
-	.card-grid:not(.single-col) { grid-template-columns: 1fr 1fr; }
-	.card-grid:not(.single-col) .exp-card { border-right: none; }
-	.card-grid:not(.single-col) .exp-card:nth-child(even) { border-right: none; }
+	.card-grid:not(.single-col) { grid-template-columns: 1fr 1fr; column-gap: 1.5rem; }
 }
 
 /* ── Expandable card ────────────────────────────────────────────── */
@@ -665,8 +743,8 @@ h1 {
 	text-align: left;
 	background: transparent;
 	border: none;
-	padding: 1.375rem 0.75rem;
 	border-radius: 0.5rem;
+	padding: 1.375rem 0.875rem;
 	cursor: pointer;
 	transition: background 0.15s ease;
 	outline: none;
@@ -776,7 +854,51 @@ h1 {
 .exp-card[aria-expanded="true"] .exp-detail > p { padding-top: 0.7rem; }
 
 /* ── Project: bold name ─────────────────────────────────────────── */
-.proj-card .exp-label { font-weight: 600; letter-spacing: -0.01em; }
+.proj-card .exp-label {
+	font-weight: 600;
+	letter-spacing: -0.01em;
+}
+
+/* ── Status dot on project tags ─────────────────────────────────── */
+.status-dot {
+	display: inline-block;
+	width: 0.42rem;
+	height: 0.42rem;
+	border-radius: 50%;
+	margin-right: 0.45rem;
+	transform: translateY(-1px);
+	transition: background 0.3s ease, border-color 0.3s ease;
+}
+.status-live    { background: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.status-paused  { background: transparent; border: 1px solid var(--accent); }
+.status-shelved { background: var(--muted2); }
+
+.tag-sep { margin: 0 0.15rem; color: var(--muted2); opacity: 0.65; }
+
+/* ── Inline link chip ───────────────────────────────────────────── */
+.link-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+	margin-top: 0.5rem;
+	padding: 0.18rem 0.55rem 0.18rem 0.6rem;
+	font-family: 'JetBrains Mono', monospace;
+	font-size: 0.68rem;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--accent);
+	background: var(--accent-soft);
+	border: 1px solid transparent;
+	border-radius: 999px;
+	text-decoration: none;
+	transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.25s cubic-bezier(0.4,0,0.2,1);
+}
+.link-chip:hover {
+	border-color: var(--accent);
+	transform: translateY(-1px);
+}
+.link-chip svg { width: 0.72rem; height: 0.72rem; transition: transform 0.2s ease; }
+.link-chip:hover svg { transform: translate(1.5px, -1.5px); }
 
 /* ── Gallery ────────────────────────────────────────────────────── */
 .gallery-grid {
@@ -795,10 +917,11 @@ h1 {
 
 /* ── Contact ────────────────────────────────────────────────────── */
 .contact-intro {
-	font-size: 0.9375rem;
-	color: var(--muted);
+	font-size: 1.0625rem;
+	color: var(--fg2);
 	margin-bottom: 0.75rem;
 	line-height: 1.6;
+	max-width: 34rem;
 }
 .contact-location {
 	font-family: 'JetBrains Mono', monospace;
@@ -806,20 +929,84 @@ h1 {
 	letter-spacing: 0.08em;
 	text-transform: uppercase;
 	color: var(--muted2);
-	margin-bottom: 1.5rem;
+	margin-bottom: 1.75rem;
 }
-.contact-links { display: flex; flex-direction: column; gap: 0.625rem; }
+.contact-links { display: flex; flex-direction: column; }
 .contact-link {
+	display: grid;
+	grid-template-columns: 6rem 1fr;
+	align-items: baseline;
+	gap: 1rem;
+	padding: 0.9rem 0;
+	border-top: 1px solid var(--border2);
 	font-size: 0.9375rem;
-	font-weight: 500;
 	color: var(--fg2);
 	text-decoration: none;
-	width: fit-content;
-	border-bottom: 1px solid var(--border);
-	padding-bottom: 2px;
-	transition: border-color 0.15s ease, color 0.15s ease;
+	transition: color 0.15s ease, border-color 0.15s ease, padding-left 0.25s cubic-bezier(0.4,0,0.2,1);
 }
-.contact-link:hover { border-color: var(--accent); color: var(--fg); }
+.contact-link:last-child { border-bottom: 1px solid var(--border2); }
+.contact-link:hover { color: var(--fg); padding-left: 0.5rem; }
+.contact-key {
+	font-family: 'JetBrains Mono', monospace;
+	font-size: 0.67rem;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: var(--muted2);
+	transition: color 0.15s ease;
+}
+.contact-link:hover .contact-key { color: var(--accent); }
+.contact-val { font-weight: 500; }
+
+/* ── Site footer ───────────────────────────────────────────────── */
+.site-footer {
+	position: relative;
+	z-index: 2;
+	max-width: 72rem;
+	margin: 0 auto;
+	padding: 2rem 2rem 3rem;
+	border-top: 1px solid var(--border2);
+	display: flex;
+	justify-content: center;
+	transition: border-color 0.3s ease;
+}
+@media (min-width: 640px)  { .site-footer { padding: 2.5rem 3rem 3.5rem; } }
+@media (min-width: 1024px) { .site-footer { padding: 3rem 4rem 4rem; } }
+
+.footer-inner {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 0.65rem;
+	align-items: flex-start;
+	justify-content: space-between;
+}
+@media (min-width: 640px) {
+	.footer-inner { flex-direction: row; align-items: center; gap: 1.5rem; }
+}
+
+.footer-line {
+	font-family: 'JetBrains Mono', monospace;
+	font-size: 0.7rem;
+	letter-spacing: 0.06em;
+	color: var(--muted);
+}
+.footer-muted { color: var(--muted2); }
+.footer-mark { color: var(--accent); margin-right: 0.25rem; }
+
+.footer-line kbd {
+	display: inline-block;
+	min-width: 1.4em;
+	padding: 1px 5px;
+	margin: 0 1px;
+	border: 1px solid var(--border);
+	border-radius: 4px;
+	background: var(--bg2);
+	color: var(--fg2);
+	font-family: inherit;
+	font-size: 0.65rem;
+	text-align: center;
+	transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
 
 /* ── View all link ──────────────────────────────────────────────── */
 .view-all-link {
@@ -958,6 +1145,40 @@ function toggleCard(btn) {
 	els.forEach((el, i) => {
 		el.style.transitionDelay = (i * 0.07) + 's';
 		io.observe(el);
+	});
+})();
+
+/* ── Scroll progress ────────────────────────────────────────────── */
+(function() {
+	const bar = document.getElementById('scrollProgress');
+	if (!bar) return;
+	let raf = 0;
+	function update() {
+		const h = document.documentElement;
+		const max = h.scrollHeight - h.clientHeight;
+		const pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
+		bar.style.width = pct + '%';
+		raf = 0;
+	}
+	window.addEventListener('scroll', () => {
+		if (!raf) raf = requestAnimationFrame(update);
+	}, { passive: true });
+	update();
+})();
+
+/* ── Keyboard shortcuts ─────────────────────────────────────────── */
+(function() {
+	document.addEventListener('keydown', (e) => {
+		if (e.metaKey || e.ctrlKey || e.altKey) return;
+		const t = e.target;
+		if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+		if (e.key === 't' || e.key === 'T') {
+			e.preventDefault();
+			document.getElementById('colorCycleBtn')?.click();
+		} else if (e.key === 'd' || e.key === 'D') {
+			e.preventDefault();
+			document.getElementById('modeToggle')?.click();
+		}
 	});
 })();
 </script>
