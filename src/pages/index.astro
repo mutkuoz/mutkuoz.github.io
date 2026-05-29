@@ -4,1163 +4,849 @@ import '../styles/global.css';
 ---
 
 <!doctype html>
-<html lang="en" data-theme="light" data-accent="stone">
+<html lang="en" data-theme="light" data-ink="blueblack">
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<meta name="description" content="Portfolio of Mehmet Utku Öztürk — machine learning specialist, software developer, founder." />
-	<title>mehmet utku öztürk</title>
+	<meta name="description" content="The notebook of Mehmet Utku Öztürk — machine learning specialist, software developer, founder." />
+	<title>utku's space</title>
 	<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 	<link rel="icon" type="image/x-icon" href="/favicon.ico" />
 	<meta property="og:type" content="website" />
-	<meta property="og:title" content="mehmet utku öztürk" />
-	<meta property="og:description" content="Portfolio of Mehmet Utku Öztürk — machine learning specialist, software developer, founder." />
+	<meta property="og:title" content="utku's space — the notebook of mehmet utku öztürk" />
+	<meta property="og:description" content="The notebook of Mehmet Utku Öztürk — machine learning specialist, software developer, founder." />
 	<meta name="twitter:card" content="summary" />
-	<meta name="twitter:title" content="mehmet utku öztürk" />
-	<meta name="twitter:description" content="Portfolio of Mehmet Utku Öztürk — machine learning specialist, software developer, founder." />
+	<meta name="twitter:title" content="utku's space" />
+	<meta name="twitter:description" content="The notebook of Mehmet Utku Öztürk — machine learning specialist, software developer, founder." />
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-	<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300..700&family=Bricolage+Grotesque:opsz,wght@12..96,400..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+	<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,300..700;1,400..500&family=Schibsted+Grotesk:wght@400..900&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet" />
 </head>
-<body>
+<body data-theme="light">
 
-<!-- ═══ SCROLL PROGRESS ═══════════════════════════════════════════════════ -->
+<!-- ink-line scroll progress -->
 <div id="scrollProgress" aria-hidden="true"></div>
 
-<!-- ═══ GRAIN OVERLAY ═════════════════════════════════════════════════════ -->
-<div class="grain" aria-hidden="true"></div>
+<!-- ink trail / splatter canvas (desktop) -->
+<canvas id="inkCanvas" aria-hidden="true"></canvas>
 
 <!-- ═══ NAVBAR ════════════════════════════════════════════════════════════ -->
 <nav id="navbar">
-	<div class="nav-inner">
-		<span class="nav-name">mutkuoz</span>
-		<div class="nav-links">
-			<a href="#about" class="nav-link">about</a>
-			<a href="#projects" class="nav-link">projects</a>
-			<a href="#research" class="nav-link">research</a>
-			<a href="#contact" class="nav-link">contact</a>
-		</div>
-		<div class="nav-controls">
-			<!-- Single colour cycle button -->
-			<button class="color-cycle-btn" id="colorCycleBtn" aria-label="cycle color theme" title="cycle color theme">
-				<span class="color-cycle-swatch" id="colorCycleSwatch"></span>
-				<svg class="color-cycle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-					<polyline points="1 4 1 10 7 10"></polyline>
-					<path d="M3.51 15a9 9 0 1 0 .49-3.03"></path>
-				</svg>
+	<a href="#top" class="nav-name">utku's&nbsp;space</a>
+	<div class="nav-links">
+		<a href="#about" class="nav-link">about</a>
+		<a href="#projects" class="nav-link">projects</a>
+		<a href="#research" class="nav-link">research</a>
+		<a href="#contact" class="nav-link">contact</a>
+	</div>
+	<div class="nav-controls">
+		<div class="pen-wrap">
+			<button class="pen-btn" id="penBtn" aria-haspopup="true" aria-expanded="false" aria-label="change pen colour">
+				<span class="pen-swatch" id="penSwatch"></span>
 			</button>
-			<!-- Dark/light toggle -->
-			<button class="mode-toggle" id="modeToggle" aria-label="toggle dark mode">
-				<svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-					<circle cx="12" cy="12" r="5"></circle>
-					<line x1="12" y1="1" x2="12" y2="3"></line>
-					<line x1="12" y1="21" x2="12" y2="23"></line>
-					<line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-					<line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-					<line x1="1" y1="12" x2="3" y2="12"></line>
-					<line x1="21" y1="12" x2="23" y2="12"></line>
-					<line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-					<line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-				</svg>
-				<svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-					<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-				</svg>
-			</button>
+			<div class="pen-pop" id="penPop" role="menu" aria-label="ink colours">
+				<button class="nib" role="menuitem" data-ink="blueblack" style="--nib:#25324d" title="blue-black"></button>
+				<button class="nib" role="menuitem" data-ink="royal"     style="--nib:#2a4bd0" title="royal blue"></button>
+				<button class="nib" role="menuitem" data-ink="red"       style="--nib:#c33125" title="red"></button>
+				<button class="nib" role="menuitem" data-ink="emerald"   style="--nib:#0c7a55" title="emerald"></button>
+				<button class="nib" role="menuitem" data-ink="violet"    style="--nib:#6a35c9" title="violet"></button>
+				<button class="nib" role="menuitem" data-ink="sepia"     style="--nib:#8a5a2b" title="sepia"></button>
+			</div>
 		</div>
+		<button class="mode-toggle" id="modeToggle" aria-label="toggle night mode">
+			<svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+				<circle cx="12" cy="12" r="4.5"></circle>
+				<path d="M12 1.5v2.5M12 20v2.5M4.2 4.2l1.8 1.8M18 18l1.8 1.8M1.5 12h2.5M20 12h2.5M4.2 19.8l1.8-1.8M18 6l1.8-1.8"></path>
+			</svg>
+			<svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+				<path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"></path>
+			</svg>
+		</button>
 	</div>
 </nav>
 
-<!-- ═══ MAIN ══════════════════════════════════════════════════════════════ -->
-<main>
+<!-- ═══ PAGE ══════════════════════════════════════════════════════════════ -->
+<main class="page" id="top">
 
 	<!-- ── HEADER ─────────────────────────────────────────────────────── -->
-	<header class="site-header reveal">
-		<p class="eyebrow">portfolio</p>
-		<h1>mehmet utku öztürk</h1>
-		<p class="subtitle-line">
-			<span class="subtitle-static"></span><span id="typewriter" class="typewriter-text"></span><span class="typewriter-cursor">|</span>
+	<header class="head reveal">
+		<p class="eyebrow">a working notebook</p>
+		<h1 id="name" title="give it a tap">mehmet utku öztürk</h1>
+		<p class="subtitle">
+			<span class="sub-static">today i am&nbsp;</span><span id="typewriter" class="type"></span><span class="caret">|</span>
 		</p>
 	</header>
 
 	<!-- ── ABOUT ──────────────────────────────────────────────────────── -->
-	<section id="about" class="site-section reveal">
-		<p class="section-label">about</p>
-		<div class="card-grid">
-
-			<button class="exp-card" aria-expanded="false" onclick="toggleCard(this)">
-				<div class="exp-card-header">
-					<div class="exp-icon">
-						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-							<polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline>
-						</svg>
-					</div>
-					<div class="exp-text">
-						<span class="exp-label">lifelong software developer</span>
-						<span class="exp-tag">work</span>
-					</div>
-					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
-				</div>
-				<div class="exp-detail"><p>writing code since age 8 — small games, tools, experiments. picked up c++ at 12 and fell into machine learning at 14. haven't stopped since.</p></div>
+	<section id="about" class="entry reveal">
+		<p class="entry-label">about</p>
+		<div class="rows two-col">
+			<button class="row" aria-expanded="false" onclick="toggleCard(this)">
+				<span class="row-head"><span class="row-label">lifelong software developer</span><span class="row-tag">work</span><span class="chev"></span></span>
+				<span class="row-detail"><span>writing code since age 8 — small games, tools, experiments. picked up c++ at 12 and fell into machine learning at 14. haven't stopped since.</span></span>
 			</button>
-
-			<button class="exp-card" aria-expanded="false" onclick="toggleCard(this)">
-				<div class="exp-card-header">
-					<div class="exp-icon">
-						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-							<circle cx="12" cy="12" r="3"></circle>
-							<path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"></path>
-						</svg>
-					</div>
-					<div class="exp-text">
-						<span class="exp-label">machine learning specialist</span>
-						<span class="exp-tag">field</span>
-					</div>
-					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
-				</div>
-				<div class="exp-detail"><p>deep work in nlp, agentic systems, and production ml. shipped systems across several startups. currently researching neuro-symbolic ai and artificial cognitive intelligence.</p></div>
+			<button class="row" aria-expanded="false" onclick="toggleCard(this)">
+				<span class="row-head"><span class="row-label">machine learning specialist</span><span class="row-tag">field</span><span class="chev"></span></span>
+				<span class="row-detail"><span>deep work in nlp, agentic systems, and production ml. shipped systems across several startups. currently researching neuro-symbolic ai and artificial cognitive intelligence.</span></span>
 			</button>
-
-			<button class="exp-card" aria-expanded="false" onclick="toggleCard(this)">
-				<div class="exp-card-header">
-					<div class="exp-icon">
-						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-							<path d="M6 5v14M18 5v14M2 9h4M18 9h4M2 15h4M18 15h4M6 12h12"></path>
-						</svg>
-					</div>
-					<div class="exp-text">
-						<span class="exp-label">class ii powerlifter</span>
-						<span class="exp-tag">physical</span>
-					</div>
-					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
-				</div>
-				<div class="exp-detail"><p>competitive class II powerlifter — 1000+ lb total. training hybrid: powerlifting, strongman, bodybuilding, calisthenics, and kickboxing.</p></div>
+			<button class="row" aria-expanded="false" onclick="toggleCard(this)">
+				<span class="row-head"><span class="row-label">class ii powerlifter</span><span class="row-tag">physical</span><span class="chev"></span></span>
+				<span class="row-detail"><span>competitive class II powerlifter — 1000+ lb total. training hybrid: powerlifting, strongman, bodybuilding, calisthenics, and kickboxing.</span></span>
 			</button>
-
-			<button class="exp-card" aria-expanded="false" onclick="toggleCard(this)">
-				<div class="exp-card-header">
-					<div class="exp-icon">
-						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-							<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
-						</svg>
-					</div>
-					<div class="exp-text">
-						<span class="exp-label">founder @ 23rd the company</span>
-						<span class="exp-tag">social</span>
-					</div>
-					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
-				</div>
-				<div class="exp-detail"><p>founder of 23rd — a decentralized open-innovation collective on ethereum, conducting and openly publishing meaningful work, mostly in machine learning.</p></div>
+			<button class="row" aria-expanded="false" onclick="toggleCard(this)">
+				<span class="row-head"><span class="row-label">founder @ 23rd the company</span><span class="row-tag">social</span><span class="chev"></span></span>
+				<span class="row-detail"><span>founder of 23rd — a decentralized open-innovation collective on ethereum, conducting and openly publishing meaningful work, mostly in machine learning.</span></span>
 			</button>
-
-			<button class="exp-card" aria-expanded="false" onclick="toggleCard(this)">
-				<div class="exp-card-header">
-					<div class="exp-icon">
-						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-							<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-						</svg>
-					</div>
-					<div class="exp-text">
-						<span class="exp-label">member @ mensa international</span>
-						<span class="exp-tag">community</span>
-					</div>
-					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
-				</div>
-				<div class="exp-detail"><p>member of the mensa high iq society. a fun credential — and a good place to meet sharp, curious people.</p></div>
+			<button class="row" aria-expanded="false" onclick="toggleCard(this)">
+				<span class="row-head"><span class="row-label">member @ mensa international</span><span class="row-tag">community</span><span class="chev"></span></span>
+				<span class="row-detail"><span>member of the mensa high iq society. a fun credential — and a good place to meet sharp, curious people.</span></span>
 			</button>
-
-			<button class="exp-card" aria-expanded="false" onclick="toggleCard(this)">
-				<div class="exp-card-header">
-					<div class="exp-icon">
-						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-							<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-							<path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
-						</svg>
-					</div>
-					<div class="exp-text">
-						<span class="exp-label">mathematics, psychoanalysis, kinesiology, neuroscience</span>
-						<span class="exp-tag">interests</span>
-					</div>
-					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
-				</div>
-				<div class="exp-detail"><p>topics i keep reading about — curious, not expert.</p></div>
+			<button class="row" aria-expanded="false" onclick="toggleCard(this)">
+				<span class="row-head"><span class="row-label">mathematics, psychoanalysis, kinesiology, neuroscience</span><span class="row-tag">interests</span><span class="chev"></span></span>
+				<span class="row-detail"><span>topics i keep reading about — curious, not expert.</span></span>
 			</button>
-
 		</div>
 	</section>
 
 	<!-- ── PROJECTS ───────────────────────────────────────────────────── -->
-	<section id="projects" class="site-section reveal">
-		<p class="section-label">projects</p>
-		<div class="card-grid">
-
-			<button class="exp-card proj-card" aria-expanded="false" onclick="toggleCard(this)">
-				<div class="exp-card-header">
-					<div class="exp-icon">
-						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-							<path d="M3 21h18"></path>
-							<path d="M9 21V7l3-3 3 3v14"></path>
-							<path d="M5 9H3l9-9 9 9h-2"></path>
-							<line x1="9" y1="12" x2="15" y2="12"></line>
-						</svg>
-					</div>
-					<div class="exp-text">
-						<span class="exp-label">turkhukuk.ai</span>
-						<span class="exp-tag"><span class="status-dot status-live" aria-hidden="true"></span>technical co-founder · 2026 —</span>
-					</div>
-					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
-				</div>
-				<div class="exp-detail"><p>a legaltech platform for turkish lawyers — case research and litigation strategy. trained and fine-tuned domain-specific language models on turkish legal corpora, and experimented with neuro-symbolic representations to bridge statistical learning with structured legal reasoning. <a href="https://www.turkhukuk.ai" target="_blank" rel="noopener" class="link-chip"><span>turkhukuk.ai</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M7 7h10v10"/></svg></a></p></div>
+	<section id="projects" class="entry reveal">
+		<p class="entry-label">projects</p>
+		<div class="rows two-col">
+			<button class="row" aria-expanded="false" onclick="toggleCard(this)">
+				<span class="row-head"><span class="row-label proj"><span class="dot live"></span>turkhukuk.ai</span><span class="row-tag">technical co-founder · 2026 —</span><span class="chev"></span></span>
+				<span class="row-detail"><span>a legaltech platform for turkish lawyers — case research and litigation strategy. trained and fine-tuned domain-specific language models on turkish legal corpora, and experimented with neuro-symbolic representations to bridge statistical learning with structured legal reasoning. <a href="https://www.turkhukuk.ai" target="_blank" rel="noopener" class="chip">turkhukuk.ai ↗</a></span></span>
 			</button>
-
-			<button class="exp-card proj-card" aria-expanded="false" onclick="toggleCard(this)">
-				<div class="exp-card-header">
-					<div class="exp-icon">
-						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-							<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-							<path d="m9 12 2 2 4-4"></path>
-						</svg>
-					</div>
-					<div class="exp-text">
-						<span class="exp-label">007captcha</span>
-						<span class="exp-tag"><span class="status-dot status-live" aria-hidden="true"></span>creator · 2026 — <span class="tag-sep">·</span> open source</span>
-					</div>
-					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
-				</div>
-				<div class="exp-detail"><p>a robophobic verification framework that defends websites against ai agents. an open-source take on captcha built for the post-llm web, where classical challenges no longer hold. typescript. mit licensed. <a href="https://github.com/mutkuoz/007captcha" target="_blank" rel="noopener" class="link-chip"><span>github</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M7 7h10v10"/></svg></a></p></div>
+			<button class="row" aria-expanded="false" onclick="toggleCard(this)">
+				<span class="row-head"><span class="row-label proj"><span class="dot live"></span>007captcha</span><span class="row-tag">creator · 2026 — · open source</span><span class="chev"></span></span>
+				<span class="row-detail"><span>a robophobic verification framework that defends websites against ai agents. an open-source take on captcha built for the post-llm web, where classical challenges no longer hold. typescript. mit licensed. <a href="https://github.com/mutkuoz/007captcha" target="_blank" rel="noopener" class="chip">github ↗</a></span></span>
 			</button>
-
-			<button class="exp-card proj-card" aria-expanded="false" onclick="toggleCard(this)">
-				<div class="exp-card-header">
-					<div class="exp-icon">
-						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-							<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle>
-							<path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-						</svg>
-					</div>
-					<div class="exp-text">
-						<span class="exp-label">octapar</span>
-						<span class="exp-tag"><span class="status-dot status-paused" aria-hidden="true"></span>founder &amp; core dev · 2025</span>
-					</div>
-					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
-				</div>
-				<div class="exp-detail"><p>an ai platform that clusters people into 8-person "tribes" — balanced, semantically coherent groups for authentic connection and mutual growth. designed a multi-stage clustering algorithm around weighted attentional embeddings and the hungarian method. paper published via 23rd.</p></div>
+			<button class="row" aria-expanded="false" onclick="toggleCard(this)">
+				<span class="row-head"><span class="row-label proj"><span class="dot paused"></span>octapar</span><span class="row-tag">founder &amp; core dev · 2025</span><span class="chev"></span></span>
+				<span class="row-detail"><span>an ai platform that clusters people into 8-person "tribes" — balanced, semantically coherent groups for authentic connection and mutual growth. designed a multi-stage clustering algorithm around weighted attentional embeddings and the hungarian method. paper published via 23rd.</span></span>
 			</button>
-
-			<button class="exp-card proj-card" aria-expanded="false" onclick="toggleCard(this)">
-				<div class="exp-card-header">
-					<div class="exp-icon">
-						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-							<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-						</svg>
-					</div>
-					<div class="exp-text">
-						<span class="exp-label">clade ai</span>
-						<span class="exp-tag"><span class="status-dot status-shelved" aria-hidden="true"></span>co-founder, ai dev · 2023–24</span>
-					</div>
-					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
-				</div>
-				<div class="exp-detail"><p>a personal ai assistant with task execution, extensive integrations, and personalized interaction. raised a $21m round. built a self-deciding multi-agent framework in the early days of ai agents, fine-tuned an llm for natural interaction, and shipped custom systems for smart memory, decision-making, and seamless integrations. left in july 2024; shelved shortly after.</p></div>
+			<button class="row" aria-expanded="false" onclick="toggleCard(this)">
+				<span class="row-head"><span class="row-label proj"><span class="dot shelved"></span>clade ai</span><span class="row-tag">co-founder, ai dev · 2023–24</span><span class="chev"></span></span>
+				<span class="row-detail"><span>a personal ai assistant with task execution, extensive integrations, and personalized interaction. raised a $21m round. built a self-deciding multi-agent framework in the early days of ai agents, fine-tuned an llm for natural interaction, and shipped custom systems for smart memory, decision-making, and seamless integrations. left in july 2024; shelved shortly after.</span></span>
 			</button>
-
-			<button class="exp-card proj-card" aria-expanded="false" onclick="toggleCard(this)">
-				<div class="exp-card-header">
-					<div class="exp-icon">
-						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-							<path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-						</svg>
-					</div>
-					<div class="exp-text">
-						<span class="exp-label">sorubot</span>
-						<span class="exp-tag"><span class="status-dot status-shelved" aria-hidden="true"></span>developer · 2022–23</span>
-					</div>
-					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
-				</div>
-				<div class="exp-detail"><p>an ai platform that generates exam questions and manages students' study sessions. very unsuccessfully fine-tuned an llm. amateur work — but not bad for a 14-year-old.</p></div>
+			<button class="row" aria-expanded="false" onclick="toggleCard(this)">
+				<span class="row-head"><span class="row-label proj"><span class="dot shelved"></span>sorubot</span><span class="row-tag">developer · 2022–23</span><span class="chev"></span></span>
+				<span class="row-detail"><span>an ai platform that generates exam questions and manages students' study sessions. very unsuccessfully fine-tuned an llm. amateur work — but not bad for a 14-year-old.</span></span>
 			</button>
-
-			<button class="exp-card proj-card" aria-expanded="false" onclick="toggleCard(this)">
-				<div class="exp-card-header">
-					<div class="exp-icon">
-						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-							<path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
-							<path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
-							<line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line>
-						</svg>
-					</div>
-					<div class="exp-text">
-						<span class="exp-label">styrk</span>
-						<span class="exp-tag"><span class="status-dot status-shelved" aria-hidden="true"></span>co-founder, backend dev · 2025</span>
-					</div>
-					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
-				</div>
-				<div class="exp-detail"><p>sports supplements with ai-driven personalization and ai-generated packaging. a fun weekend project. shelved.</p></div>
+			<button class="row" aria-expanded="false" onclick="toggleCard(this)">
+				<span class="row-head"><span class="row-label proj"><span class="dot shelved"></span>styrk</span><span class="row-tag">co-founder, backend dev · 2025</span><span class="chev"></span></span>
+				<span class="row-detail"><span>sports supplements with ai-driven personalization and ai-generated packaging. a fun weekend project. shelved.</span></span>
 			</button>
-
 		</div>
 	</section>
 
-	<!-- ── RESEARCH ───────────────────────────────────────────────── -->
-	<section id="research" class="site-section reveal">
-		<p class="section-label">research</p>
-		<div class="card-grid single-col">
-
-			<button class="exp-card pub-card" aria-expanded="false" onclick="toggleCard(this)">
-				<div class="exp-card-header">
-					<div class="exp-icon">
-						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-							<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-							<path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-						</svg>
-					</div>
-					<div class="exp-text">
-						<span class="exp-label">HukukBERT Domain-Specific Language Model for Turkish Law</span>
-						<span class="exp-tag">turkhukuk.ai · 2026</span>
-					</div>
-					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
-				</div>
-				<div class="exp-detail"><p>Recent advances in natural language processing (NLP) have opened significant doors for LegalTech applications; however, existing studies specific to Turkish law have been severely limited by data constraints. While extensive models like LEGAL-BERT have been developed for English legal texts, the Turkish legal domain lacks a high-volume, domain-specific counterpart. In this paper, we introduce HukukBERT, the most comprehensive legal language model for Turkish, trained on an 18 GB cleaned legal corpus using advanced masking strategies. We systematically compare our 48K WordPiece tokenizer and Domain-Adaptive Pre-Training (DAPT) approach against general-purpose and existing domain-specific Turkish models. Evaluated on a novel Legal Cloze Test benchmark, HukukBERT achieves state-of-the-art performance with 84.40% Top-1 accuracy, substantially outperforming existing models such as BERTurk-Legal. We release HukukBERT to serve as a foundational model for downstream Turkish legal tasks. <a href="https://arxiv.org/abs/2604.04790" target="_blank" rel="noopener" class="link-chip"><span>arxiv</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M7 7h10v10"/></svg></a></p></div>
+	<!-- ── RESEARCH ───────────────────────────────────────────────────── -->
+	<section id="research" class="entry reveal">
+		<p class="entry-label">research</p>
+		<div class="rows">
+			<button class="row" aria-expanded="false" onclick="toggleCard(this)">
+				<span class="row-head"><span class="row-label wrap">HukukBERT Domain-Specific Language Model for Turkish Law</span><span class="row-tag">turkhukuk.ai · 2026</span><span class="chev"></span></span>
+				<span class="row-detail"><span>Recent advances in natural language processing (NLP) have opened significant doors for LegalTech applications; however, existing studies specific to Turkish law have been severely limited by data constraints. While extensive models like LEGAL-BERT have been developed for English legal texts, the Turkish legal domain lacks a high-volume, domain-specific counterpart. In this paper, we introduce HukukBERT, the most comprehensive legal language model for Turkish, trained on an 18 GB cleaned legal corpus using advanced masking strategies. We systematically compare our 48K WordPiece tokenizer and Domain-Adaptive Pre-Training (DAPT) approach against general-purpose and existing domain-specific Turkish models. Evaluated on a novel Legal Cloze Test benchmark, HukukBERT achieves state-of-the-art performance with 84.40% Top-1 accuracy, substantially outperforming existing models such as BERTurk-Legal. We release HukukBERT to serve as a foundational model for downstream Turkish legal tasks. <a href="https://arxiv.org/abs/2604.04790" target="_blank" rel="noopener" class="chip">arxiv ↗</a></span></span>
 			</button>
-			<button class="exp-card pub-card" aria-expanded="false" onclick="toggleCard(this)">
-				<div class="exp-card-header">
-					<div class="exp-icon">
-						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-							<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-							<path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-						</svg>
-					</div>
-					<div class="exp-text">
-						<span class="exp-label">Octapar: A Framework for Multi-Modal, Balanced User Grouping using Weighted Attentional Embeddings and Assignment-Based Clustering</span>
-						<span class="exp-tag">23rd the company · 2025</span>
-					</div>
-					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
-				</div>
-				<div class="exp-detail"><p>The formation of coherent, effective, and equitably sized user groups is a critical and persistent challenge in the design of online social platforms, collaborative learning environments, and enterprise-level teamwork tools. Existing automated methods, while scalable, often fail to produce groups of a consistent, predetermined size, leading to significant logistical issues and imbalanced user experiences. Furthermore, they often rely on shallow or easily manipulated user data. This paper introduces Octapar, a novel, multi-stage algorithmic framework designed to generate semantically coherent, perfectly balanced user clusters from deep, multi-modal user profiles. The framework pioneers a conversational onboarding process, using specialized chatbots and Large Language Models (LLMs) to extract nuanced user characteristics across both skill and philosophical domains. These characteristics are formalized as a rich set of semantic tags. The core technical innovation is a custom weighted attention mechanism that generates a sophisticated user vector by incorporating not only global tag rarity (IDF) but also a novel metric of local, intra-user tag uniqueness. This allows the model to identify and amplify a user's most distinctive traits. Final group formation is achieved via an iterative, assignment-based clustering algorithm that utilizes the Hungarian method to guarantee perfectly balanced clusters. This approach ensures structural consistency and fairness in group formation, a critical and often unmet requirement for many practical applications. We provide a detailed walkthrough of the architecture, the mathematical foundations of its components, and a discussion of its implications for the future of computational group formation. <a href="https://zenodo.org/records/17360220" target="_blank" rel="noopener" class="link-chip"><span>zenodo</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M7 7h10v10"/></svg></a></p></div>
+			<button class="row" aria-expanded="false" onclick="toggleCard(this)">
+				<span class="row-head"><span class="row-label wrap">Octapar: A Framework for Multi-Modal, Balanced User Grouping using Weighted Attentional Embeddings and Assignment-Based Clustering</span><span class="row-tag">23rd the company · 2025</span><span class="chev"></span></span>
+				<span class="row-detail"><span>The formation of coherent, effective, and equitably sized user groups is a critical and persistent challenge in the design of online social platforms, collaborative learning environments, and enterprise-level teamwork tools. Existing automated methods, while scalable, often fail to produce groups of a consistent, predetermined size, leading to significant logistical issues and imbalanced user experiences. Furthermore, they often rely on shallow or easily manipulated user data. This paper introduces Octapar, a novel, multi-stage algorithmic framework designed to generate semantically coherent, perfectly balanced user clusters from deep, multi-modal user profiles. The framework pioneers a conversational onboarding process, using specialized chatbots and Large Language Models (LLMs) to extract nuanced user characteristics across both skill and philosophical domains. These characteristics are formalized as a rich set of semantic tags. The core technical innovation is a custom weighted attention mechanism that generates a sophisticated user vector by incorporating not only global tag rarity (IDF) but also a novel metric of local, intra-user tag uniqueness. This allows the model to identify and amplify a user's most distinctive traits. Final group formation is achieved via an iterative, assignment-based clustering algorithm that utilizes the Hungarian method to guarantee perfectly balanced clusters. This approach ensures structural consistency and fairness in group formation, a critical and often unmet requirement for many practical applications. We provide a detailed walkthrough of the architecture, the mathematical foundations of its components, and a discussion of its implications for the future of computational group formation. <a href="https://zenodo.org/records/17360220" target="_blank" rel="noopener" class="chip">zenodo ↗</a></span></span>
 			</button>
-			<button class="exp-card pub-card" aria-expanded="false" onclick="toggleCard(this)">
-				<div class="exp-card-header">
-					<div class="exp-icon">
-						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-							<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-							<path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-						</svg>
-					</div>
-					<div class="exp-text">
-						<span class="exp-label">Streaming Intelligence: Harnessing AI and Big Data in the Competitive Landscape of Digital Content Platforms</span>
-						<span class="exp-tag">Plawlabs · 2024</span>
-					</div>
-					<div class="exp-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
-				</div>
-				<div class="exp-detail"><p>In the rapidly evolving realm of digital entertainment, Artificial Intelligence (AI) and Big Data stand at the forefront, reshaping the future of content consumption and curation. Esteemed global streaming giants such as Netflix, YouTube, Hulu, Amazon Prime Video, HBO Max, Disney+, and even social platforms like Instagram and TikTok, are skillfully leveraging these technologies to transform content recommendation, presentation, and personalization processes. This not only elevates the user experience but also sets unprecedented standards for operational efficiency across the industry. Our article delves into the intricate use of AI and Big Data by these leading platforms, highlighting their critical role in captivating audiences and streamlining content strategies. Furthermore, our research offers concrete insights and forward-looking strategies for one of the Turkey's emerging digital platform, in collaboration with PlawLabs, on surpassing its global competitors with the development of advanced AI technology. This initiative is aimed at overcoming unique challenges brought forth by these technological advancements and seizing expansive opportunities. By capitalizing on the technological expertise and strategic foresights of current industry leaders, this platform is poised to gain a significant competitive edge in the rapidly growing market of digital streaming services, both domestically and internationally. Adopting our technology foresights will not only enhance the quality of content and increase user engagement but will also seamlessly align with the changing preferences and demands of today's diverse digital audience, supporting the platform's financial outcomes. Through this comprehensive analysis, we aim to illuminate a path for our national platform to leverage AI and Big Data, catalyze its growth, and redefine content maturity in the digital space.</p></div>
+			<button class="row" aria-expanded="false" onclick="toggleCard(this)">
+				<span class="row-head"><span class="row-label wrap">Streaming Intelligence: Harnessing AI and Big Data in the Competitive Landscape of Digital Content Platforms</span><span class="row-tag">Plawlabs · 2024</span><span class="chev"></span></span>
+				<span class="row-detail"><span>In the rapidly evolving realm of digital entertainment, Artificial Intelligence (AI) and Big Data stand at the forefront, reshaping the future of content consumption and curation. Esteemed global streaming giants such as Netflix, YouTube, Hulu, Amazon Prime Video, HBO Max, Disney+, and even social platforms like Instagram and TikTok, are skillfully leveraging these technologies to transform content recommendation, presentation, and personalization processes. This not only elevates the user experience but also sets unprecedented standards for operational efficiency across the industry. Our article delves into the intricate use of AI and Big Data by these leading platforms, highlighting their critical role in captivating audiences and streamlining content strategies. Furthermore, our research offers concrete insights and forward-looking strategies for one of the Turkey's emerging digital platform, in collaboration with PlawLabs, on surpassing its global competitors with the development of advanced AI technology. This initiative is aimed at overcoming unique challenges brought forth by these technological advancements and seizing expansive opportunities. By capitalizing on the technological expertise and strategic foresights of current industry leaders, this platform is poised to gain a significant competitive edge in the rapidly growing market of digital streaming services, both domestically and internationally. Adopting our technology foresights will not only enhance the quality of content and increase user engagement but will also seamlessly align with the changing preferences and demands of today's diverse digital audience, supporting the platform's financial outcomes. Through this comprehensive analysis, we aim to illuminate a path for our national platform to leverage AI and Big Data, catalyze its growth, and redefine content maturity in the digital space.</span></span>
 			</button>
 		</div>
-		<p class="empty-note">more coming.</p>
+		<p class="more-note">more coming.</p>
 	</section>
-
-
 
 	<!-- ── CONTACT ────────────────────────────────────────────────────── -->
-	<section id="contact" class="site-section reveal">
-		<p class="section-label">contact</p>
+	<section id="contact" class="entry reveal">
+		<p class="entry-label">contact</p>
 		<p class="contact-intro">open to collaboration, research, and good conversation.</p>
-		<p class="contact-location">ankara, türkiye · GMT+3</p>
+		<p class="contact-loc">ankara, türkiye · GMT+3</p>
 		<div class="contact-links">
-			<a href="mailto:mutkuoz@proton.me" class="contact-link"><span class="contact-key">email</span><span class="contact-val">mutkuoz@proton.me</span></a>
-			<a href="mailto:utku.ozturk@member.mensa.org" class="contact-link"><span class="contact-key">mensa</span><span class="contact-val">utku.ozturk@member.mensa.org</span></a>
-			<a href="https://github.com/mutkuoz" target="_blank" rel="noopener" class="contact-link"><span class="contact-key">github</span><span class="contact-val">@mutkuoz</span></a>
-			<a href="https://linkedin.com/in/mutkuoz" target="_blank" rel="noopener" class="contact-link"><span class="contact-key">linkedin</span><span class="contact-val">@mutkuoz</span></a>
+			<a href="mailto:mutkuoz@proton.me" class="c-link"><span class="c-key">email</span><span class="c-val">mutkuoz@proton.me</span></a>
+			<a href="mailto:utku.ozturk@member.mensa.org" class="c-link"><span class="c-key">mensa</span><span class="c-val">utku.ozturk@member.mensa.org</span></a>
+			<a href="https://github.com/mutkuoz" target="_blank" rel="noopener" class="c-link"><span class="c-key">github</span><span class="c-val">@mutkuoz</span></a>
+			<a href="https://linkedin.com/in/mutkuoz" target="_blank" rel="noopener" class="c-link"><span class="c-key">linkedin</span><span class="c-val">@mutkuoz</span></a>
 		</div>
 	</section>
 
+	<!-- ── FOOTER ─────────────────────────────────────────────────────── -->
+	<footer class="foot reveal">
+		<p class="foot-line"><span class="foot-mark">✦</span> written by mutkuoz · last updated 2026</p>
+		<p class="foot-line muted">
+			<kbd>T</kbd> swap pen · <kbd>D</kbd> day/night · <button class="play-link" id="playLink">▸ play</button> · <span class="foot-hint">try typing a word…</span>
+		</p>
+	</footer>
+
+	<!-- peelable page corner -->
+	<div class="curl" id="curl" role="button" tabindex="0" aria-label="peel the corner">
+		<span class="curl-note">you read the whole page. ✦</span>
+	</div>
 </main>
 
-<!-- ═══ FOOTER ════════════════════════════════════════════════════════════ -->
-<footer class="site-footer">
-	<div class="footer-inner">
-		<p class="footer-line">
-			<span class="footer-mark">*</span> designed &amp; built by mutkuoz · last updated 2026
-		</p>
-		<p class="footer-line footer-muted">
-			<kbd>T</kbd> cycle accent · <kbd>D</kbd> toggle theme
-		</p>
+<!-- small toast for easter-egg feedback -->
+<div class="toast" id="toast" aria-live="polite"></div>
+
+<!-- ═══ SNAKE MINIGAME ════════════════════════════════════════════════════ -->
+<div class="snake" id="snake" aria-hidden="true">
+	<canvas id="snakeCanvas"></canvas>
+	<div class="snake-bar">
+		<span class="snake-title">snake</span>
+		<span class="snake-score">score <b id="snakeScore">0</b></span>
+		<span class="snake-keys">arrows / wasd · esc to quit</span>
 	</div>
-</footer>
+	<div class="snake-over" id="snakeOver">
+		<p class="snake-over-t">game over</p>
+		<p class="snake-over-s">score <b id="snakeFinal">0</b></p>
+		<button class="snake-btn" id="snakeRetry">play again</button>
+	</div>
+</div>
 
 <!-- ═══ STYLES ════════════════════════════════════════════════════════════ -->
 <style>
-/* ── Reset ─────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* ── Accent + background palettes ───────────────────────────────── */
-/* Each accent defines: accent color, soft tint, bg, bg2, nav-bg   */
+:root {
+	--sans:    'Hanken Grotesk', system-ui, -apple-system, sans-serif;
+	--display: 'Schibsted Grotesk', 'Hanken Grotesk', system-ui, sans-serif;
+	--mono:    'Spline Sans Mono', ui-monospace, monospace;
+}
 
-/* stone (neutral) */
-[data-theme="light"][data-accent="stone"] { --bg: #ffffff; --bg2: #f7f7f7; --nav-bg: rgba(255,255,255,0.85); }
-[data-theme="dark"][data-accent="stone"] { --bg: #111111; --bg2: #1a1a1a; --nav-bg: rgba(17,17,17,0.88); }
+/* ── ink (your pen) ────────────────────────────────────────────────── */
+[data-ink="blueblack"] { --ink:#25324d; --ink-soft:rgba(37,50,77,0.09); }
+[data-ink="royal"]     { --ink:#2a4bd0; --ink-soft:rgba(42,75,208,0.10); }
+[data-ink="red"]       { --ink:#c33125; --ink-soft:rgba(195,49,37,0.09); }
+[data-ink="emerald"]   { --ink:#0c7a55; --ink-soft:rgba(12,122,85,0.10); }
+[data-ink="violet"]    { --ink:#6a35c9; --ink-soft:rgba(106,53,201,0.10); }
+[data-ink="sepia"]     { --ink:#8a5a2b; --ink-soft:rgba(138,90,43,0.11); }
+[data-theme="dark"][data-ink="blueblack"] { --ink:#93a8d8; --ink-soft:rgba(147,168,216,0.13); }
+[data-theme="dark"][data-ink="royal"]     { --ink:#7d97ff; --ink-soft:rgba(125,151,255,0.14); }
+[data-theme="dark"][data-ink="red"]       { --ink:#ff8175; --ink-soft:rgba(255,129,117,0.13); }
+[data-theme="dark"][data-ink="emerald"]   { --ink:#4fd3a0; --ink-soft:rgba(79,211,160,0.13); }
+[data-theme="dark"][data-ink="violet"]    { --ink:#b48dff; --ink-soft:rgba(180,141,255,0.14); }
+[data-theme="dark"][data-ink="sepia"]     { --ink:#dba968; --ink-soft:rgba(219,169,104,0.13); }
 
-/* indigo */
-[data-theme="light"][data-accent="indigo"] { --bg: #f4f4ff; --bg2: #ebebff; --nav-bg: rgba(244,244,255,0.88); }
-[data-theme="dark"][data-accent="indigo"] { --bg: #0c0c18; --bg2: #13132a; --nav-bg: rgba(12,12,24,0.90); }
-
-/* rose */
-[data-theme="light"][data-accent="rose"] { --bg: #fff4f5; --bg2: #ffebee; --nav-bg: rgba(255,244,245,0.88); }
-[data-theme="dark"][data-accent="rose"] { --bg: #170c0e; --bg2: #231015; --nav-bg: rgba(23,12,14,0.90); }
-
-/* amber */
-[data-theme="light"][data-accent="amber"] { --bg: #fffdf0; --bg2: #fff8da; --nav-bg: rgba(255,253,240,0.88); }
-[data-theme="dark"][data-accent="amber"] { --bg: #160f00; --bg2: #231700; --nav-bg: rgba(22,15,0,0.90); }
-
-/* emerald */
-[data-theme="light"][data-accent="emerald"] { --bg: #f0fff8; --bg2: #e2ffef; --nav-bg: rgba(240,255,248,0.88); }
-[data-theme="dark"][data-accent="emerald"] { --bg: #071410; --bg2: #0d2018; --nav-bg: rgba(7,20,16,0.90); }
-
-/* sky */
-[data-theme="light"][data-accent="sky"] { --bg: #f0f9ff; --bg2: #e0f2ff; --nav-bg: rgba(240,249,255,0.88); }
-[data-theme="dark"][data-accent="sky"] { --bg: #060e18; --bg2: #0c1a28; --nav-bg: rgba(6,14,24,0.90); }
-
-/* violet */
-[data-theme="light"][data-accent="violet"] { --bg: #f6f3ff; --bg2: #ede8ff; --nav-bg: rgba(246,243,255,0.88); }
-[data-theme="dark"][data-accent="violet"] { --bg: #0d0918; --bg2: #160f28; --nav-bg: rgba(13,9,24,0.90); }
-
-/* ── Accent colours (fg-level) & soft tints ─────────────────────── */
-:root                   { --accent: #737373; --accent-soft: rgba(115,115,115,0.10); }
-[data-accent="indigo"]  { --accent: #6366f1; --accent-soft: rgba(99,102,241,0.12); }
-[data-accent="rose"]    { --accent: #f43f5e; --accent-soft: rgba(244,63,94,0.12); }
-[data-accent="amber"]   { --accent: #f59e0b; --accent-soft: rgba(245,158,11,0.12); }
-[data-accent="emerald"] { --accent: #10b981; --accent-soft: rgba(16,185,129,0.12); }
-[data-accent="sky"]     { --accent: #0ea5e9; --accent-soft: rgba(14,165,233,0.12); }
-[data-accent="violet"]  { --accent: #8b5cf6; --accent-soft: rgba(139,92,246,0.12); }
-
-/* ── Light theme shared tokens ──────────────────────────────────── */
+/* ── paper / ink tokens ────────────────────────────────────────────── */
 [data-theme="light"] {
-	--fg:      #111111;
-	--fg2:     #404040;
-	--muted:   #888888;
-	--muted2:  #b5b5b5;
-	--border:  #e2e2e2;
-	--border2: #eeeeee;
+	--paper:#faf8f2; --rule:rgba(40,36,28,0.045);
+	--fg:#1d1c18; --fg2:#4c4a42; --muted:#928d80; --muted2:#bdb7a8;
+	--line:rgba(40,36,28,0.10);
 }
-
-/* ── Dark theme shared tokens ───────────────────────────────────── */
 [data-theme="dark"] {
-	--fg:      #f0f0f0;
-	--fg2:     #d0d0d0;
-	--muted:   #888888;
-	--muted2:  #505050;
-	--border:  #282828;
-	--border2: #1e1e1e;
+	--paper:#17171a; --rule:rgba(220,222,235,0.038);
+	--fg:#ecebe4; --fg2:#bdbcb2; --muted:#8a887e; --muted2:#56554d;
+	--line:rgba(230,230,240,0.10);
 }
 
-/* ── Base ───────────────────────────────────────────────────────── */
 html { scroll-behavior: smooth; }
 
 body {
-	font-family: 'Archivo', system-ui, sans-serif;
-	font-feature-settings: 'ss01' on, 'cv01' on;
-	background: var(--bg);
+	font-family: var(--sans);
 	color: var(--fg);
+	background-color: var(--paper);
+	/* whisper-faint ruling — the only notebook cue */
+	background-image: repeating-linear-gradient(to bottom,
+		transparent 0, transparent calc(2.1rem - 1px),
+		var(--rule) calc(2.1rem - 1px), var(--rule) 2.1rem);
+	background-position: 0 0.6rem;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-	transition: background 0.3s ease, color 0.3s ease;
+	transition: background-color 0.4s ease, color 0.4s ease;
+	min-height: 100vh;
 }
 
-/* ── Grain overlay ──────────────────────────────────────────────── */
-.grain {
-	position: fixed;
-	inset: 0;
-	z-index: 50;
-	pointer-events: none;
-	opacity: 0.5;
-	mix-blend-mode: multiply;
-	background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.09 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
-	background-size: 220px 220px;
-}
-[data-theme="dark"] .grain { opacity: 0.6; mix-blend-mode: screen; }
+/* ── ink trail / splatter canvas ───────────────────────────────────── */
+#inkCanvas { position: fixed; inset: 0; z-index: 5; pointer-events: none; }
 
-/* ── Scroll progress ────────────────────────────────────────────── */
+/* ── scroll progress ───────────────────────────────────────────────── */
 #scrollProgress {
-	position: fixed;
-	top: 0; left: 0;
-	height: 2px;
-	width: 0;
-	background: var(--accent);
-	z-index: 200;
-	pointer-events: none;
-	transition: background 0.3s ease;
+	position: fixed; top: 0; left: 0; height: 2px; width: 0;
+	background: var(--ink); z-index: 200; transition: background 0.3s ease;
 }
 
-/* ── Navbar ─────────────────────────────────────────────────────── */
+/* ── navbar ────────────────────────────────────────────────────────── */
 #navbar {
-	position: fixed;
-	top: 2px; left: 0; right: 0;
-	z-index: 100;
-	background: var(--nav-bg);
-	border-bottom: 1px solid var(--border2);
-	backdrop-filter: blur(12px);
-	-webkit-backdrop-filter: blur(12px);
-	transition: background 0.3s ease, border-color 0.3s ease;
+	position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+	display: flex; align-items: center; justify-content: space-between;
+	gap: 1rem; height: 3.6rem; padding: 0 1.4rem;
+	background: color-mix(in srgb, var(--paper) 80%, transparent);
+	backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+	transition: background 0.4s ease;
 }
-
-.nav-inner {
-	max-width: 72rem;
-	margin: 0 auto;
-	padding: 0 2rem;
-	height: 3.5rem;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-}
-@media (min-width: 640px)  { .nav-inner { padding: 0 3rem; } }
-@media (min-width: 1024px) { .nav-inner { padding: 0 4rem; } }
+@media (min-width: 720px) { #navbar { padding: 0 2.4rem; } }
 
 .nav-name {
-	font-family: 'JetBrains Mono', monospace;
-	font-size: 0.875rem;
-	font-weight: 500;
-	color: var(--accent);
-	letter-spacing: 0.04em;
-	transition: color 0.3s ease;
+	font-family: var(--display); font-size: 0.98rem; font-weight: 700;
+	letter-spacing: -0.01em; color: var(--fg); text-decoration: none; white-space: nowrap;
+	transition: color 0.2s ease;
 }
+.nav-name:hover { color: var(--ink); }
 
-.nav-links {
-	display: none;
-	align-items: center;
-	gap: 1.5rem;
-}
-@media (min-width: 640px) { .nav-links { display: flex; } }
-
+.nav-links { display: none; gap: 1.5rem; margin-left: auto; margin-right: 1.4rem; }
+@media (min-width: 720px) { .nav-links { display: flex; } }
 .nav-link {
-	font-family: 'JetBrains Mono', monospace;
-	font-size: 0.7rem;
-	font-weight: 500;
-	letter-spacing: 0.08em;
-	text-transform: uppercase;
-	color: var(--muted);
-	text-decoration: none;
-	transition: color 0.15s ease;
+	font-family: var(--mono); font-size: 0.72rem; color: var(--muted);
+	text-decoration: none; position: relative; transition: color 0.18s ease;
+}
+.nav-link::after {
+	content: ''; position: absolute; left: 0; right: 100%; bottom: -3px; height: 1.5px;
+	background: var(--ink); transition: right 0.25s cubic-bezier(0.4,0,0.2,1);
 }
 .nav-link:hover { color: var(--fg); }
+.nav-link:hover::after { right: 0; }
 
-.nav-controls {
-	display: flex;
-	align-items: center;
-	gap: 1rem;
+.nav-controls { display: flex; align-items: center; gap: 0.6rem; }
+
+/* pen picker */
+.pen-wrap { position: relative; }
+.pen-btn {
+	display: flex; align-items: center; justify-content: center;
+	width: 1.9rem; height: 1.9rem; border-radius: 50%;
+	border: 1px solid var(--line); background: transparent; cursor: pointer;
+	transition: border-color 0.2s ease, transform 0.3s ease;
 }
+.pen-btn:hover { border-color: var(--ink); transform: rotate(-12deg); }
+.pen-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.pen-swatch { width: 0.85rem; height: 0.85rem; border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 2px var(--ink-soft); transition: background 0.3s ease; }
 
-/* ── Color cycle button ─────────────────────────────────────────── */
-.color-cycle-btn {
-	display: flex;
-	align-items: center;
-	gap: 0.45rem;
-	padding: 0.3rem 0.65rem 0.3rem 0.45rem;
-	border-radius: 2rem;
-	border: 1px solid var(--border);
-	background: transparent;
-	cursor: pointer;
-	color: var(--muted);
-	transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
-	outline: none;
+.pen-pop {
+	position: absolute; top: calc(100% + 0.5rem); right: 0;
+	display: flex; gap: 0.5rem; padding: 0.6rem;
+	background: var(--paper); border: 1px solid var(--line); border-radius: 0.8rem;
+	box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+	opacity: 0; transform: translateY(-6px) scale(0.96); transform-origin: top right;
+	pointer-events: none; transition: opacity 0.18s ease, transform 0.18s cubic-bezier(0.34,1.4,0.64,1);
+	z-index: 120;
 }
-.color-cycle-btn:hover { color: var(--fg); background: var(--bg2); }
-.color-cycle-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.pen-pop.open { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+.nib { width: 1.1rem; height: 1.1rem; border-radius: 50%; background: var(--nib); border: 2px solid transparent; cursor: pointer; padding: 0; transition: transform 0.16s ease, border-color 0.16s ease; }
+.nib:hover { transform: scale(1.2) rotate(-8deg); }
+.nib.active { border-color: var(--fg); }
+.nib:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
 
-.color-cycle-swatch {
-	width: 0.8rem;
-	height: 0.8rem;
-	border-radius: 50%;
-	background: var(--accent);
-	transition: background 0.3s ease;
-	flex-shrink: 0;
-}
-
-.color-cycle-icon { width: 0.875rem; height: 0.875rem; }
-
-/* ── Dark/light toggle ──────────────────────────────────────────── */
 .mode-toggle {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: 2.1rem;
-	height: 2.1rem;
-	border-radius: 50%;
-	border: 1px solid var(--border);
-	background: transparent;
-	cursor: pointer;
-	color: var(--muted);
-	transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+	display: flex; align-items: center; justify-content: center;
+	width: 1.9rem; height: 1.9rem; border-radius: 50%;
+	border: 1px solid var(--line); background: transparent; cursor: pointer; color: var(--muted);
+	transition: color 0.2s ease, border-color 0.2s ease, transform 0.4s cubic-bezier(0.34,1.4,0.64,1);
 }
-.mode-toggle:hover { color: var(--fg); background: var(--bg2); }
-.mode-toggle svg { width: 1rem; height: 1rem; }
-
+.mode-toggle:hover { color: var(--ink); border-color: var(--ink); transform: rotate(-25deg); }
+.mode-toggle:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.mode-toggle svg { width: 0.95rem; height: 0.95rem; }
 [data-theme="light"] .icon-moon { display: none; }
 [data-theme="dark"]  .icon-sun  { display: none; }
 
-/* ── Layout ─────────────────────────────────────────────────────── */
-main {
-	position: relative;
-	z-index: 2;
-	max-width: 72rem;
-	margin: 0 auto;
-	padding: 7rem 2rem 5rem;
-	counter-reset: section;
+/* ── page column ───────────────────────────────────────────────────── */
+.page {
+	position: relative; z-index: 2;
+	max-width: 58rem; margin: 0 auto;
+	padding: 8rem 1.4rem 4rem;
 }
-@media (min-width: 640px)  { main { padding: 8rem 3rem 6rem; } }
-@media (min-width: 1024px) { main { padding: 9rem 4rem 7rem; } }
+@media (min-width: 720px) { .page { padding: 9.5rem 2rem 5rem; } }
 
-/* ── Header ─────────────────────────────────────────────────────── */
-.site-header {
-	margin-bottom: 5.5rem;
-	padding-bottom: 3.5rem;
-	border-bottom: 1px solid var(--border2);
-	position: relative;
-}
-
+/* ── header ────────────────────────────────────────────────────────── */
+.head { margin-bottom: 6rem; }
 .eyebrow {
-	font-family: 'JetBrains Mono', monospace;
-	font-size: 0.7rem;
-	font-weight: 500;
-	letter-spacing: 0.18em;
-	text-transform: uppercase;
-	color: var(--muted);
-	margin-bottom: 1.25rem;
+	font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.22em;
+	text-transform: uppercase; color: var(--muted); margin-bottom: 1.3rem;
 }
-
 h1 {
-	font-family: 'Bricolage Grotesque', 'Archivo', system-ui, sans-serif;
-	font-variation-settings: 'opsz' 96;
-	font-size: clamp(2.4rem, 6vw, 4rem);
-	font-weight: 500;
-	letter-spacing: -0.04em;
-	line-height: 1.02;
-	color: var(--fg);
-	margin-bottom: 1.25rem;
+	font-family: var(--display); font-size: clamp(2.4rem, 7vw, 4.2rem);
+	font-weight: 800; letter-spacing: -0.04em; line-height: 1; color: var(--fg);
+	margin-bottom: 1.2rem; cursor: pointer; user-select: none;
+}
+.subtitle { font-size: 1.1rem; color: var(--fg2); display: flex; align-items: baseline; flex-wrap: wrap; min-height: 1.6em; }
+.sub-static { color: var(--muted); }
+.type { color: var(--ink); font-weight: 600; transition: color 0.3s ease; }
+.caret { color: var(--ink); margin-left: 1px; animation: blink 1s step-end infinite; }
+@keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+
+/* ── entries ───────────────────────────────────────────────────────── */
+.page { counter-reset: entry; }
+.entry { counter-increment: entry; margin-bottom: 5.5rem; }
+.entry-label {
+	font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.1em;
+	text-transform: uppercase; color: var(--muted); margin-bottom: 1.6rem;
+}
+.entry-label::before {
+	content: counter(entry, decimal-leading-zero) "  ";
+	color: var(--ink); transition: color 0.3s ease;
 }
 
-/* ── Typewriter ─────────────────────────────────────────────────── */
-.subtitle-line {
-	font-size: 1.0625rem;
-	color: var(--muted);
-	min-height: 1.6em;
-	display: flex;
-	align-items: center;
-	flex-wrap: wrap;
-	gap: 0.25rem;
-}
-@media (min-width: 640px) { .subtitle-line { font-size: 1.125rem; } }
+/* ── rows ──────────────────────────────────────────────────────────── */
+.rows { display: grid; grid-template-columns: 1fr; gap: 0; }
+@media (min-width: 680px) { .rows.two-col { grid-template-columns: 1fr 1fr; column-gap: 2.5rem; } }
 
-.subtitle-static { color: var(--muted2); }
+.row {
+	display: block; width: 100%; min-width: 0; text-align: left; font-family: inherit;
+	background: transparent; border: none; border-top: 1px solid var(--line);
+	padding: 1rem 0.2rem; cursor: pointer; outline: none;
+	transition: padding-left 0.25s cubic-bezier(0.4,0,0.2,1);
+}
+.row:hover { padding-left: 0.5rem; }
+.row:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: 4px; }
 
-.typewriter-text {
-	color: var(--accent);
-	font-weight: 500;
-	transition: color 0.3s ease;
+.row-head { display: flex; align-items: baseline; gap: 0.6rem; min-width: 0; }
+.row-label { flex: 1; min-width: 0; font-size: 0.96rem; font-weight: 600; color: var(--fg); line-height: 1.4; }
+@media (min-width: 680px) {
+	.row-label:not(.wrap) { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 }
+.row-label.proj { display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 700; }
+.row-tag { font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted2); white-space: nowrap; transition: color 0.15s ease; }
+.row:hover .row-tag { color: var(--muted); }
 
-.typewriter-cursor {
-	color: var(--accent);
-	font-weight: 300;
-	animation: blink 1s step-end infinite;
-	transition: color 0.3s ease;
+.chev {
+	flex-shrink: 0; width: 0.7rem; height: 0.7rem; position: relative; align-self: center;
+	transition: transform 0.25s cubic-bezier(0.4,0,0.2,1);
 }
+.chev::before, .chev::after {
+	content: ''; position: absolute; top: 50%; width: 0.42rem; height: 1.5px;
+	background: var(--muted2); transition: background 0.18s ease;
+}
+.chev::before { left: 0; transform: translateY(-50%) rotate(45deg); }
+.chev::after  { right: 0; transform: translateY(-50%) rotate(-45deg); }
+.row:hover .chev::before, .row:hover .chev::after,
+.row[aria-expanded="true"] .chev::before, .row[aria-expanded="true"] .chev::after { background: var(--ink); }
+.row[aria-expanded="true"] .chev { transform: rotate(180deg); }
 
-@keyframes blink {
-	0%, 100% { opacity: 1; }
-	50%       { opacity: 0; }
+.row-detail { display: grid; grid-template-rows: 0fr; overflow: hidden; transition: grid-template-rows 0.3s cubic-bezier(0.4,0,0.2,1); }
+.row-detail > span {
+	overflow: hidden; display: block; max-width: 44rem; font-size: 0.9rem; line-height: 1.8; color: var(--fg2);
+	padding-top: 0; transition: padding-top 0.3s ease;
 }
+.row[aria-expanded="true"] .row-detail { grid-template-rows: 1fr; }
+.row[aria-expanded="true"] .row-detail > span { padding-top: 0.8rem; }
 
-/* ── Section label ──────────────────────────────────────────────── */
-.section-label {
-	font-family: 'JetBrains Mono', monospace;
-	font-size: 0.7rem;
-	font-weight: 500;
-	letter-spacing: 0.15em;
-	text-transform: uppercase;
-	color: var(--muted);
-	margin-bottom: 1.75rem;
-	display: flex;
-	align-items: baseline;
-	gap: 0.7rem;
-}
-.site-section { counter-increment: section; }
-.site-section .section-label::before {
-	content: counter(section, decimal-leading-zero);
-	color: var(--accent);
-	font-weight: 500;
-	opacity: 0.85;
-	transition: color 0.3s ease;
-}
+/* status dots */
+.dot { width: 0.42rem; height: 0.42rem; border-radius: 50%; flex-shrink: 0; }
+.dot.live { background: var(--ink); box-shadow: 0 0 0 3px var(--ink-soft); }
+.dot.paused { background: transparent; border: 1px solid var(--ink); }
+.dot.shelved { background: var(--muted2); }
 
-.section-label-row {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	margin-bottom: 1.75rem;
+/* link chip */
+.chip {
+	display: inline-block; margin-top: 0.6rem; padding: 0.22rem 0.6rem;
+	font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.04em; text-transform: uppercase;
+	color: var(--ink); background: var(--ink-soft); border: 1px solid transparent;
+	border-radius: 999px; text-decoration: none;
+	transition: border-color 0.18s ease, transform 0.2s ease;
 }
-.section-label-row .section-label { margin-bottom: 0; }
+.chip:hover { border-color: var(--ink); transform: translateY(-1px); }
 
-/* ── Site section ───────────────────────────────────────────────── */
-.site-section {
-	margin-bottom: 5rem;
-	padding-bottom: 5rem;
-	border-bottom: 1px solid var(--border2);
-	transition: border-color 0.3s ease;
-	scroll-margin-top: 4.5rem;
-}
-#projects { margin-top: 1.5rem; }
-.site-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.more-note { font-size: 0.85rem; color: var(--muted2); font-style: italic; margin-top: 1.3rem; }
 
-/* ── Card grid ──────────────────────────────────────────────────── */
-.card-grid {
-	display: grid;
-	grid-template-columns: 1fr;
-	gap: 0.25rem;
-}
-
-@media (min-width: 640px) {
-	.card-grid:not(.single-col) { grid-template-columns: 1fr 1fr; column-gap: 1.5rem; }
-}
-
-/* ── Expandable card ────────────────────────────────────────────── */
-.exp-card {
-	display: block;
-	width: 100%;
-	text-align: left;
-	background: transparent;
-	border: none;
-	border-radius: 0.5rem;
-	padding: 1.375rem 0.875rem;
-	cursor: pointer;
-	transition: background 0.15s ease;
-	outline: none;
-	font-family: inherit;
-}
-
-.exp-card:hover { background: var(--bg2); }
-.exp-card[aria-expanded="true"] { background: var(--accent-soft); }
-
-.exp-card:focus-visible {
-	outline: 2px solid var(--accent);
-	outline-offset: 2px;
-	border-radius: 0.5rem;
-}
-
-/* ── Card header ────────────────────────────────────────────────── */
-.exp-card-header {
-	display: flex;
-	align-items: center;
-	gap: 1rem;
-}
-
-/* ── Icon ───────────────────────────────────────────────────────── */
-.exp-icon {
-	flex-shrink: 0;
-	width: 2.25rem;
-	height: 2.25rem;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	color: var(--muted2);
-	transition: color 0.18s ease;
-}
-.exp-icon svg { width: 1.0625rem; height: 1.0625rem; }
-
-.exp-card:hover .exp-icon,
-.exp-card[aria-expanded="true"] .exp-icon { color: var(--accent); }
-
-/* ── Text block ─────────────────────────────────────────────────── */
-.exp-text {
-	flex: 1;
-	min-width: 0;
-	display: flex;
-	flex-direction: column;
-	gap: 0.3rem;
-}
-
-.exp-label {
-	font-size: 0.9375rem;
-	font-weight: 500;
-	color: var(--fg);
-	line-height: 1.35;
-}
-@media (min-width: 640px) {
-	.exp-label {
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-	}
-	.pub-card .exp-label { white-space: normal; }
-}
-
-.exp-tag {
-	font-family: 'JetBrains Mono', monospace;
-	font-size: 0.67rem;
-	letter-spacing: 0.06em;
-	text-transform: uppercase;
-	color: var(--muted2);
-	transition: color 0.15s ease;
-}
-
-.exp-card:hover .exp-tag,
-.exp-card[aria-expanded="true"] .exp-tag { color: var(--muted); }
-
-/* ── Chevron ────────────────────────────────────────────────────── */
-.exp-chevron {
-	flex-shrink: 0;
-	width: 1.125rem;
-	height: 1.125rem;
-	color: var(--muted2);
-	transition: transform 0.25s cubic-bezier(0.4,0,0.2,1), color 0.18s ease;
-}
-.exp-chevron svg { width: 1.125rem; height: 1.125rem; }
-
-.exp-card[aria-expanded="true"] .exp-chevron {
-	transform: rotate(180deg);
-	color: var(--accent);
-}
-
-/* ── Detail panel ───────────────────────────────────────────────── */
-.exp-detail {
-	display: grid;
-	grid-template-rows: 0fr;
-	transition: grid-template-rows 0.28s cubic-bezier(0.4,0,0.2,1);
-	overflow: hidden;
-}
-.exp-detail > p {
-	overflow: hidden;
-	font-size: 0.9rem;
-	line-height: 1.75;
-	color: var(--muted);
-	padding-left: 3.25rem;
-	padding-top: 0;
-	transition: padding-top 0.28s ease;
-}
-.exp-card[aria-expanded="true"] .exp-detail { grid-template-rows: 1fr; }
-.exp-card[aria-expanded="true"] .exp-detail > p { padding-top: 0.7rem; }
-
-/* ── Project: bold name ─────────────────────────────────────────── */
-.proj-card .exp-label {
-	font-weight: 600;
-	letter-spacing: -0.01em;
-}
-
-/* ── Status dot on project tags ─────────────────────────────────── */
-.status-dot {
-	display: inline-block;
-	width: 0.42rem;
-	height: 0.42rem;
-	border-radius: 50%;
-	margin-right: 0.45rem;
-	transform: translateY(-1px);
-	transition: background 0.3s ease, border-color 0.3s ease;
-}
-.status-live    { background: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
-.status-paused  { background: transparent; border: 1px solid var(--accent); }
-.status-shelved { background: var(--muted2); }
-
-.tag-sep { margin: 0 0.15rem; color: var(--muted2); opacity: 0.65; }
-
-/* ── Inline link chip ───────────────────────────────────────────── */
-.link-chip {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.35rem;
-	margin-top: 0.5rem;
-	padding: 0.18rem 0.55rem 0.18rem 0.6rem;
-	font-family: 'JetBrains Mono', monospace;
-	font-size: 0.68rem;
-	letter-spacing: 0.08em;
-	text-transform: uppercase;
-	color: var(--accent);
-	background: var(--accent-soft);
-	border: 1px solid transparent;
-	border-radius: 999px;
-	text-decoration: none;
-	transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.25s cubic-bezier(0.4,0,0.2,1);
-}
-.link-chip:hover {
-	border-color: var(--accent);
-	transform: translateY(-1px);
-}
-.link-chip svg { width: 0.72rem; height: 0.72rem; transition: transform 0.2s ease; }
-.link-chip:hover svg { transform: translate(1.5px, -1.5px); }
-
-/* ── Gallery ────────────────────────────────────────────────────── */
-.gallery-grid {
-	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	gap: 1rem;
-}
-.gallery-item {
-	aspect-ratio: 1;
-	background: var(--bg2);
-	border: 1px solid var(--border);
-	border-radius: 0.875rem;
-	transition: background 0.2s ease, border-color 0.3s ease;
-}
-.gallery-item:hover { background: var(--border); }
-
-/* ── Contact ────────────────────────────────────────────────────── */
-.contact-intro {
-	font-size: 1.0625rem;
-	color: var(--fg2);
-	margin-bottom: 0.75rem;
-	line-height: 1.6;
-	max-width: 34rem;
-}
-.contact-location {
-	font-family: 'JetBrains Mono', monospace;
-	font-size: 0.7rem;
-	letter-spacing: 0.08em;
-	text-transform: uppercase;
-	color: var(--muted2);
-	margin-bottom: 1.75rem;
-}
+/* ── contact ───────────────────────────────────────────────────────── */
+.contact-intro { font-size: 1.05rem; color: var(--fg2); margin-bottom: 0.7rem; line-height: 1.6; max-width: 32rem; }
+.contact-loc { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted2); margin-bottom: 1.6rem; }
 .contact-links { display: flex; flex-direction: column; }
-.contact-link {
-	display: grid;
-	grid-template-columns: 6rem 1fr;
-	align-items: baseline;
-	gap: 1rem;
-	padding: 0.9rem 0;
-	border-top: 1px solid var(--border2);
-	font-size: 0.9375rem;
-	color: var(--fg2);
-	text-decoration: none;
-	transition: color 0.15s ease, border-color 0.15s ease, padding-left 0.25s cubic-bezier(0.4,0,0.2,1);
+.c-link {
+	display: grid; grid-template-columns: 5.5rem 1fr; align-items: baseline; gap: 1rem;
+	padding: 0.85rem 0.2rem; border-top: 1px solid var(--line);
+	font-size: 0.95rem; color: var(--fg2); text-decoration: none;
+	transition: color 0.15s ease, padding-left 0.25s cubic-bezier(0.4,0,0.2,1);
 }
-.contact-link:last-child { border-bottom: 1px solid var(--border2); }
-.contact-link:hover { color: var(--fg); padding-left: 0.5rem; }
-.contact-key {
-	font-family: 'JetBrains Mono', monospace;
-	font-size: 0.67rem;
-	letter-spacing: 0.14em;
-	text-transform: uppercase;
-	color: var(--muted2);
-	transition: color 0.15s ease;
-}
-.contact-link:hover .contact-key { color: var(--accent); }
-.contact-val { font-weight: 500; }
+.c-link:last-child { border-bottom: 1px solid var(--line); }
+.c-link:hover { color: var(--fg); padding-left: 0.6rem; }
+.c-key { font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted2); transition: color 0.15s ease; }
+.c-link:hover .c-key { color: var(--ink); }
+.c-val { font-weight: 600; }
 
-/* ── Site footer ───────────────────────────────────────────────── */
-.site-footer {
-	position: relative;
-	z-index: 2;
-	max-width: 72rem;
-	margin: 0 auto;
-	padding: 2rem 2rem 3rem;
-	border-top: 1px solid var(--border2);
-	display: flex;
-	justify-content: center;
-	transition: border-color 0.3s ease;
+/* ── footer ────────────────────────────────────────────────────────── */
+.foot { margin-top: 6rem; }
+.foot-line { font-family: var(--mono); font-size: 0.7rem; color: var(--muted); line-height: 2.1; }
+.muted { color: var(--muted2); }
+.foot-mark { color: var(--ink); margin-right: 0.3rem; }
+.foot-hint { opacity: 0.7; }
+.foot-line kbd {
+	display: inline-block; min-width: 1.4em; padding: 1px 5px; margin: 0 1px;
+	border: 1px solid var(--line); border-radius: 4px; background: var(--ink-soft);
+	color: var(--fg2); font-family: inherit; font-size: 0.64rem; text-align: center;
 }
-@media (min-width: 640px)  { .site-footer { padding: 2.5rem 3rem 3.5rem; } }
-@media (min-width: 1024px) { .site-footer { padding: 3rem 4rem 4rem; } }
+.play-link {
+	font-family: var(--mono); font-size: 0.7rem; color: var(--ink); background: transparent;
+	border: none; cursor: pointer; padding: 0; letter-spacing: 0.02em;
+	transition: opacity 0.2s ease;
+}
+.play-link:hover { opacity: 0.7; }
 
-.footer-inner {
-	width: 100%;
-	display: flex;
-	flex-direction: column;
-	gap: 0.65rem;
-	align-items: flex-start;
-	justify-content: space-between;
+/* ── peelable corner ───────────────────────────────────────────────── */
+.curl { position: fixed; right: 0; bottom: 0; width: 42px; height: 42px; z-index: 6; cursor: pointer; outline: none; }
+.curl::after {
+	content: ''; position: absolute; right: 0; bottom: 0; width: 42px; height: 42px;
+	background: linear-gradient(135deg, transparent 0 48%, color-mix(in srgb, var(--paper) 60%, #000 10%) 50%, color-mix(in srgb, var(--paper) 88%, #000 4%) 64%);
+	box-shadow: -6px -6px 14px rgba(0,0,0,0.10);
+	transition: width 0.3s cubic-bezier(0.34,1.2,0.64,1), height 0.3s cubic-bezier(0.34,1.2,0.64,1);
 }
-@media (min-width: 640px) {
-	.footer-inner { flex-direction: row; align-items: center; gap: 1.5rem; }
+.curl:hover::after, .curl:focus-visible::after, .curl.peeled::after { width: 92px; height: 92px; }
+.curl-note {
+	position: fixed; right: 14px; bottom: 16px; width: 140px; text-align: right;
+	font-family: var(--mono); font-size: 0.6rem; line-height: 1.5; color: var(--muted);
+	opacity: 0; transform: translateY(6px); pointer-events: none;
+	transition: opacity 0.3s ease 0.06s, transform 0.3s ease 0.06s;
 }
+.curl:hover .curl-note, .curl:focus-visible .curl-note, .curl.peeled .curl-note { opacity: 1; transform: translateY(0); }
 
-.footer-line {
-	font-family: 'JetBrains Mono', monospace;
-	font-size: 0.7rem;
-	letter-spacing: 0.06em;
-	color: var(--muted);
+/* ── toast ─────────────────────────────────────────────────────────── */
+.toast {
+	position: fixed; left: 50%; bottom: 2rem; transform: translateX(-50%) translateY(1.5rem);
+	z-index: 250; padding: 0.55rem 1rem; border-radius: 999px;
+	background: var(--fg); color: var(--paper); font-family: var(--mono); font-size: 0.72rem;
+	letter-spacing: 0.02em; opacity: 0; pointer-events: none;
+	transition: opacity 0.25s ease, transform 0.3s cubic-bezier(0.34,1.4,0.64,1);
+	box-shadow: 0 10px 28px rgba(0,0,0,0.25); white-space: nowrap;
 }
-.footer-muted { color: var(--muted2); }
-.footer-mark { color: var(--accent); margin-right: 0.25rem; }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-.footer-line kbd {
-	display: inline-block;
-	min-width: 1.4em;
-	padding: 1px 5px;
-	margin: 0 1px;
-	border: 1px solid var(--border);
-	border-radius: 4px;
-	background: var(--bg2);
-	color: var(--fg2);
-	font-family: inherit;
-	font-size: 0.65rem;
-	text-align: center;
-	transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+/* ── snake minigame ────────────────────────────────────────────────── */
+.snake {
+	position: fixed; inset: 0; z-index: 400; display: none;
+	background: color-mix(in srgb, var(--paper) 92%, transparent);
+	backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px);
 }
+.snake.show { display: block; }
+#snakeCanvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.snake-bar {
+	position: absolute; top: 1.2rem; left: 50%; transform: translateX(-50%);
+	display: flex; align-items: center; gap: 1.3rem;
+	font-family: var(--mono); font-size: 0.72rem; color: var(--muted);
+	padding: 0.5rem 1rem; background: color-mix(in srgb, var(--paper) 70%, transparent); border-radius: 999px;
+}
+.snake-title { font-weight: 500; color: var(--ink); text-transform: uppercase; letter-spacing: 0.12em; }
+.snake-score b { color: var(--fg); }
+.snake-keys { color: var(--muted2); }
+@media (max-width: 560px) { .snake-keys { display: none; } }
+.snake-over {
+	position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%) scale(0.9);
+	text-align: center; display: none; opacity: 0; transition: opacity 0.25s ease, transform 0.3s cubic-bezier(0.34,1.4,0.64,1);
+}
+.snake-over.show { display: block; opacity: 1; transform: translate(-50%,-50%) scale(1); }
+.snake-over-t { font-family: var(--display); font-size: 2rem; font-weight: 800; color: var(--fg); margin-bottom: 0.4rem; }
+.snake-over-s { font-family: var(--mono); font-size: 0.85rem; color: var(--muted); margin-bottom: 1.2rem; }
+.snake-over-s b { color: var(--ink); }
+.snake-btn {
+	font-family: var(--mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em;
+	padding: 0.55rem 1.2rem; border: 1.5px solid var(--ink); border-radius: 999px;
+	background: transparent; color: var(--ink); cursor: pointer; transition: background 0.18s ease, color 0.18s ease;
+}
+.snake-btn:hover { background: var(--ink); color: var(--paper); }
 
-/* ── View all link ──────────────────────────────────────────────── */
-.view-all-link {
-	font-family: 'JetBrains Mono', monospace;
-	font-size: 0.67rem;
-	letter-spacing: 0.1em;
-	text-transform: uppercase;
-	color: var(--muted2);
-	text-decoration: none;
-	transition: color 0.15s ease;
-}
-.view-all-link:hover { color: var(--fg); }
+/* ── reveal ────────────────────────────────────────────────────────── */
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.6s cubic-bezier(0.4,0,0.2,1), transform 0.6s cubic-bezier(0.4,0,0.2,1); }
+.reveal.visible { opacity: 1; transform: translateY(0); }
 
-/* ── Empty note ─────────────────────────────────────────────────── */
-.empty-note {
-	font-size: 0.875rem;
-	color: var(--muted2);
-	font-style: italic;
-	margin-top: 1.25rem;
-}
+::selection { background: var(--ink-soft); color: var(--fg); }
 
-/* ── Reveal animations ──────────────────────────────────────────── */
-.reveal {
-	opacity: 0;
-	transform: translateY(20px);
-	transition: opacity 0.55s cubic-bezier(0.4,0,0.2,1), transform 0.55s cubic-bezier(0.4,0,0.2,1);
+@media (prefers-reduced-motion: reduce) {
+	html { scroll-behavior: auto; }
+	.reveal { opacity: 1; transform: none; transition: none; }
+	.caret { animation: none; }
 }
-.reveal.visible {
-	opacity: 1;
-	transform: translateY(0);
-}
-
-/* ── Selection ──────────────────────────────────────────────────── */
-::selection { background: var(--accent-soft); color: var(--fg); }
 </style>
 
 <!-- ═══ SCRIPT ════════════════════════════════════════════════════════════ -->
 <script is:inline>
-/* ── Accordion ──────────────────────────────────────────────────── */
+/* ── accordion ─────────────────────────────────────────────────────── */
 function toggleCard(btn) {
-	const isOpen = btn.getAttribute('aria-expanded') === 'true';
-	btn.setAttribute('aria-expanded', String(!isOpen));
+	btn.setAttribute('aria-expanded', String(btn.getAttribute('aria-expanded') !== 'true'));
 }
 
-/* ── Typewriter ─────────────────────────────────────────────────── */
-(function() {
-	const words = [
-		'machine learning specialist',
-		'open source enjoyer',
-		'software developer',
-		'athlete',
-		'nerd'
-	];
-	let wordIdx = 0, charIdx = 0, deleting = false;
-	const el = document.getElementById('typewriter');
-	if (!el) return;
-
-	function tick() {
-		const current = words[wordIdx];
-		if (deleting) {
-			charIdx--;
-			el.textContent = current.slice(0, charIdx);
-			if (charIdx === 0) {
-				deleting = false;
-				wordIdx = (wordIdx + 1) % words.length;
-				setTimeout(tick, 420);
-				return;
-			}
-			setTimeout(tick, 42);
-		} else {
-			charIdx++;
-			el.textContent = current.slice(0, charIdx);
-			if (charIdx === current.length) {
-				deleting = true;
-				setTimeout(tick, 1800);
-				return;
-			}
-			setTimeout(tick, 68);
-		}
-	}
-	setTimeout(tick, 600);
+/* ── small toast ───────────────────────────────────────────────────── */
+const toast = (function() {
+	const el = document.getElementById('toast');
+	let t = 0;
+	return function(msg, ms) {
+		el.textContent = msg; el.classList.add('show');
+		clearTimeout(t); t = setTimeout(() => el.classList.remove('show'), ms || 2200);
+	};
 })();
 
-/* ── Dark / light toggle ────────────────────────────────────────── */
+/* ── typewriter ────────────────────────────────────────────────────── */
+(function() {
+	const words = ['a machine learning specialist','an open source enjoyer','a software developer','an athlete','a nerd'];
+	let wi = 0, ci = 0, del = false;
+	const el = document.getElementById('typewriter');
+	if (!el) return;
+	function tick() {
+		const w = words[wi];
+		if (del) { ci--; el.textContent = w.slice(0, ci);
+			if (ci === 0) { del = false; wi = (wi + 1) % words.length; setTimeout(tick, 420); return; }
+			setTimeout(tick, 40);
+		} else { ci++; el.textContent = w.slice(0, ci);
+			if (ci === w.length) { del = true; setTimeout(tick, 1700); return; }
+			setTimeout(tick, 66);
+		}
+	}
+	setTimeout(tick, 650);
+})();
+
+/* ── day / night ───────────────────────────────────────────────────── */
 (function() {
 	const html = document.documentElement;
-	const btn  = document.getElementById('modeToggle');
-	const saved = localStorage.getItem('theme') ||
-		(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-	html.setAttribute('data-theme', saved);
-
-	btn.addEventListener('click', () => {
+	const saved = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+	html.setAttribute('data-theme', saved); document.body.setAttribute('data-theme', saved);
+	document.getElementById('modeToggle').addEventListener('click', () => {
 		const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-		html.setAttribute('data-theme', next);
+		html.setAttribute('data-theme', next); document.body.setAttribute('data-theme', next);
 		localStorage.setItem('theme', next);
 	});
 })();
 
-/* ── Accent colour cycle ────────────────────────────────────────── */
-(function() {
-	const ACCENTS = ['stone','indigo','rose','amber','emerald','sky','violet'];
-	const html    = document.documentElement;
-	const btn     = document.getElementById('colorCycleBtn');
-	const saved   = localStorage.getItem('accent') || 'stone';
-	let   idx     = ACCENTS.indexOf(saved);
-	if (idx < 0) idx = 0;
+/* ── ink color helper ──────────────────────────────────────────────── */
+function inkColor() {
+	return getComputedStyle(document.documentElement).getPropertyValue('--ink').trim() || '#25324d';
+}
 
+/* ── pen picker ────────────────────────────────────────────────────── */
+const InkPicker = (function() {
+	const INKS = ['blueblack','royal','red','emerald','violet','sepia'];
+	const html = document.documentElement;
+	const btn = document.getElementById('penBtn'), pop = document.getElementById('penPop');
+	const nibs = Array.from(document.querySelectorAll('.nib'));
+	let idx = INKS.indexOf(localStorage.getItem('ink') || 'blueblack'); if (idx < 0) idx = 0;
+	function mark() { nibs.forEach(n => n.classList.toggle('active', n.dataset.ink === INKS[idx])); }
 	function apply(i) {
-		html.setAttribute('data-accent', ACCENTS[i]);
-		localStorage.setItem('accent', ACCENTS[i]);
+		idx = (i + INKS.length) % INKS.length;
+		html.setAttribute('data-ink', INKS[idx]); localStorage.setItem('ink', INKS[idx]); mark();
+		if (window.InkFX) window.InkFX.cursor();
 	}
-
+	function open(s) { pop.classList.toggle('open', s); btn.setAttribute('aria-expanded', String(s)); }
 	apply(idx);
-
-	btn.addEventListener('click', () => {
-		idx = (idx + 1) % ACCENTS.length;
-		apply(idx);
-		/* brief spin animation */
-		const icon = btn.querySelector('.color-cycle-icon');
-		icon.animate([{transform:'rotate(0deg)'},{transform:'rotate(360deg)'}],
-			{duration: 380, easing: 'cubic-bezier(0.4,0,0.2,1)' });
-	});
+	btn.addEventListener('click', e => { e.stopPropagation(); open(!pop.classList.contains('open')); });
+	nibs.forEach(n => n.addEventListener('click', e => { e.stopPropagation(); apply(INKS.indexOf(n.dataset.ink)); open(false); }));
+	document.addEventListener('click', () => open(false));
+	return { cycle() { apply(idx + 1); } };
 })();
 
-/* ── Scroll reveal ──────────────────────────────────────────────── */
-(function() {
-	const els = document.querySelectorAll('.reveal');
-	const io  = new IntersectionObserver((entries) => {
-		entries.forEach(e => {
-			if (e.isIntersecting) {
-				e.target.classList.add('visible');
-				io.unobserve(e.target);
-			}
-		});
-	}, { threshold: 0.07 });
-	els.forEach((el, i) => {
-		el.style.transitionDelay = (i * 0.07) + 's';
-		io.observe(el);
-	});
-})();
-
-/* ── Scroll progress ────────────────────────────────────────────── */
-(function() {
-	const bar = document.getElementById('scrollProgress');
-	if (!bar) return;
-	let raf = 0;
-	function update() {
-		const h = document.documentElement;
-		const max = h.scrollHeight - h.clientHeight;
-		const pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
-		bar.style.width = pct + '%';
-		raf = 0;
+/* ── pen cursor + ink trail + splatter ─────────────────────────────── */
+const InkFX = (function() {
+	const fine = window.matchMedia('(pointer: fine)').matches;
+	const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+	const canvas = document.getElementById('inkCanvas');
+	const ctx = canvas.getContext('2d');
+	let w, h, dpr;
+	function resize() {
+		dpr = Math.min(window.devicePixelRatio || 1, 2);
+		w = innerWidth; h = innerHeight;
+		canvas.width = w * dpr; canvas.height = h * dpr;
+		canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
+		ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 	}
-	window.addEventListener('scroll', () => {
-		if (!raf) raf = requestAnimationFrame(update);
-	}, { passive: true });
-	update();
+	resize(); addEventListener('resize', resize);
+
+	function buildCursor(c) {
+		const svg = "<svg xmlns='http://www.w3.org/2000/svg' width='28' height='30' viewBox='0 0 28 30'>"
+			+ "<path d='M14 28 L7 13 C7 6 10 3 14 3 C18 3 21 6 21 13 Z' fill='" + c + "' stroke='#ffffff' stroke-width='1.4'/>"
+			+ "<circle cx='14' cy='10' r='1.7' fill='#ffffff'/><line x1='14' y1='12.5' x2='14' y2='24' stroke='#ffffff' stroke-width='1.2'/></svg>";
+		return "url(\"data:image/svg+xml," + encodeURIComponent(svg) + "\") 14 28, auto";
+	}
+	function cursor() { if (fine) document.body.style.cursor = buildCursor(inkColor()); }
+	cursor();
+
+	const segs = []; let raf = 0;
+	function loop() {
+		ctx.clearRect(0, 0, w, h); ctx.lineCap = 'round';
+		for (let i = segs.length - 1; i >= 0; i--) {
+			const s = segs[i]; s.life -= s.fade;
+			if (s.life <= 0) { segs.splice(i, 1); continue; }
+			ctx.globalAlpha = Math.max(0, s.life) * 0.8; ctx.strokeStyle = s.color; ctx.lineWidth = s.w;
+			ctx.beginPath(); ctx.moveTo(s.x1, s.y1); ctx.lineTo(s.x2, s.y2); ctx.stroke();
+		}
+		ctx.globalAlpha = 1; raf = segs.length ? requestAnimationFrame(loop) : 0;
+	}
+	function push(s) { segs.push(s); if (!raf) raf = requestAnimationFrame(loop); }
+
+	/* trail */
+	let drawing = false, lx = 0, ly = 0;
+	if (fine && !reduce) {
+		addEventListener('mousedown', e => {
+			if (e.button !== 0) return;
+			if (e.target.closest('a,button,input,textarea,select,#navbar,.pen-pop,.curl,.snake,.toast')) return;
+			drawing = true; lx = e.clientX; ly = e.clientY;
+		});
+		addEventListener('mousemove', e => {
+			if (!drawing) return;
+			const d = Math.hypot(e.clientX - lx, e.clientY - ly);
+			push({ x1: lx, y1: ly, x2: e.clientX, y2: e.clientY, life: 1, fade: 0.02, color: inkColor(), w: Math.max(1.3, 4 - d * 0.05) });
+			lx = e.clientX; ly = e.clientY;
+		});
+		addEventListener('mouseup', () => drawing = false);
+		addEventListener('blur', () => drawing = false);
+	}
+
+	/* splatter burst */
+	function splat(x, y, n) {
+		if (reduce) return;
+		const c = inkColor(); n = n || 14;
+		for (let i = 0; i < n; i++) {
+			const a = (Math.PI * 2 * i) / n + (i * 1.3), r = 8 + (i % 5) * 9;
+			push({ x1: x, y1: y, x2: x + Math.cos(a) * r, y2: y + Math.sin(a) * r, life: 1, fade: 0.014, color: c, w: 1 + (i % 3) });
+		}
+	}
+	return { cursor, splat };
+})();
+window.InkFX = InkFX;
+
+/* ── tap the name → ink splatter + a hidden one-liner ──────────────── */
+(function() {
+	const name = document.getElementById('name');
+	const lines = ['ankara, 3am, still typing.', 'mostly curious, occasionally dangerous.', 'i lift things up and put them down.', 'building quietly. shipping loudly.'];
+	let i = -1;
+	name.addEventListener('click', e => {
+		const r = name.getBoundingClientRect();
+		InkFX.splat(e.clientX || (r.left + r.width / 2), e.clientY || (r.top + r.height / 2), 16);
+		i = (i + 1) % lines.length; toast(lines[i]);
+	});
 })();
 
-/* ── Keyboard shortcuts ─────────────────────────────────────────── */
+/* ── peelable corner ───────────────────────────────────────────────── */
 (function() {
-	document.addEventListener('keydown', (e) => {
-		if (e.metaKey || e.ctrlKey || e.altKey) return;
+	const curl = document.getElementById('curl');
+	curl.addEventListener('click', () => curl.classList.toggle('peeled'));
+	curl.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); curl.classList.toggle('peeled'); } });
+})();
+
+/* ── reveal ────────────────────────────────────────────────────────── */
+(function() {
+	const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } }), { threshold: 0.06 });
+	document.querySelectorAll('.reveal').forEach((el, i) => { el.style.transitionDelay = (i * 0.05) + 's'; io.observe(el); });
+})();
+
+/* ── scroll progress ───────────────────────────────────────────────── */
+(function() {
+	const bar = document.getElementById('scrollProgress'); let raf = 0;
+	function up() { const h = document.documentElement, m = h.scrollHeight - h.clientHeight; bar.style.width = (m > 0 ? (h.scrollTop / m) * 100 : 0) + '%'; raf = 0; }
+	addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(up); }, { passive: true }); up();
+})();
+
+/* ── SNAKE minigame ────────────────────────────────────────────────── */
+const Snake = (function() {
+	const wrap = document.getElementById('snake');
+	const canvas = document.getElementById('snakeCanvas');
+	const ctx = canvas.getContext('2d');
+	const scoreEl = document.getElementById('snakeScore');
+	const overEl = document.getElementById('snakeOver');
+	const finalEl = document.getElementById('snakeFinal');
+	const CELL = 26;
+	let cols, rows, snake, dir, nextDir, food, score, dead, acc, lastT, raf = 0, running = false, ox = 0, oy = 0;
+
+	function fit() {
+		const dpr = Math.min(window.devicePixelRatio || 1, 2);
+		canvas.width = innerWidth * dpr; canvas.height = innerHeight * dpr;
+		canvas.style.width = innerWidth + 'px'; canvas.style.height = innerHeight + 'px';
+		ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+		cols = Math.floor(innerWidth / CELL); rows = Math.floor(innerHeight / CELL);
+		ox = (innerWidth - cols * CELL) / 2; oy = (innerHeight - rows * CELL) / 2;
+	}
+	function placeFood() {
+		do { food = { x: (Math.random() * cols) | 0, y: (Math.random() * rows) | 0 }; }
+		while (snake.some(s => s.x === food.x && s.y === food.y));
+	}
+	function reset() {
+		fit();
+		const cx = cols >> 1, cy = rows >> 1;
+		snake = [{ x: cx, y: cy }, { x: cx - 1, y: cy }, { x: cx - 2, y: cy }];
+		dir = { x: 1, y: 0 }; nextDir = dir; score = 0; dead = false; acc = 0; lastT = 0;
+		scoreEl.textContent = '0'; overEl.classList.remove('show'); placeFood();
+	}
+	function step() {
+		dir = nextDir;
+		const head = { x: snake[0].x + dir.x, y: snake[0].y + dir.y };
+		if (head.x < 0 || head.y < 0 || head.x >= cols || head.y >= rows || snake.some(s => s.x === head.x && s.y === head.y)) {
+			dead = true; finalEl.textContent = score; overEl.classList.add('show'); return;
+		}
+		snake.unshift(head);
+		if (head.x === food.x && head.y === food.y) { score++; scoreEl.textContent = score; placeFood(); }
+		else snake.pop();
+	}
+	function cell(x, y) { return [ox + x * CELL, oy + y * CELL]; }
+	function render() {
+		ctx.clearRect(0, 0, innerWidth, innerHeight);
+		const ink = inkColor();
+		// food = ink dot
+		const [fx, fy] = cell(food.x, food.y);
+		ctx.fillStyle = ink; ctx.globalAlpha = 0.85;
+		ctx.beginPath(); ctx.arc(fx + CELL / 2, fy + CELL / 2, CELL * 0.22, 0, 7); ctx.fill();
+		// snake = continuous ink line
+		ctx.globalAlpha = 1; ctx.strokeStyle = ink; ctx.lineWidth = CELL * 0.5; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+		ctx.beginPath();
+		snake.forEach((s, i) => { const [x, y] = cell(s.x, s.y); const px = x + CELL / 2, py = y + CELL / 2; i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); });
+		ctx.stroke();
+		// head dot
+		const [hx, hy] = cell(snake[0].x, snake[0].y);
+		ctx.fillStyle = ink; ctx.beginPath(); ctx.arc(hx + CELL / 2, hy + CELL / 2, CELL * 0.3, 0, 7); ctx.fill();
+	}
+	function loop(t) {
+		if (!running) return;
+		if (!lastT) lastT = t;
+		const dt = t - lastT; lastT = t;
+		if (!dead) {
+			acc += dt; const speed = Math.max(70, 130 - score * 3);
+			while (acc >= speed) { acc -= speed; step(); if (dead) break; }
+			render();
+		}
+		raf = requestAnimationFrame(loop);
+	}
+	function onKey(e) {
+		const k = e.key;
+		if (k === 'Escape' || k === 'q') { stop(); return; }
+		if (dead && (k === ' ' || k === 'Enter')) { e.preventDefault(); reset(); return; }
+		let nd = null;
+		if (k === 'ArrowUp' || k === 'w') nd = { x: 0, y: -1 };
+		else if (k === 'ArrowDown' || k === 's') nd = { x: 0, y: 1 };
+		else if (k === 'ArrowLeft' || k === 'a') nd = { x: -1, y: 0 };
+		else if (k === 'ArrowRight' || k === 'd') nd = { x: 1, y: 0 };
+		if (nd) { e.preventDefault(); if (nd.x !== -dir.x || nd.y !== -dir.y) nextDir = nd; }
+	}
+	function start() {
+		if (running) return;
+		running = true; wrap.classList.add('show'); wrap.setAttribute('aria-hidden', 'false');
+		reset(); document.addEventListener('keydown', onKey, true); addEventListener('resize', fit);
+		lastT = 0; raf = requestAnimationFrame(loop); toast('snake — esc to quit', 1600);
+	}
+	function stop() {
+		running = false; wrap.classList.remove('show'); wrap.setAttribute('aria-hidden', 'true');
+		cancelAnimationFrame(raf); document.removeEventListener('keydown', onKey, true); removeEventListener('resize', fit);
+	}
+	document.getElementById('snakeRetry').addEventListener('click', reset);
+	return { start, stop, isRunning() { return running; } };
+})();
+document.getElementById('playLink').addEventListener('click', () => Snake.start());
+
+/* ── keyboard: shortcuts · konami · typed secret words ─────────────── */
+(function() {
+	const konami = ['arrowup','arrowup','arrowdown','arrowdown','arrowleft','arrowright','arrowleft','arrowright','b','a'];
+	let kpos = 0, buf = '';
+	const SECRETS = {
+		snake: () => Snake.start(),
+		play:  () => Snake.start(),
+		moon:  () => document.getElementById('modeToggle').click(),
+		mensa: () => toast('iq is overrated. curiosity isn\'t. ✦'),
+		utku:  () => { const r = document.getElementById('name').getBoundingClientRect(); InkFX.splat(r.left + r.width / 2, r.top + r.height / 2, 22); toast('hi. 👋'); },
+		lift:  () => toast('1000+ lb total. 💪'),
+	};
+	addEventListener('keydown', e => {
 		const t = e.target;
 		if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
-		if (e.key === 't' || e.key === 'T') {
-			e.preventDefault();
-			document.getElementById('colorCycleBtn')?.click();
-		} else if (e.key === 'd' || e.key === 'D') {
-			e.preventDefault();
-			document.getElementById('modeToggle')?.click();
+		if (Snake.isRunning()) return;
+
+		const kl = e.key.toLowerCase();
+
+		/* konami */
+		if (kl === konami[kpos]) { kpos++; if (kpos === konami.length) { kpos = 0; InkFX.splat(innerWidth / 2, innerHeight / 2, 40); toast('✦ secret pen unlocked — type "snake" to play'); } }
+		else kpos = (kl === konami[0]) ? 1 : 0;
+
+		if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+		/* shortcuts */
+		if (kl === 't') { InkPicker.cycle(); }
+		else if (kl === 'd') { document.getElementById('modeToggle').click(); }
+
+		/* typed secret words */
+		if (/^[a-z]$/.test(kl)) {
+			buf = (buf + kl).slice(-6);
+			for (const word in SECRETS) { if (buf.endsWith(word)) { SECRETS[word](); buf = ''; break; } }
 		}
 	});
 })();
