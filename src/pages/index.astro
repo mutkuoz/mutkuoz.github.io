@@ -1,6 +1,7 @@
 ---
 // src/pages/index.astro
 import '../styles/global.css';
+import Board from '../components/Board.astro';
 ---
 
 <!doctype html>
@@ -40,19 +41,9 @@ import '../styles/global.css';
 		<a href="#contact" class="nav-link">contact</a>
 	</div>
 	<div class="nav-controls">
-		<div class="pen-wrap">
-			<button class="pen-btn" id="penBtn" aria-haspopup="true" aria-expanded="false" aria-label="change pen colour">
-				<span class="pen-swatch" id="penSwatch"></span>
-			</button>
-			<div class="pen-pop" id="penPop" role="menu" aria-label="ink colours">
-				<button class="nib" role="menuitem" data-ink="blueblack" style="--nib:#25324d" title="blue-black"></button>
-				<button class="nib" role="menuitem" data-ink="royal"     style="--nib:#2a4bd0" title="royal blue"></button>
-				<button class="nib" role="menuitem" data-ink="red"       style="--nib:#c33125" title="red"></button>
-				<button class="nib" role="menuitem" data-ink="emerald"   style="--nib:#0c7a55" title="emerald"></button>
-				<button class="nib" role="menuitem" data-ink="violet"    style="--nib:#6a35c9" title="violet"></button>
-				<button class="nib" role="menuitem" data-ink="sepia"     style="--nib:#8a5a2b" title="sepia"></button>
-			</div>
-		</div>
+		<button class="pen-btn" id="penBtn" aria-label="cycle pen colour" title="cycle pen colour (T)">
+			<span class="pen-swatch" id="penSwatch"></span>
+		</button>
 		<button class="mode-toggle" id="modeToggle" aria-label="toggle night mode">
 			<svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
 				<circle cx="12" cy="12" r="4.5"></circle>
@@ -176,7 +167,7 @@ import '../styles/global.css';
 	<footer class="foot reveal">
 		<p class="foot-line"><span class="foot-mark">✦</span> written by mutkuoz · last updated 2026</p>
 		<p class="foot-line muted">
-			<kbd>T</kbd> swap pen · <kbd>D</kbd> day/night · <button class="play-link" id="playLink">▸ play</button> · <span class="foot-hint">try typing a word…</span>
+			<kbd>T</kbd> swap pen · <kbd>D</kbd> day/night · <button class="play-link" id="playLink">▸ play</button> · <button class="play-link" id="boardLink">▸ the board</button> · <span class="foot-hint">try typing a word…</span>
 		</p>
 	</footer>
 
@@ -195,7 +186,8 @@ import '../styles/global.css';
 	<div class="snake-bar">
 		<span class="snake-title">snake</span>
 		<span class="snake-score">score <b id="snakeScore">0</b></span>
-		<span class="snake-keys">arrows / wasd · esc to quit</span>
+		<span class="snake-keys">swipe / arrows to steer</span>
+		<button class="snake-close" id="snakeClose" aria-label="quit snake">✕</button>
 	</div>
 	<div class="snake-over" id="snakeOver">
 		<p class="snake-over-t">game over</p>
@@ -203,6 +195,9 @@ import '../styles/global.css';
 		<button class="snake-btn" id="snakeRetry">play again</button>
 	</div>
 </div>
+
+<!-- ═══ SHARED BOARD ══════════════════════════════════════════════════════ -->
+<Board />
 
 <!-- ═══ STYLES ════════════════════════════════════════════════════════════ -->
 <style>
@@ -299,32 +294,17 @@ body {
 
 .nav-controls { display: flex; align-items: center; gap: 0.6rem; }
 
-/* pen picker */
-.pen-wrap { position: relative; }
+/* pen picker — click to cycle */
 .pen-btn {
 	display: flex; align-items: center; justify-content: center;
 	width: 1.9rem; height: 1.9rem; border-radius: 50%;
 	border: 1px solid var(--line); background: transparent; cursor: pointer;
-	transition: border-color 0.2s ease, transform 0.3s ease;
+	transition: border-color 0.2s ease, transform 0.3s cubic-bezier(0.34,1.4,0.64,1);
 }
 .pen-btn:hover { border-color: var(--ink); transform: rotate(-12deg); }
+.pen-btn:active { transform: rotate(-12deg) scale(0.88); }
 .pen-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-.pen-swatch { width: 0.85rem; height: 0.85rem; border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 2px var(--ink-soft); transition: background 0.3s ease; }
-
-.pen-pop {
-	position: absolute; top: calc(100% + 0.5rem); right: 0;
-	display: flex; gap: 0.5rem; padding: 0.6rem;
-	background: var(--paper); border: 1px solid var(--line); border-radius: 0.8rem;
-	box-shadow: 0 12px 30px rgba(0,0,0,0.18);
-	opacity: 0; transform: translateY(-6px) scale(0.96); transform-origin: top right;
-	pointer-events: none; transition: opacity 0.18s ease, transform 0.18s cubic-bezier(0.34,1.4,0.64,1);
-	z-index: 120;
-}
-.pen-pop.open { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
-.nib { width: 1.1rem; height: 1.1rem; border-radius: 50%; background: var(--nib); border: 2px solid transparent; cursor: pointer; padding: 0; transition: transform 0.16s ease, border-color 0.16s ease; }
-.nib:hover { transform: scale(1.2) rotate(-8deg); }
-.nib.active { border-color: var(--fg); }
-.nib:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+.pen-swatch { width: 0.85rem; height: 0.85rem; border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 2px var(--ink-soft); transition: background 0.3s ease, box-shadow 0.3s ease; }
 
 .mode-toggle {
 	display: flex; align-items: center; justify-content: center;
@@ -506,7 +486,7 @@ h1 {
 	backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px);
 }
 .snake.show { display: block; }
-#snakeCanvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+#snakeCanvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
 .snake-bar {
 	position: absolute; top: 1.2rem; left: 50%; transform: translateX(-50%);
 	display: flex; align-items: center; gap: 1.3rem;
@@ -516,7 +496,15 @@ h1 {
 .snake-title { font-weight: 500; color: var(--ink); text-transform: uppercase; letter-spacing: 0.12em; }
 .snake-score b { color: var(--fg); }
 .snake-keys { color: var(--muted2); }
-@media (max-width: 560px) { .snake-keys { display: none; } }
+.snake-close {
+	display: flex; align-items: center; justify-content: center;
+	width: 1.5rem; height: 1.5rem; margin-left: 0.2rem; padding: 0;
+	border: 1px solid var(--line); border-radius: 50%;
+	background: transparent; color: var(--muted); cursor: pointer; font-size: 0.8rem; line-height: 1;
+	transition: color 0.18s ease, border-color 0.18s ease;
+}
+.snake-close:hover { color: var(--ink); border-color: var(--ink); }
+@media (max-width: 480px) { .snake-keys { display: none; } }
 .snake-over {
 	position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%) scale(0.9);
 	text-align: center; display: none; opacity: 0; transition: opacity 0.25s ease, transform 0.3s cubic-bezier(0.34,1.4,0.64,1);
@@ -600,22 +588,51 @@ function inkColor() {
 
 /* ── pen picker ────────────────────────────────────────────────────── */
 const InkPicker = (function() {
-	const INKS = ['blueblack','royal','red','emerald','violet','sepia'];
+	/* click cycles through solid inks, ending on an animated rainbow */
+	const INKS = ['blueblack','royal','red','emerald','violet','sepia','rgb'];
 	const html = document.documentElement;
-	const btn = document.getElementById('penBtn'), pop = document.getElementById('penPop');
-	const nibs = Array.from(document.querySelectorAll('.nib'));
+	const btn = document.getElementById('penBtn');
+	const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 	let idx = INKS.indexOf(localStorage.getItem('ink') || 'blueblack'); if (idx < 0) idx = 0;
-	function mark() { nibs.forEach(n => n.classList.toggle('active', n.dataset.ink === INKS[idx])); }
+	let rafId = 0;
+
+	function stopRGB() {
+		if (rafId) { cancelAnimationFrame(rafId); rafId = 0; }
+		html.style.removeProperty('--ink');
+		html.style.removeProperty('--ink-soft');
+	}
+	function rgbFrame() {
+		const hue = (performance.now() / 26) % 360;
+		const dark = html.getAttribute('data-theme') === 'dark';
+		const l = dark ? 66 : 50, s = dark ? 88 : 78;
+		html.style.setProperty('--ink', 'hsl(' + hue.toFixed(1) + ', ' + s + '%, ' + l + '%)');
+		html.style.setProperty('--ink-soft', 'hsla(' + hue.toFixed(1) + ', ' + s + '%, ' + l + '%, 0.14)');
+		rafId = requestAnimationFrame(rgbFrame);
+	}
+	function startRGB() {
+		if (reduce) { /* no motion: settle on a single pleasant hue */
+			html.style.setProperty('--ink', 'hsl(280, 70%, 58%)');
+			html.style.setProperty('--ink-soft', 'hsla(280, 70%, 58%, 0.14)');
+			if (window.InkFX) window.InkFX.cursor();
+			return;
+		}
+		rafId = requestAnimationFrame(rgbFrame);
+	}
 	function apply(i) {
 		idx = (i + INKS.length) % INKS.length;
-		html.setAttribute('data-ink', INKS[idx]); localStorage.setItem('ink', INKS[idx]); mark();
-		if (window.InkFX) window.InkFX.cursor();
+		const ink = INKS[idx];
+		localStorage.setItem('ink', ink);
+		if (ink === 'rgb') {
+			html.setAttribute('data-ink', 'rgb'); startRGB();
+			btn.title = 'rainbow pen — click to cycle (T)';
+		} else {
+			stopRGB(); html.setAttribute('data-ink', ink);
+			btn.title = 'cycle pen colour (T)';
+			if (window.InkFX) window.InkFX.cursor();
+		}
 	}
-	function open(s) { pop.classList.toggle('open', s); btn.setAttribute('aria-expanded', String(s)); }
 	apply(idx);
-	btn.addEventListener('click', e => { e.stopPropagation(); open(!pop.classList.contains('open')); });
-	nibs.forEach(n => n.addEventListener('click', e => { e.stopPropagation(); apply(INKS.indexOf(n.dataset.ink)); open(false); }));
-	document.addEventListener('click', () => open(false));
+	btn.addEventListener('click', () => apply(idx + 1));
 	return { cycle() { apply(idx + 1); } };
 })();
 
@@ -799,17 +816,43 @@ const Snake = (function() {
 		else if (k === 'ArrowRight' || k === 'd') nd = { x: 1, y: 0 };
 		if (nd) { e.preventDefault(); if (nd.x !== -dir.x || nd.y !== -dir.y) nextDir = nd; }
 	}
+	/* touch: swipe anywhere to steer; tap on game-over restarts */
+	let tsx = 0, tsy = 0, touching = false;
+	function setDir(nd) { if (!dead && (nd.x !== -dir.x || nd.y !== -dir.y)) nextDir = nd; }
+	function onTouchStart(e) { const t = e.touches[0]; tsx = t.clientX; tsy = t.clientY; touching = true; e.preventDefault(); }
+	function onTouchMove(e) {
+		if (!touching) return; e.preventDefault();
+		const t = e.touches[0], dx = t.clientX - tsx, dy = t.clientY - tsy, TH = 22;
+		if (Math.abs(dx) < TH && Math.abs(dy) < TH) return;
+		if (Math.abs(dx) > Math.abs(dy)) setDir({ x: dx > 0 ? 1 : -1, y: 0 });
+		else setDir({ x: 0, y: dy > 0 ? 1 : -1 });
+		tsx = t.clientX; tsy = t.clientY; // reset origin so a long drag can turn repeatedly
+	}
+	function onTouchEnd() { touching = false; }
+
 	function start() {
 		if (running) return;
 		running = true; wrap.classList.add('show'); wrap.setAttribute('aria-hidden', 'false');
-		reset(); document.addEventListener('keydown', onKey, true); addEventListener('resize', fit);
-		lastT = 0; raf = requestAnimationFrame(loop); toast('snake — esc to quit', 1600);
+		reset();
+		document.addEventListener('keydown', onKey, true);
+		canvas.addEventListener('touchstart', onTouchStart, { passive: false });
+		canvas.addEventListener('touchmove', onTouchMove, { passive: false });
+		canvas.addEventListener('touchend', onTouchEnd);
+		addEventListener('resize', fit);
+		lastT = 0; raf = requestAnimationFrame(loop);
+		toast(matchMedia('(pointer: coarse)').matches ? 'snake — swipe to steer' : 'snake — esc to quit', 1700);
 	}
 	function stop() {
 		running = false; wrap.classList.remove('show'); wrap.setAttribute('aria-hidden', 'true');
-		cancelAnimationFrame(raf); document.removeEventListener('keydown', onKey, true); removeEventListener('resize', fit);
+		cancelAnimationFrame(raf);
+		document.removeEventListener('keydown', onKey, true);
+		canvas.removeEventListener('touchstart', onTouchStart);
+		canvas.removeEventListener('touchmove', onTouchMove);
+		canvas.removeEventListener('touchend', onTouchEnd);
+		removeEventListener('resize', fit);
 	}
 	document.getElementById('snakeRetry').addEventListener('click', reset);
+	document.getElementById('snakeClose').addEventListener('click', stop);
 	return { start, stop, isRunning() { return running; } };
 })();
 document.getElementById('playLink').addEventListener('click', () => Snake.start());
@@ -821,6 +864,8 @@ document.getElementById('playLink').addEventListener('click', () => Snake.start(
 	const SECRETS = {
 		snake: () => Snake.start(),
 		play:  () => Snake.start(),
+		board: () => window.Board && window.Board.open(),
+		draw:  () => window.Board && window.Board.open(),
 		moon:  () => document.getElementById('modeToggle').click(),
 		mensa: () => toast('iq is overrated. curiosity isn\'t. ✦'),
 		utku:  () => { const r = document.getElementById('name').getBoundingClientRect(); InkFX.splat(r.left + r.width / 2, r.top + r.height / 2, 22); toast('hi. 👋'); },
