@@ -52,7 +52,7 @@ begin
   if cur is distinct from p_expected then
     return query select false, b.version, b.png from public.board b where b.id = 1;
   else
-    update public.board set png = p_png, version = board.version + 1, updated_at = now() where id = 1;
+    update public.board as b set png = p_png, version = b.version + 1, updated_at = now() where b.id = 1;
     return query select true, b.version, null::text from public.board b where b.id = 1;
   end if;
 end; $$;
@@ -68,7 +68,7 @@ begin
   if p_secret is distinct from s then
     return query select false, b.version from public.board b where b.id = 1;
   else
-    update public.board set png = null, version = board.version + 1, updated_at = now() where id = 1;
+    update public.board as b set png = null, version = b.version + 1, updated_at = now() where b.id = 1;
     return query select true, b.version from public.board b where b.id = 1;
   end if;
 end; $$;
