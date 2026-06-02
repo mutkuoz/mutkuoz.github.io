@@ -298,7 +298,13 @@ const PALETTE = ['#1d1c18', '#5b5650', '#ffffff', '#e5484d', '#f76b15', '#ffb224
 	}
 	async function poll() {
 		if (!open || saving) return;
-		try { const r = await storeLoad(); if (r.version !== version) { version = r.version; await setBase(r.png); } } catch (e) {}
+		try {
+			const r = await storeLoad();
+			// version only ever increases (CAS); apply ONLY strictly-newer state, and
+			// never if a save started while we were awaiting — otherwise a stale read
+			// reverts base/version backwards and wipes what was just drawn.
+			if (!saving && r.version > version) { version = r.version; await setBase(r.png); }
+		} catch (e) {}
 	}
 	function setStatus(s) {
 		if (s === 'saving') { statusEl.textContent = 'saving…'; statusEl.className = 'board-status saving'; return; }
