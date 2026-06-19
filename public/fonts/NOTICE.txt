@@ -1,0 +1,9 @@
+The tinmetric-* web fonts in this directory are the Liberation fonts
+(Liberation Serif / Liberation Sans), converted to WOFF2.
+
+Liberation™ fonts are © Red Hat, Inc., licensed under the
+SIL Open Font License, Version 1.1 (https://scripts.sil.org/OFL).
+
+They are bundled here as metric-compatible stand-ins for Times New Roman
+and Arial so that UDF pagination and line breaking are identical for every
+viewer regardless of the fonts installed on the device.

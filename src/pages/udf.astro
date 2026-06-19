@@ -1,0 +1,120 @@
+---
+// Standalone UDF viewer / calibration tool.
+// Renders UYAP .udf files exactly as the official editor does, fully client-side.
+// Unlinked from the portfolio nav on purpose — it's a tool, not a portfolio item.
+---
+
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <title>UDF Görüntüleyici</title>
+  <style>
+    :root { color-scheme: light; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font: 14px/1.5 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: #2b2d31; color: #e7e7ea; }
+    header { position: sticky; top: 0; z-index: 10; display: flex; flex-wrap: wrap;
+      align-items: center; gap: 14px; padding: 10px 16px; background: #1f2023;
+      border-bottom: 1px solid #000; }
+    h1 { font-size: 15px; font-weight: 650; margin: 0; letter-spacing: .2px; }
+    .spacer { flex: 1; }
+    label.file { display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+      background: #3a82f7; color: #fff; padding: 7px 13px; border-radius: 7px; font-weight: 600; }
+    label.file input { display: none; }
+    .pill { background: #303237; border: 1px solid #44464c; border-radius: 999px;
+      padding: 4px 11px; font-variant-numeric: tabular-nums; }
+    .calib { display: flex; flex-wrap: wrap; align-items: center; gap: 18px;
+      padding: 8px 16px; background: #26282c; border-bottom: 1px solid #000; font-size: 12.5px; }
+    .calib .grp { display: flex; align-items: center; gap: 8px; }
+    .calib input[type=range] { width: 130px; accent-color: #3a82f7; }
+    .calib b { font-variant-numeric: tabular-nums; min-width: 42px; display: inline-block; }
+    .calib .hint { color: #9a9ca3; }
+    #drop { margin: 40px auto; max-width: 560px; padding: 46px; text-align: center;
+      border: 2px dashed #4b4d54; border-radius: 14px; color: #b6b8bf; }
+    #drop.drag { border-color: #3a82f7; background: #20242c; }
+    #viewer { min-height: 60vh; }
+    .err { color: #ff8585; padding: 16px; text-align: center; }
+    a.reset { color: #9fc2ff; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>UDF Görüntüleyici</h1>
+    <label class="file">UDF aç<input id="file" type="file" accept=".udf" /></label>
+    <span class="pill" id="pages">— sayfa</span>
+    <span class="pill" id="name">dosya yok</span>
+    <span class="spacer"></span>
+    <a class="reset" id="reset">sıfırla</a>
+  </header>
+
+  <div class="calib">
+    <span class="hint">Kalibrasyon:</span>
+    <div class="grp">satır yüksekliği
+      <input id="ls" type="range" min="0.9" max="1.35" step="0.005" value="1" />
+      <b id="lsv">1.000</b>
+    </div>
+    <div class="grp">varsayılan sekme
+      <input id="tab" type="range" min="2" max="10" step="0.1" value="5.1" />
+      <b id="tabv">5.1pt</b>
+    </div>
+    <span class="hint">— resmî editöre birebir oturana kadar oynatın</span>
+  </div>
+
+  <div id="drop">UDF dosyasını buraya bırakın ya da <b>UDF aç</b> ile seçin.</div>
+  <div id="viewer"></div>
+
+  <script>
+    import { renderUdfFile } from '../lib/udf';
+
+    const $ = (id) => document.getElementById(id);
+    let buffer = null;
+
+    const opts = () => ({
+      lineScale: parseFloat($('ls').value),
+      defaultTabPt: parseFloat($('tab').value),
+    });
+
+    function render() {
+      if (!buffer) return;
+      $('lsv').textContent = parseFloat($('ls').value).toFixed(3);
+      $('tabv').textContent = parseFloat($('tab').value).toFixed(1) + 'pt';
+      try {
+        const n = renderUdfFile(buffer, $('viewer'), opts());
+        $('pages').textContent = n + ' sayfa';
+        $('drop').style.display = 'none';
+      } catch (e) {
+        $('viewer').innerHTML = '<div class="err">Açılamadı: ' + (e && e.message) + '</div>';
+      }
+    }
+
+    async function load(file) {
+      buffer = await file.arrayBuffer();
+      $('name').textContent = file.name;
+      // wait for the embedded fonts so the first layout is already exact
+      if (document.fonts && document.fonts.ready) await document.fonts.ready;
+      render();
+    }
+
+    $('file').addEventListener('change', (e) => { if (e.target.files[0]) load(e.target.files[0]); });
+    $('ls').addEventListener('input', render);
+    $('tab').addEventListener('input', render);
+    $('reset').addEventListener('click', () => {
+      $('ls').value = '1'; $('tab').value = '5.1'; render();
+    });
+
+    const drop = $('drop');
+    ['dragenter', 'dragover'].forEach((ev) => document.addEventListener(ev, (e) => {
+      e.preventDefault(); drop.classList.add('drag'); drop.style.display = '';
+    }));
+    document.addEventListener('dragleave', (e) => { if (e.relatedTarget === null) drop.classList.remove('drag'); });
+    document.addEventListener('drop', (e) => {
+      e.preventDefault(); drop.classList.remove('drag');
+      const f = e.dataTransfer.files[0];
+      if (f) load(f);
+    });
+  </script>
+</body>
+</html>
