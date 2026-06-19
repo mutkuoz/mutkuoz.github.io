@@ -390,15 +390,18 @@ body {
 /* ── lead block ────────────────────────────────────────────────────── */
 .lead { display: grid; grid-template-columns: 1fr; gap: 2rem; margin-top: 2.2rem; }
 @media (min-width: 840px) {
-	.lead { grid-template-columns: 1fr 18rem; gap: 2.8rem; align-items: start; }
-	.lead-body { columns: 2; column-gap: 2.2rem; }
+	.lead { grid-template-columns: 1fr 1.2fr; gap: 3rem; align-items: stretch; }
+	/* image fills its column and matches the text height — no split, no dead space */
+	.lead-aside { display: flex; }
+	.lead-aside .fig { display: flex; flex-direction: column; flex: 1 1 auto; }
+	.lead-aside .fig-slot { flex: 1 1 auto; aspect-ratio: auto; min-height: 12rem; }
 }
 .standfirst {
-	font-size: clamp(1.05rem, 1.6vw, 1.2rem); line-height: 1.66; color: var(--fg);
+	font-size: clamp(1.12rem, 1.5vw, 1.35rem); line-height: 1.72; color: var(--fg);
 	text-align: justify; hyphens: auto;
 }
 .interests {
-	margin-top: 1rem; font-style: italic; font-size: 1.02rem; line-height: 1.66; color: var(--fg2);
+	margin-top: 1rem; font-style: italic; font-size: 1.05rem; line-height: 1.7; color: var(--fg2);
 }
 
 /* portrait sidebar */
