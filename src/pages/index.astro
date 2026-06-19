@@ -380,7 +380,10 @@ body {
 /* ── lead block ────────────────────────────────────────────────────── */
 .lead { display: grid; grid-template-columns: 1fr; gap: 2rem; margin-top: 2.2rem; }
 @media (min-width: 840px) {
-	.lead { grid-template-columns: 1.5fr 1fr; gap: 3rem; align-items: start; }
+	.lead { grid-template-columns: 1.5fr 1fr; gap: 1.5rem; align-items: start; }
+	/* pull the cutout toward the text — at head height its left side is empty,
+	   so it overlaps the gap invisibly; shoulders sit below the text. */
+	.lead-aside .fig { margin-left: -3.5rem; margin-right: -1.5rem; }
 }
 .standfirst {
 	font-size: clamp(1.15rem, 1.7vw, 1.5rem); line-height: 1.8; color: var(--fg);
