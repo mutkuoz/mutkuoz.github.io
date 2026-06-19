@@ -72,7 +72,7 @@ const dateStr = today.toLocaleDateString('en-GB', { day: 'numeric', month: 'long
 		<aside class="lead-aside">
 			<figure class="fig">
 				<div class="fig-slot">
-					<img src="/portrait.jpg" alt="mehmet utku öztürk — black-and-white engraved portrait" />
+					<img src="/portrait.png" alt="mehmet utku öztürk — black-and-white engraved portrait" />
 				</div>
 				<figcaption>mehmet utku öztürk. <span class="cap-soft">ankara, türkiye.</span></figcaption>
 			</figure>
@@ -382,8 +382,6 @@ body {
 @media (min-width: 840px) {
 	.lead { grid-template-columns: 1fr 21rem; gap: 3rem; align-items: start; }
 }
-/* square portrait, shown whole (no crop) */
-.lead-aside .fig-slot { aspect-ratio: 1 / 1; }
 .standfirst {
 	font-size: clamp(1.15rem, 1.7vw, 1.5rem); line-height: 1.8; color: var(--fg);
 	text-align: justify; hyphens: auto;
@@ -392,28 +390,17 @@ body {
 	margin-top: 1.1rem; font-style: italic; font-size: 1.08rem; line-height: 1.72; color: var(--fg2);
 }
 
-/* portrait sidebar */
+/* portrait — transparent line-art cutout, floats on the page */
 .fig { margin: 0; }
-.fig-slot {
-	position: relative; aspect-ratio: 4 / 5; border: 1px solid var(--hair);
-	display: grid; place-items: center; overflow: hidden;
-	background-image: repeating-linear-gradient(45deg, var(--hair) 0 1px, transparent 1px 11px);
-}
-.fig-wide .fig-slot { aspect-ratio: 16 / 7; }
-.fig-mark {
-	font-size: 0.7rem; letter-spacing: 0.08em; color: var(--muted);
-	background: var(--bg); padding: 0.25rem 0.6rem; border: 1px solid var(--hair);
-}
-.fig-slot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.05); }
-.fig-slot:has(img) { background-image: none; }
-.fig-slot:has(img) .fig-mark { display: none; }
+.fig-slot { position: relative; }
+.fig-slot img { display: block; width: 100%; height: auto; }
+/* black engraving would vanish on a black page — invert it in dark mode */
+[data-theme="dark"] .fig-slot img { filter: invert(1); }
 figcaption {
 	font-style: italic; font-size: 0.82rem; color: var(--muted);
 	padding-top: 0.5rem; margin-top: 0.5rem; border-top: 1px solid var(--hair); line-height: 1.5;
 }
 .cap-soft { color: var(--muted2); }
-.fig-wide { margin-top: 3.2rem; }
-.fig-wide figcaption { text-align: center; }
 
 /* ── section rule-head (quiet) ─────────────────────────────────────── */
 .rule-head { margin-bottom: 1.4rem; padding-bottom: 0.45rem; border-bottom: 1px solid var(--hair); }
