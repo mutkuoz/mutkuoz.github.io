@@ -1,7 +1,6 @@
 ---
-// src/pages/index.astro — a newspaper-style personal record, pure black on pure white, set in serif.
+// src/pages/index.astro — a quiet newspaper-style personal record, pure black on pure white, full lowercase, serif.
 import '../styles/global.css';
-import Board from '../components/Board.astro';
 
 const today = new Date();
 const dateStr = today.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -12,19 +11,19 @@ const dateStr = today.toLocaleDateString('en-GB', { day: 'numeric', month: 'long
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<meta name="description" content="Mehmet Utku Öztürk — software developer focused on artificial consciousness and thinking systems. Projects, research, and contact." />
-	<title>Mehmet Utku Öztürk</title>
+	<meta name="description" content="mehmet utku öztürk — software developer focused on artificial consciousness and thinking systems. projects, research, and contact." />
+	<title>mehmet utku öztürk</title>
 	<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 	<link rel="icon" type="image/x-icon" href="/favicon.ico" />
 	<meta property="og:type" content="website" />
-	<meta property="og:title" content="Mehmet Utku Öztürk" />
-	<meta property="og:description" content="Software developer focused on artificial consciousness and thinking systems. Projects, research, and contact." />
+	<meta property="og:title" content="mehmet utku öztürk" />
+	<meta property="og:description" content="software developer focused on artificial consciousness and thinking systems. projects, research, and contact." />
 	<meta name="twitter:card" content="summary" />
-	<meta name="twitter:title" content="Mehmet Utku Öztürk" />
-	<meta name="twitter:description" content="Software developer focused on artificial consciousness and thinking systems." />
+	<meta name="twitter:title" content="mehmet utku öztürk" />
+	<meta name="twitter:description" content="software developer focused on artificial consciousness and thinking systems." />
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-	<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&family=Playfair+Display:ital,wght@0,500..900;1,500..700&display=swap" rel="stylesheet" />
+	<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&family=Playfair+Display:ital,wght@0,500..800;1,500..600&display=swap" rel="stylesheet" />
 </head>
 <body data-theme="light">
 
@@ -40,7 +39,7 @@ const dateStr = today.toLocaleDateString('en-GB', { day: 'numeric', month: 'long
 		<a href="#research" class="nav-link">research</a>
 		<a href="#contact" class="nav-link">contact</a>
 	</div>
-	<button class="mode-toggle" id="modeToggle" aria-label="toggle dark mode" title="day / night (D)">
+	<button class="mode-toggle" id="modeToggle" aria-label="toggle dark mode" title="day / night (d)">
 		<svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
 			<circle cx="12" cy="12" r="4.5"></circle>
 			<path d="M12 1.5v2.5M12 20v2.5M4.2 4.2l1.8 1.8M18 18l1.8 1.8M1.5 12h2.5M20 12h2.5M4.2 19.8l1.8-1.8M18 6l1.8-1.8"></path>
@@ -57,16 +56,13 @@ const dateStr = today.toLocaleDateString('en-GB', { day: 'numeric', month: 'long
 	<!-- ── MASTHEAD ───────────────────────────────────────────────────── -->
 	<header class="masthead reveal">
 		<div class="dateline">
-			<span>Ankara &middot; Türkiye</span>
-			<span class="dateline-mid">Personal Edition</span>
+			<span>ankara &middot; türkiye</span>
 			<span id="datelineDate">{dateStr}</span>
 		</div>
-		<h1 class="nameplate">Mehmet Utku Öztürk</h1>
-		<p class="masthead-deck">software &middot; machine learning &middot; artificial consciousness &amp; thinking systems</p>
-		<div class="rule-double" aria-hidden="true"></div>
+		<h1 class="nameplate">mehmet utku öztürk</h1>
 	</header>
 
-	<!-- ── LEAD (bio + interests + portrait + facts) ──────────────────── -->
+	<!-- ── LEAD (bio + interests + portrait) ──────────────────────────── -->
 	<section class="lead reveal" aria-label="introduction">
 		<div class="lead-body">
 			<p class="standfirst">started programming when i was 8 with small apps and scripts. got familiar with c++ and c# by i was 11. started working on machine learning at 13, extremely unsuccessfully finetuned my first llm at 14. since then, i&rsquo;m working on software with a primary focus on artificial consciousness and &ldquo;thinking&rdquo; systems.</p>
@@ -81,24 +77,12 @@ const dateStr = today.toLocaleDateString('en-GB', { day: 'numeric', month: 'long
 				</div>
 				<figcaption>mehmet utku öztürk. <span class="cap-soft">ankara, türkiye.</span></figcaption>
 			</figure>
-			<div class="factbox">
-				<p class="factbox-head">key facts</p>
-				<dl>
-					<div><dt>location</dt><dd>ankara, türkiye &middot; gmt+3</dd></div>
-					<div><dt>focus</dt><dd>artificial consciousness &amp; thinking systems</dd></div>
-					<div><dt>society</dt><dd>mensa international</dd></div>
-					<div><dt>also</dt><dd>powerlifting &middot; chess &middot; coffee</dd></div>
-				</dl>
-			</div>
 		</aside>
 	</section>
 
 	<!-- ── ABOUT ──────────────────────────────────────────────────────── -->
 	<section id="about" class="section reveal">
-		<div class="rule-head">
-			<span class="rule-head-label">i &mdash; about</span>
-			<span class="rule-head-count">six roles</span>
-		</div>
+		<div class="rule-head"><h2 class="rule-head-label">about</h2></div>
 		<div class="cols cols-2">
 			<div class="col">
 				<article class="item">
@@ -123,7 +107,7 @@ const dateStr = today.toLocaleDateString('en-GB', { day: 'numeric', month: 'long
 						<span class="item-byline">physical</span>
 						<span class="item-plus" aria-hidden="true"></span>
 					</button>
-					<div class="item-body"><div class="item-body-inner"><p>competitive class II powerlifter — 1000+ lb total. training hybrid: powerlifting, strongman, bodybuilding, calisthenics, and kickboxing.</p></div></div>
+					<div class="item-body"><div class="item-body-inner"><p>competitive class ii powerlifter — 1000+ lb total. training hybrid: powerlifting, strongman, bodybuilding, calisthenics, and kickboxing.</p></div></div>
 				</article>
 			</div>
 			<div class="col">
@@ -166,10 +150,7 @@ const dateStr = today.toLocaleDateString('en-GB', { day: 'numeric', month: 'long
 
 	<!-- ── PROJECTS ───────────────────────────────────────────────────── -->
 	<section id="projects" class="section reveal">
-		<div class="rule-head">
-			<span class="rule-head-label">ii &mdash; projects</span>
-			<span class="rule-head-count">six ventures</span>
-		</div>
+		<div class="rule-head"><h2 class="rule-head-label">projects</h2></div>
 		<div class="cols cols-2">
 			<div class="col">
 				<article class="item item-proj">
@@ -229,10 +210,7 @@ const dateStr = today.toLocaleDateString('en-GB', { day: 'numeric', month: 'long
 
 	<!-- ── RESEARCH ───────────────────────────────────────────────────── -->
 	<section id="research" class="section reveal">
-		<div class="rule-head">
-			<span class="rule-head-label">iii &mdash; research</span>
-			<span class="rule-head-count">three papers</span>
-		</div>
+		<div class="rule-head"><h2 class="rule-head-label">research</h2></div>
 		<div class="papers">
 			<article class="item item-paper">
 				<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
@@ -264,10 +242,7 @@ const dateStr = today.toLocaleDateString('en-GB', { day: 'numeric', month: 'long
 
 	<!-- ── CONTACT ────────────────────────────────────────────────────── -->
 	<section id="contact" class="section reveal">
-		<div class="rule-head">
-			<span class="rule-head-label">iv &mdash; contact</span>
-			<span class="rule-head-count">say hello</span>
-		</div>
+		<div class="rule-head"><h2 class="rule-head-label">contact</h2></div>
 		<p class="contact-intro">open to collaboration, research, and good conversation.</p>
 		<p class="contact-loc">ankara, türkiye &middot; gmt+3</p>
 		<dl class="contact-list">
@@ -280,9 +255,8 @@ const dateStr = today.toLocaleDateString('en-GB', { day: 'numeric', month: 'long
 
 	<!-- ── COLOPHON ───────────────────────────────────────────────────── -->
 	<footer class="colophon reveal">
-		<div class="rule-double" aria-hidden="true"></div>
-		<p class="colophon-line">The personal record of Mehmet Utku Öztürk. Set in Playfair Display &amp; Newsreader. Last revised June 2026.</p>
-		<p class="colophon-line muted">diversions — <button class="ghost-link" id="playLink">snake</button> &middot; <button class="ghost-link" id="boardLink">the board</button></p>
+		<p class="colophon-line">the personal record of mehmet utku öztürk. set in playfair display &amp; newsreader. last revised june 2026.</p>
+		<p class="colophon-line muted">diversions — <button class="ghost-link" id="playLink">snake</button></p>
 	</footer>
 
 </main>
@@ -306,9 +280,6 @@ const dateStr = today.toLocaleDateString('en-GB', { day: 'numeric', month: 'long
 	</div>
 </div>
 
-<!-- ═══ SHARED BOARD ══════════════════════════════════════════════════════ -->
-<Board />
-
 <!-- ═══ STYLES ════════════════════════════════════════════════════════════ -->
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -316,24 +287,20 @@ const dateStr = today.toLocaleDateString('en-GB', { day: 'numeric', month: 'long
 :root {
 	--serif:   'Newsreader', Georgia, 'Times New Roman', serif;
 	--display: 'Playfair Display', Georgia, 'Times New Roman', serif;
-	/* aliases consumed by Board.astro + Snake so they inherit this theme */
-	--sans: var(--serif);
-	--mono: var(--serif);
+	/* alias consumed by snake canvas */
+	--ink: var(--fg);
 }
 
 /* ── pure black / white theming ────────────────────────────────────── */
 [data-theme="light"] {
 	--bg:#ffffff; --fg:#000000;
-	--fg2:rgba(0,0,0,0.74); --muted:rgba(0,0,0,0.54); --muted2:rgba(0,0,0,0.38);
-	--line:#000000; --hair:rgba(0,0,0,0.22);
-	/* Board.astro aliases */
-	--paper:#ffffff; --ink:#000000; --ink-soft:rgba(0,0,0,0.07);
+	--fg2:rgba(0,0,0,0.74); --muted:rgba(0,0,0,0.52); --muted2:rgba(0,0,0,0.36);
+	--hair:rgba(0,0,0,0.16);
 }
 [data-theme="dark"] {
 	--bg:#000000; --fg:#ffffff;
-	--fg2:rgba(255,255,255,0.78); --muted:rgba(255,255,255,0.56); --muted2:rgba(255,255,255,0.40);
-	--line:#ffffff; --hair:rgba(255,255,255,0.26);
-	--paper:#000000; --ink:#ffffff; --ink-soft:rgba(255,255,255,0.10);
+	--fg2:rgba(255,255,255,0.78); --muted:rgba(255,255,255,0.54); --muted2:rgba(255,255,255,0.38);
+	--hair:rgba(255,255,255,0.20);
 }
 
 html { scroll-behavior: smooth; }
@@ -341,6 +308,7 @@ html { scroll-behavior: smooth; }
 body {
 	font-family: var(--serif);
 	font-optical-sizing: auto;
+	text-transform: lowercase;
 	color: var(--fg);
 	background: var(--bg);
 	-webkit-font-smoothing: antialiased;
@@ -355,7 +323,7 @@ body {
 /* ── reading progress ──────────────────────────────────────────────── */
 #scrollProgress {
 	position: fixed; top: 0; left: 0; height: 2px; width: 0;
-	background: var(--fg); z-index: 200;
+	background: var(--fg); z-index: 200; opacity: 0.6;
 }
 
 /* ── navbar ────────────────────────────────────────────────────────── */
@@ -371,14 +339,13 @@ body {
 @media (min-width: 720px) { #navbar { padding: 0 2rem; } }
 .nav-brand {
 	font-family: var(--display); font-style: italic; font-weight: 600;
-	font-size: 1.02rem; letter-spacing: 0; color: var(--fg);
-	text-decoration: none; white-space: nowrap;
+	font-size: 1.02rem; color: var(--fg); text-decoration: none; white-space: nowrap;
 }
 .nav-links { display: none; gap: 1.6rem; margin-left: auto; margin-right: 1.3rem; }
 @media (min-width: 700px) { .nav-links { display: flex; } }
 .nav-link {
-	font-family: var(--serif); font-size: 0.74rem; letter-spacing: 0.16em;
-	text-transform: uppercase; color: var(--muted); text-decoration: none;
+	font-family: var(--serif); font-size: 0.86rem; letter-spacing: 0.02em;
+	color: var(--muted); text-decoration: none;
 	position: relative; padding-bottom: 2px; transition: color 0.18s ease;
 }
 .nav-link::after {
@@ -400,63 +367,50 @@ body {
 [data-theme="light"] .icon-moon { display: none; }
 [data-theme="dark"]  .icon-sun  { display: none; }
 
-/* ── page column ───────────────────────────────────────────────────── */
+/* ── page column (wider) ───────────────────────────────────────────── */
 .paper {
-	max-width: 64rem; margin: 0 auto;
+	max-width: 80rem; margin: 0 auto;
 	padding: 6rem 1.3rem 4rem;
 }
-@media (min-width: 720px) { .paper { padding: 7rem 2.2rem 5rem; } }
-.section { scroll-margin-top: 4.5rem; margin-top: 3.6rem; }
+@media (min-width: 720px) { .paper { padding: 7rem 2.4rem 5rem; } }
+.section { scroll-margin-top: 4.5rem; margin-top: 3.4rem; }
 
 /* ── masthead ──────────────────────────────────────────────────────── */
-.masthead { border-top: 3px solid var(--line); padding-top: 0.55rem; }
+.masthead { border-bottom: 1px solid var(--hair); padding-bottom: 1.2rem; }
 .dateline {
 	display: flex; align-items: center; justify-content: space-between; gap: 0.6rem;
-	border-bottom: 1px solid var(--line); padding-bottom: 0.5rem;
-	font-size: 0.66rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted);
+	font-size: 0.72rem; letter-spacing: 0.05em; color: var(--muted); margin-bottom: 0.9rem;
 }
-.dateline-mid { font-style: italic; letter-spacing: 0.1em; }
-@media (max-width: 540px) { .dateline-mid { display: none; } }
 .nameplate {
-	font-family: var(--display); font-weight: 800;
-	font-size: clamp(2.5rem, 8.5vw, 5.4rem); line-height: 0.98; text-align: center;
-	letter-spacing: -0.02em; padding: 1.5rem 0 0.7rem;
+	font-family: var(--display); font-weight: 700;
+	font-size: clamp(2.4rem, 8vw, 5rem); line-height: 1; text-align: center;
+	letter-spacing: -0.02em;
 }
-.masthead-deck {
-	text-align: center; font-style: italic; color: var(--fg2);
-	font-size: clamp(0.95rem, 2vw, 1.15rem); letter-spacing: 0.01em; padding-bottom: 0.8rem;
-}
-.rule-double { border-bottom: 4px double var(--line); }
 
 /* ── lead block ────────────────────────────────────────────────────── */
-.lead { display: grid; grid-template-columns: 1fr; gap: 2.2rem; margin-top: 2.4rem; }
+.lead { display: grid; grid-template-columns: 1fr; gap: 2rem; margin-top: 2.2rem; }
 @media (min-width: 840px) {
-	.lead { grid-template-columns: 1fr 17.5rem; gap: 3rem; }
-	.lead-aside { border-left: 1px solid var(--hair); padding-left: 3rem; }
+	.lead { grid-template-columns: 1fr 18rem; gap: 2.8rem; align-items: start; }
+	.lead-body { columns: 2; column-gap: 2.2rem; }
 }
 .standfirst {
-	font-size: clamp(1.1rem, 2.3vw, 1.4rem); line-height: 1.7; color: var(--fg);
+	font-size: clamp(1.05rem, 1.6vw, 1.2rem); line-height: 1.66; color: var(--fg);
 	text-align: justify; hyphens: auto;
 }
-.standfirst::first-letter {
-	font-family: var(--display); font-weight: 800; float: left;
-	font-size: 4.4em; line-height: 0.72; padding: 0.05em 0.1em 0 0; color: var(--fg);
-}
 .interests {
-	margin-top: 1.3rem; font-style: italic; font-size: 1.05rem; line-height: 1.7;
-	color: var(--fg2); border-top: 1px solid var(--hair); padding-top: 1.3rem;
+	margin-top: 1rem; font-style: italic; font-size: 1.02rem; line-height: 1.66; color: var(--fg2);
 }
 
-/* portrait + facts sidebar */
+/* portrait sidebar */
 .fig { margin: 0; }
 .fig-slot {
-	position: relative; aspect-ratio: 4 / 5; border: 1px solid var(--line);
+	position: relative; aspect-ratio: 4 / 5; border: 1px solid var(--hair);
 	display: grid; place-items: center; overflow: hidden;
-	background-image: repeating-linear-gradient(45deg, var(--hair) 0 1px, transparent 1px 10px);
+	background-image: repeating-linear-gradient(45deg, var(--hair) 0 1px, transparent 1px 11px);
 }
 .fig-wide .fig-slot { aspect-ratio: 16 / 7; }
 .fig-mark {
-	font-size: 0.68rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted);
+	font-size: 0.7rem; letter-spacing: 0.08em; color: var(--muted);
 	background: var(--bg); padding: 0.25rem 0.6rem; border: 1px solid var(--hair);
 }
 .fig-slot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.05); }
@@ -467,43 +421,21 @@ figcaption {
 	padding-top: 0.5rem; margin-top: 0.5rem; border-top: 1px solid var(--hair); line-height: 1.5;
 }
 .cap-soft { color: var(--muted2); }
-.fig-wide { margin-top: 3.4rem; }
+.fig-wide { margin-top: 3.2rem; }
 .fig-wide figcaption { text-align: center; }
 
-.factbox { margin-top: 1.8rem; border-top: 2px solid var(--line); padding-top: 0.7rem; }
-.factbox-head {
-	font-size: 0.66rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--fg);
-	font-weight: 600; margin-bottom: 0.6rem;
-}
-.factbox dl { display: grid; gap: 0.5rem; }
-.factbox dt {
-	font-size: 0.6rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted);
-}
-.factbox dd { font-size: 0.92rem; line-height: 1.4; color: var(--fg); }
-
-/* ── section rule-head ─────────────────────────────────────────────── */
-.rule-head {
-	display: flex; align-items: baseline; justify-content: space-between; gap: 1rem;
-	border-top: 3px solid var(--line); border-bottom: 1px solid var(--line);
-	padding: 0.45rem 0; margin-bottom: 1.5rem;
-}
-.rule-head-label {
-	font-size: 0.82rem; letter-spacing: 0.22em; text-transform: uppercase; font-weight: 600; color: var(--fg);
-}
-.rule-head-count { font-style: italic; font-size: 0.82rem; color: var(--muted); }
+/* ── section rule-head (quiet) ─────────────────────────────────────── */
+.rule-head { margin-bottom: 1.4rem; padding-bottom: 0.45rem; border-bottom: 1px solid var(--hair); }
+.rule-head-label { font-family: var(--serif); font-size: 1rem; font-weight: 600; letter-spacing: 0.01em; color: var(--fg); }
 
 /* ── columns ───────────────────────────────────────────────────────── */
 .cols-2 { display: grid; grid-template-columns: 1fr; }
-@media (min-width: 760px) {
-	.cols-2 { grid-template-columns: 1fr 1fr; }
-	.cols-2 .col + .col { border-left: 1px solid var(--hair); padding-left: 2.4rem; }
-	.cols-2 .col:first-child { padding-right: 2.4rem; }
-}
+@media (min-width: 760px) { .cols-2 { grid-template-columns: 1fr 1fr; column-gap: 3.2rem; } }
 
 /* ── expandable item ───────────────────────────────────────────────── */
 .item { border-top: 1px solid var(--hair); }
 .col > .item:first-child, .papers > .item:first-child { border-top: none; }
-@media (max-width: 759px) { .col > .item:first-child { border-top: 1px solid var(--hair); } .col:first-child > .item:first-child { border-top: none; } }
+@media (max-width: 759px) { .col + .col > .item:first-child { border-top: 1px solid var(--hair); } }
 
 .item-head {
 	display: grid; grid-template-columns: 1fr auto; grid-template-areas: "title plus" "byline plus";
@@ -519,22 +451,21 @@ figcaption {
 }
 .item-byline {
 	grid-area: byline; margin-top: 0.25rem;
-	font-size: 0.64rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted);
+	font-size: 0.74rem; letter-spacing: 0.02em; color: var(--muted);
 }
 .item-plus { grid-area: plus; align-self: center; width: 1rem; text-align: center; }
 .item-plus::after {
 	content: '+'; font-family: var(--display); font-size: 1.3rem; line-height: 1; color: var(--muted);
-	transition: color 0.18s ease, transform 0.25s ease; display: inline-block;
+	transition: color 0.18s ease; display: inline-block;
 }
 .item-head:hover .item-plus::after { color: var(--fg); }
 .item-head[aria-expanded="true"] .item-plus::after { content: '\2212'; color: var(--fg); }
 
-/* project + paper title flavours */
 .item-proj .item-title { font-family: var(--display); font-weight: 700; font-size: 1.2rem; letter-spacing: -0.01em; }
 .item-paper .item-title { font-style: italic; font-weight: 500; font-size: 1.08rem; }
 
 /* status markers */
-.status { display: inline-block; width: 0.62rem; height: 0.62rem; flex-shrink: 0; transform: translateY(-0.04em); }
+.status { display: inline-block; width: 0.6rem; height: 0.6rem; flex-shrink: 0; transform: translateY(-0.04em); }
 .status-live { background: var(--fg); }
 .status-paused { background: transparent; box-shadow: inset 0 0 0 1.5px var(--fg); }
 .status-shelved { background: var(--muted2); }
@@ -543,33 +474,29 @@ figcaption {
 .item-head[aria-expanded="true"] + .item-body { grid-template-rows: 1fr; }
 .item-body-inner { overflow: hidden; min-height: 0; }
 .item-body p {
-	font-size: 0.95rem; line-height: 1.8; color: var(--fg2); max-width: 46rem;
+	font-size: 0.95rem; line-height: 1.8; color: var(--fg2); max-width: 48rem;
 	padding: 0.1rem 0 1rem;
 }
-.item-body p.abstract { text-align: justify; hyphens: auto; max-width: 60rem; }
+.item-body p.abstract { text-align: justify; hyphens: auto; max-width: 64rem; }
 
 /* link chip */
 .chip {
-	display: inline-block; margin-top: 0.2rem; margin-bottom: 1rem;
-	font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--fg);
+	display: inline-block; margin-bottom: 1rem;
+	font-size: 0.78rem; letter-spacing: 0.02em; color: var(--fg);
 	text-decoration: none; border-bottom: 1px solid var(--fg); padding-bottom: 1px;
 	transition: opacity 0.18s ease;
 }
 .item-body p + .chip { margin-top: -0.4rem; }
 .chip:hover { opacity: 0.55; }
 
-.legend { margin-top: 1.4rem; font-size: 0.74rem; color: var(--muted); display: flex; align-items: center; gap: 0.3rem; flex-wrap: wrap; }
+.legend { margin-top: 1.4rem; font-size: 0.8rem; color: var(--muted); display: flex; align-items: center; gap: 0.3rem; flex-wrap: wrap; }
 .legend .status { margin-right: 0.1rem; }
 .more-note { margin-top: 1.4rem; font-style: italic; font-size: 0.9rem; color: var(--muted2); }
-
 .papers .item-body p.abstract { padding-bottom: 0.7rem; }
 
 /* ── contact ───────────────────────────────────────────────────────── */
-.contact-intro { font-size: 1.15rem; line-height: 1.6; color: var(--fg); max-width: 34rem; }
-.contact-loc {
-	margin-top: 0.5rem; margin-bottom: 1.6rem;
-	font-size: 0.66rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted);
-}
+.contact-intro { font-size: 1.15rem; line-height: 1.6; color: var(--fg); max-width: 36rem; }
+.contact-loc { margin-top: 0.5rem; margin-bottom: 1.6rem; font-size: 0.74rem; letter-spacing: 0.04em; color: var(--muted); }
 .contact-list { display: grid; }
 .c-link {
 	display: grid; grid-template-columns: 6rem 1fr; align-items: baseline; gap: 1rem;
@@ -578,16 +505,15 @@ figcaption {
 }
 .c-link:last-child { border-bottom: 1px solid var(--hair); }
 .c-link:hover { padding-left: 0.5rem; }
-.c-link dt { font-size: 0.62rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+.c-link dt { font-size: 0.74rem; letter-spacing: 0.03em; color: var(--muted); }
 .c-link:hover dt { color: var(--fg); }
 .c-link dd { font-size: 1rem; font-weight: 500; }
 .c-link:hover dd { text-decoration: underline; text-underline-offset: 3px; }
 
 /* ── colophon ──────────────────────────────────────────────────────── */
-.colophon { margin-top: 4rem; }
-.colophon .rule-double { margin-bottom: 1.1rem; }
+.colophon { margin-top: 4rem; padding-top: 1.1rem; border-top: 1px solid var(--hair); }
 .colophon-line { font-style: italic; font-size: 0.82rem; color: var(--muted); line-height: 1.9; }
-.colophon-line.muted { font-style: normal; letter-spacing: 0.04em; }
+.colophon-line.muted { font-style: normal; letter-spacing: 0.02em; }
 .ghost-link {
 	font-family: var(--serif); font-size: 0.82rem; color: var(--fg);
 	background: none; border: none; border-bottom: 1px solid var(--hair); cursor: pointer;
@@ -615,11 +541,11 @@ figcaption {
 #snakeCanvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
 .snake-bar {
 	position: absolute; top: 1.2rem; left: 50%; transform: translateX(-50%);
-	display: flex; align-items: center; gap: 1.3rem; font-size: 0.78rem; color: var(--muted);
+	display: flex; align-items: center; gap: 1.3rem; font-size: 0.82rem; color: var(--muted);
 	padding: 0.5rem 1.1rem; background: color-mix(in srgb, var(--bg) 75%, transparent);
 	border: 1px solid var(--hair);
 }
-.snake-title { font-weight: 600; color: var(--fg); text-transform: uppercase; letter-spacing: 0.16em; }
+.snake-title { font-weight: 600; color: var(--fg); letter-spacing: 0.06em; }
 .snake-score b { color: var(--fg); }
 .snake-keys { color: var(--muted2); }
 .snake-close {
@@ -636,18 +562,18 @@ figcaption {
 	transition: opacity 0.25s ease, transform 0.3s cubic-bezier(0.34,1.4,0.64,1);
 }
 .snake-over.show { display: block; opacity: 1; transform: translate(-50%,-50%) scale(1); }
-.snake-over-t { font-family: var(--display); font-size: 2.2rem; font-weight: 800; color: var(--fg); margin-bottom: 0.4rem; }
+.snake-over-t { font-family: var(--display); font-size: 2.2rem; font-weight: 700; color: var(--fg); margin-bottom: 0.4rem; }
 .snake-over-s { font-size: 0.9rem; color: var(--muted); margin-bottom: 1.2rem; }
 .snake-over-s b { color: var(--fg); }
 .snake-btn {
-	font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.12em;
+	font-size: 0.82rem; letter-spacing: 0.04em;
 	padding: 0.55rem 1.3rem; border: 1.5px solid var(--fg); background: transparent; color: var(--fg);
 	cursor: pointer; transition: background 0.18s ease, color 0.18s ease;
 }
 .snake-btn:hover { background: var(--fg); color: var(--bg); }
 
 /* ── reveal ────────────────────────────────────────────────────────── */
-.reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.6s cubic-bezier(0.4,0,0.2,1), transform 0.6s cubic-bezier(0.4,0,0.2,1); }
+.reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.6s cubic-bezier(0.4,0,0.2,1), transform 0.6s cubic-bezier(0.4,0,0.2,1); }
 .reveal.visible { opacity: 1; transform: translateY(0); }
 
 @media (prefers-reduced-motion: reduce) {
@@ -679,10 +605,10 @@ const toast = (function () {
 	if (el) el.textContent = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 })();
 
-/* ── day / night ───────────────────────────────────────────────────── */
+/* ── day / night (light is default) ────────────────────────────────── */
 (function () {
 	const html = document.documentElement;
-	const saved = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+	const saved = localStorage.getItem('theme') || 'light';
 	html.setAttribute('data-theme', saved); document.body.setAttribute('data-theme', saved);
 	document.getElementById('modeToggle').addEventListener('click', () => {
 		const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
@@ -691,9 +617,9 @@ const toast = (function () {
 	});
 })();
 
-/* ── ink helper (foreground colour) for snake/board canvases ───────── */
+/* ── ink helper (foreground colour) for snake canvas ───────────────── */
 function inkColor() {
-	return getComputedStyle(document.documentElement).getPropertyValue('--ink').trim()
+	return getComputedStyle(document.documentElement).getPropertyValue('--fg').trim()
 		|| (document.documentElement.getAttribute('data-theme') === 'dark' ? '#ffffff' : '#000000');
 }
 
@@ -825,7 +751,7 @@ const Snake = (function () {
 })();
 document.getElementById('playLink').addEventListener('click', () => Snake.start());
 
-/* ── keyboard: D = day/night · type "snake" / "board" ──────────────── */
+/* ── keyboard: d = day/night · type "snake" ────────────────────────── */
 (function () {
 	let buf = '';
 	addEventListener('keydown', e => {
@@ -838,7 +764,6 @@ document.getElementById('playLink').addEventListener('click', () => Snake.start(
 		if (/^[a-z]$/.test(kl)) {
 			buf = (buf + kl).slice(-6);
 			if (buf.endsWith('snake') || buf.endsWith('play')) { Snake.start(); buf = ''; }
-			else if (buf.endsWith('board') || buf.endsWith('draw')) { window.Board && window.Board.open(); buf = ''; }
 		}
 	});
 })();
