@@ -369,7 +369,7 @@ const PALETTE = ['#1d1c18', '#5b5650', '#ffffff', '#e5484d', '#f76b15', '#ffb224
 	textIn.addEventListener('keydown', e => {
 		if (e.key === 'Enter' && textIn.value.trim() && pendText) {
 			const px = Math.max(14, size * 3.2);
-			myStrokes.push({ type: 'text', text: textIn.value.trim(), x: pendText.x, y: pendText.y, color, font: '600 ' + px + 'px "Hanken Grotesk", sans-serif' });
+			myStrokes.push({ type: 'text', text: textIn.value.trim(), x: pendText.x, y: pendText.y, color, font: '600 ' + px + 'px "Newsreader", Georgia, serif' });
 			render(); scheduleSave(); hideTextInput();
 		} else if (e.key === 'Escape') hideTextInput();
 	});
