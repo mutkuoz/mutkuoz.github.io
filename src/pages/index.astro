@@ -65,8 +65,7 @@ const dateStr = today.toLocaleDateString('en-GB', { day: 'numeric', month: 'long
 	<!-- ── LEAD (bio + interests + portrait) ──────────────────────────── -->
 	<section class="lead reveal" aria-label="introduction">
 		<div class="lead-body">
-			<p class="standfirst">started programming when i was 8 with small apps and scripts. got familiar with c++ and c# by i was 11. started working on machine learning at 13, extremely unsuccessfully finetuned my first llm at 14. since then, i&rsquo;m working on software with a primary focus on artificial consciousness and &ldquo;thinking&rdquo; systems.</p>
-			<p class="interests">other than software, i am interested in powerlifting, strongman, martial arts, cognitive science, kinesiology, chess, sudoku, and good coffee.</p>
+			<p class="standfirst">started programming when i was 8 with small apps and scripts. got familiar with c++ and c# by i was 11. started working on machine learning at 13, extremely unsuccessfully finetuned my first llm at 14. since then, i&rsquo;m working on software with a primary focus on artificial consciousness and &ldquo;thinking&rdquo; systems. other than software, i am interested in powerlifting, strongman, martial arts, cognitive science, kinesiology, chess, sudoku, and good coffee.</p>
 		</div>
 
 		<aside class="lead-aside">
@@ -245,8 +244,7 @@ const dateStr = today.toLocaleDateString('en-GB', { day: 'numeric', month: 'long
 
 	<!-- ── COLOPHON ───────────────────────────────────────────────────── -->
 	<footer class="colophon reveal">
-		<p class="colophon-line">the personal record of mehmet utku öztürk. set in playfair display &amp; newsreader. last revised june 2026.</p>
-		<p class="colophon-line muted">diversions — <button class="ghost-link" id="playLink">snake</button></p>
+		<p class="colophon-line muted"><button class="ghost-link" id="playLink">snake</button></p>
 	</footer>
 
 </main>
@@ -383,18 +381,15 @@ body {
 	.lead { grid-template-columns: 1.5fr 1fr; gap: 1.5rem; align-items: start; }
 	/* pull the cutout toward the text — at head height its left side is empty,
 	   so it overlaps the gap invisibly; shoulders sit below the text. */
-	.lead-aside .fig { margin-left: -3.5rem; margin-right: -1.5rem; }
+	.lead-aside .fig { margin-left: -3.5rem; margin-right: -1.5rem; max-width: 30rem; }
 }
 .standfirst {
 	font-size: clamp(1.15rem, 1.7vw, 1.5rem); line-height: 1.8; color: var(--fg);
 	text-align: justify; hyphens: auto;
 }
-.interests {
-	margin-top: 1.1rem; font-style: italic; font-size: 1.08rem; line-height: 1.72; color: var(--fg2);
-}
 
 /* portrait — transparent line-art cutout, floats on the page */
-.fig { margin: 0; }
+.fig { margin: 0 auto; max-width: 22rem; }
 .fig-slot { position: relative; }
 .fig-slot img { display: block; width: 100%; height: auto; }
 /* black engraving would vanish on a black page — invert it in dark mode */
