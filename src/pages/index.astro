@@ -30,6 +30,9 @@ const dateStr = today.toLocaleDateString('en-GB', { day: 'numeric', month: 'long
 <!-- reading-progress hairline -->
 <div id="scrollProgress" aria-hidden="true"></div>
 
+<!-- the overly, unnecessarily, excessively complex day/night transition stage -->
+<canvas id="skyCanvas" class="sky-canvas" aria-hidden="true"></canvas>
+
 <!-- ═══ NAVBAR ════════════════════════════════════════════════════════════ -->
 <nav id="navbar">
 	<a href="#top" class="nav-brand">utku&rsquo;s&nbsp;space</a>
@@ -552,9 +555,34 @@ figcaption {
 .reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.6s cubic-bezier(0.4,0,0.2,1), transform 0.6s cubic-bezier(0.4,0,0.2,1); }
 .reveal.visible { opacity: 1; transform: translateY(0); }
 
+/* ── celestial day/night transition stage ─────────────────────────── */
+.sky-canvas {
+	position: fixed; inset: 0; z-index: 600; display: none; opacity: 0;
+	pointer-events: none; cursor: pointer;
+	transition: opacity 0.3s ease;
+}
+.sky-canvas.show { display: block; opacity: 1; pointer-events: auto; }
+
+/* the toggle winds up before it flings the heavens into motion */
+.mode-toggle.casting { animation: toggleCharge 0.5s cubic-bezier(0.34,1.4,0.64,1); }
+@keyframes toggleCharge {
+	0%   { transform: scale(1) rotate(0); }
+	45%  { transform: scale(0.78) rotate(-32deg); }
+	100% { transform: scale(1) rotate(0); }
+}
+/* …and lands with a flourish once the new world is revealed */
+.mode-toggle.landed { animation: toggleLand 0.7s cubic-bezier(0.34,1.55,0.5,1); }
+@keyframes toggleLand {
+	0%   { transform: scale(0.5) rotate(-220deg); }
+	60%  { transform: scale(1.18) rotate(12deg); }
+	100% { transform: scale(1) rotate(0); }
+}
+
 @media (prefers-reduced-motion: reduce) {
 	html { scroll-behavior: auto; }
 	.reveal { opacity: 1; transform: none; transition: none; }
+	.sky-canvas { display: none !important; }
+	.mode-toggle.casting, .mode-toggle.landed { animation: none; }
 }
 </style>
 
@@ -581,16 +609,370 @@ const toast = (function () {
 	if (el) el.textContent = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 })();
 
-/* ── day / night (light is default) ────────────────────────────────── */
-(function () {
+/* ══════════════════════════════════════════════════════════════════════
+   day / night — but as an absurd, multi-act celestial cinematic.
+   one click and the sun sets, the sky bleeds through sunset into night,
+   stars ignite, a constellation draws itself, shooting stars streak, an
+   aurora breathes, the moon climbs — then the freshly-themed page is
+   revealed through an aperture that irises out of the toggle button.
+   (and the whole thing runs in reverse for sunrise.)
+   wildly more machinery than a colour swap needs. that is the point.
+   ════════════════════════════════════════════════════════════════════ */
+const ThemeCinema = (function () {
 	const html = document.documentElement;
-	const saved = localStorage.getItem('theme') || 'light';
-	html.setAttribute('data-theme', saved); document.body.setAttribute('data-theme', saved);
-	document.getElementById('modeToggle').addEventListener('click', () => {
-		const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-		html.setAttribute('data-theme', next); document.body.setAttribute('data-theme', next);
-		localStorage.setItem('theme', next);
-	});
+	const body = document.body;
+	const toggleBtn = document.getElementById('modeToggle');
+	const canvas = document.getElementById('skyCanvas');
+	const ctx = canvas.getContext('2d');
+	const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+
+	const DURATION = 4800;   // ms — yes, nearly five whole seconds to flip a colour.
+	const FLIP_AT  = 0.60;   // swap the real page theme behind the curtain here
+
+	let running = false, raf = 0, startT = 0, T = 0;
+	let dir = 1;             // +1 = day→night (dusk) · -1 = night→day (dawn)
+	let toTheme = 'dark', flipped = false;
+	let W = 0, H = 0, dpr = 1, horizonY = 0, bx = 0, by = 0, maxR = 0;
+	let stars = [], clouds = [], hills = [], motes = [], shooters = [], constellation = [], captionBeats = [];
+
+	/* —— maths —— */
+	const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+	const lerp  = (a, b, t) => a + (b - a) * t;
+	const remap = (p, a, b) => clamp((p - a) / (b - a), 0, 1);
+	const easeInOut = t => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+	const easeOut   = t => 1 - Math.pow(1 - t, 3);
+	const mix = (c1, c2, t) => [lerp(c1[0], c2[0], t), lerp(c1[1], c2[1], t), lerp(c1[2], c2[2], t)];
+	const rgb = (c, a) => a == null ? `rgb(${c[0]|0},${c[1]|0},${c[2]|0})` : `rgba(${c[0]|0},${c[1]|0},${c[2]|0},${a})`;
+	const rnd = (a, b) => a + Math.random() * (b - a);
+	const band = (p, from, to, f) => clamp(Math.min(remap(p, from, from + f), 1 - remap(p, to - f, to)), 0, 1);
+
+	/* —— sky keyframes, day → night (top colour, bottom colour) —— */
+	const SKY = [
+		{ p: 0.00, t: [154,198,235], b: [226,234,228] }, // clear day
+		{ p: 0.26, t: [120,168,214], b: [245,210,156] }, // afternoon, warming horizon
+		{ p: 0.46, t: [120,112,168], b: [248,150, 96] }, // golden hour
+		{ p: 0.64, t: [ 78, 60,116], b: [203, 98,112] }, // sunset rose
+		{ p: 0.82, t: [ 28, 26, 60], b: [ 70, 40, 84] }, // dusk indigo
+		{ p: 1.00, t: [  5,  6, 16], b: [ 12, 12, 30] }, // deep night
+	];
+	function skyAt(q) {
+		let i = 0; while (i < SKY.length - 1 && q > SKY[i + 1].p) i++;
+		const a = SKY[i], b = SKY[Math.min(i + 1, SKY.length - 1)];
+		const u = a === b ? 0 : remap(q, a.p, b.p);
+		return { top: mix(a.t, b.t, u), bot: mix(a.b, b.b, u) };
+	}
+
+	/* —— apply theme instantly + persist —— */
+	function apply(t) {
+		html.setAttribute('data-theme', t);
+		body.setAttribute('data-theme', t);
+		try { localStorage.setItem('theme', t); } catch (e) {}
+	}
+
+	/* —— measure viewport, button centre, reveal radius —— */
+	function size() {
+		dpr = Math.min(window.devicePixelRatio || 1, 2);
+		W = innerWidth; H = innerHeight; horizonY = H * 0.8;
+		canvas.width = W * dpr; canvas.height = H * dpr;
+		canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+		ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+		const r = toggleBtn.getBoundingClientRect();
+		bx = r.left + r.width / 2; by = r.top + r.height / 2;
+		maxR = Math.max(Math.hypot(bx, by), Math.hypot(W - bx, by),
+		                Math.hypot(bx, H - by), Math.hypot(W - bx, H - by)) + 40;
+	}
+
+	/* —— populate the heavens —— */
+	function build() {
+		stars = [];
+		for (let i = 0; i < 180; i++)
+			stars.push({ x: rnd(0, W), y: rnd(0, horizonY * 0.95),
+				r: rnd(0.4, 1.7) * (Math.random() < 0.08 ? 2 : 1),
+				a: rnd(0.35, 1), tw: rnd(1, 3), ph: rnd(0, 7) });
+
+		constellation = [];
+		const up = stars.filter(s => s.y < horizonY * 0.6);
+		for (let i = 0; i < 7 && up.length; i++) constellation.push(up.splice((Math.random() * up.length) | 0, 1)[0]);
+
+		clouds = [];
+		for (let i = 0; i < 6; i++)
+			clouds.push({ x: rnd(-120, W), y: rnd(0.12 * H, 0.52 * H), s: rnd(0.7, 1.5), a: rnd(0.5, 0.9), spd: rnd(0.004, 0.013) });
+
+		motes = [];
+		for (let i = 0; i < 42; i++)
+			motes.push({ x: rnd(0, W), y: rnd(0.2 * H, H), r: rnd(0.6, 2), s: rnd(0.6, 1.6), ph: rnd(0, 7) });
+
+		hills = [];
+		[{ base: 0.86, amp: 0.05, col: [44,50,60] },
+		 { base: 0.90, amp: 0.07, col: [26,30,40] },
+		 { base: 0.95, amp: 0.05, col: [10,12,20] }].forEach(L => {
+			const pts = [], seg = Math.ceil(W / 40) + 2, s1 = rnd(0, 7), s2 = rnd(0, 7);
+			for (let i = 0; i <= seg; i++) {
+				const x = (i / seg) * W;
+				const y = H * L.base - Math.sin(i * 0.5 + s1) * H * L.amp * 0.5 - Math.sin(i * 0.17 + s2) * H * L.amp * 0.5;
+				pts.push([x, y]);
+			}
+			hills.push({ pts, col: L.col });
+		});
+
+		shooters = (dir === 1 ? [{ at: 0.70, win: 0.10 }, { at: 0.85, win: 0.10 }]
+		                      : [{ at: 0.06, win: 0.10 }, { at: 0.20, win: 0.09 }]);
+		shooters.forEach(s => { s.x = rnd(0.15 * W, 0.8 * W); s.y = rnd(0.05 * H, 0.3 * H); s.ang = rnd(0.35, 0.8); s.len = rnd(0.4, 0.65) * Math.hypot(W, H); });
+
+		const lines = (dir === 1
+			? [['the sun goes down over ankara', 'night settles on the steppe'], ['dusk folds over the city', 'the dark comes in, slow and certain']]
+			: [['first light breaks over ankara', 'the city wakes into white'], ['dawn spills across the steppe', 'morning returns, bright and plain']]
+		)[(Math.random() * 2) | 0];
+		captionBeats = [{ from: 0.10, to: 0.40, text: lines[0] }, { from: 0.46, to: 0.78, text: lines[1] }];
+	}
+
+	/* —— individual painters —— */
+	function drawAurora(now, nf) {
+		const a = clamp((nf - 0.4) / 0.6, 0, 1) * 0.5; if (a <= 0) return;
+		ctx.save(); ctx.globalCompositeOperation = 'lighter';
+		for (let bnd = 0; bnd < 2; bnd++) {
+			const baseY = H * (0.16 + bnd * 0.07), col = bnd ? [120,90,200] : [60,200,170];
+			ctx.beginPath(); ctx.moveTo(0, baseY);
+			for (let x = 0; x <= W; x += 20)
+				ctx.lineTo(x, baseY + Math.sin(x * 0.01 + now * 0.0006 + bnd * 2) * 22 + Math.sin(x * 0.004 + now * 0.0003) * 30);
+			ctx.lineTo(W, 0); ctx.lineTo(0, 0); ctx.closePath();
+			const g = ctx.createLinearGradient(0, baseY - 80, 0, baseY + 60);
+			g.addColorStop(0, rgb(col, 0)); g.addColorStop(0.5, rgb(col, a)); g.addColorStop(1, rgb(col, 0));
+			ctx.fillStyle = g; ctx.fill();
+		}
+		ctx.restore();
+	}
+	function drawStars(now, nf) {
+		if (nf <= 0.02) return; ctx.save(); ctx.fillStyle = '#ffffff';
+		for (const s of stars) {
+			const a = s.a * nf * (0.55 + 0.45 * Math.sin(now * 0.001 * s.tw + s.ph));
+			if (a <= 0.02) continue;
+			ctx.globalAlpha = a; ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, 7); ctx.fill();
+			if (s.r > 2) { ctx.globalAlpha = a * 0.4; ctx.fillRect(s.x - s.r * 3, s.y - 0.4, s.r * 6, 0.8); ctx.fillRect(s.x - 0.4, s.y - s.r * 3, 0.8, s.r * 6); }
+		}
+		ctx.restore();
+	}
+	function drawConstellation(nf) {
+		if (constellation.length < 2 || nf <= 0.05) return;
+		ctx.save();
+		ctx.globalAlpha = nf * 0.4; ctx.strokeStyle = 'rgba(200,214,255,0.9)'; ctx.lineWidth = 1;
+		ctx.beginPath(); constellation.forEach((s, i) => i ? ctx.lineTo(s.x, s.y) : ctx.moveTo(s.x, s.y)); ctx.stroke();
+		ctx.globalAlpha = nf * 0.7; ctx.fillStyle = '#dfe7ff';
+		constellation.forEach(s => { ctx.beginPath(); ctx.arc(s.x, s.y, 1.7, 0, 7); ctx.fill(); });
+		ctx.restore();
+	}
+	function drawShooters(p) {
+		for (const s of shooters) {
+			const lp = remap(p, s.at, s.at + s.win); if (lp <= 0 || lp >= 1) continue;
+			const a = Math.sin(Math.PI * lp);
+			const hx = s.x + Math.cos(s.ang) * s.len * lp, hy = s.y + Math.sin(s.ang) * s.len * lp;
+			const tx = hx - Math.cos(s.ang) * 130, ty = hy - Math.sin(s.ang) * 130;
+			const g = ctx.createLinearGradient(tx, ty, hx, hy);
+			g.addColorStop(0, 'rgba(255,255,255,0)'); g.addColorStop(1, `rgba(255,255,255,${a})`);
+			ctx.save(); ctx.strokeStyle = g; ctx.lineWidth = 2; ctx.lineCap = 'round';
+			ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(hx, hy); ctx.stroke();
+			ctx.globalAlpha = a; ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(hx, hy, 2, 0, 7); ctx.fill();
+			ctx.restore();
+		}
+	}
+	function drawSun(x, y, r, a, df) {
+		if (a <= 0) return; ctx.save();
+		const gl = ctx.createRadialGradient(x, y, 0, x, y, r * 5);
+		gl.addColorStop(0, `rgba(255,240,200,${0.5 * a})`); gl.addColorStop(0.4, `rgba(255,210,140,${0.18 * a})`); gl.addColorStop(1, 'rgba(255,200,120,0)');
+		ctx.fillStyle = gl; ctx.fillRect(x - r * 5, y - r * 5, r * 10, r * 10);
+		ctx.save(); ctx.translate(x, y); ctx.rotate(T * 0.0002);   // slowly turning rays
+		for (let i = 0; i < 12; i++) {
+			ctx.rotate(Math.PI / 6);
+			ctx.beginPath(); ctx.moveTo(r * 1.3, -r * 0.05); ctx.lineTo(r * 3.4, 0); ctx.lineTo(r * 1.3, r * 0.05); ctx.closePath();
+			ctx.fillStyle = `rgba(255,228,170,${0.18 * a * df})`; ctx.fill();
+		}
+		ctx.restore();
+		const dg = ctx.createRadialGradient(x - r * 0.3, y - r * 0.3, r * 0.2, x, y, r);
+		dg.addColorStop(0, '#fff9e8'); dg.addColorStop(0.7, '#ffd98a'); dg.addColorStop(1, '#ffb866');
+		ctx.globalAlpha = a; ctx.fillStyle = dg; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill();
+		ctx.restore();
+	}
+	function drawMoon(x, y, r, a) {
+		if (a <= 0) return; ctx.save();
+		const gl = ctx.createRadialGradient(x, y, 0, x, y, r * 4);
+		gl.addColorStop(0, `rgba(220,228,255,${0.4 * a})`); gl.addColorStop(0.5, `rgba(180,195,235,${0.12 * a})`); gl.addColorStop(1, 'rgba(180,195,235,0)');
+		ctx.fillStyle = gl; ctx.fillRect(x - r * 4, y - r * 4, r * 8, r * 8);
+		const dg = ctx.createRadialGradient(x - r * 0.35, y - r * 0.35, r * 0.2, x, y, r);
+		dg.addColorStop(0, '#ffffff'); dg.addColorStop(0.7, '#e8ecf6'); dg.addColorStop(1, '#c2c9da');
+		ctx.globalAlpha = a; ctx.fillStyle = dg; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill();
+		ctx.fillStyle = 'rgba(150,158,180,0.5)';
+		[[-.3,-.2,.18],[.25,.1,.22],[.05,.38,.14],[.38,-.3,.12],[-.2,.32,.1]].forEach(c => {
+			ctx.beginPath(); ctx.arc(x + c[0] * r, y + c[1] * r, c[2] * r, 0, 7); ctx.fill();
+		});
+		ctx.restore();
+	}
+	function drawHills(nf) {
+		hills.forEach(h => {
+			ctx.fillStyle = rgb(mix(h.col, [4,5,12], nf));
+			ctx.beginPath(); ctx.moveTo(0, H); ctx.lineTo(h.pts[0][0], h.pts[0][1]);
+			for (let i = 1; i < h.pts.length; i++) ctx.lineTo(h.pts[i][0], h.pts[i][1]);
+			ctx.lineTo(W, H); ctx.closePath(); ctx.fill();
+		});
+	}
+	function puff(x, y, u) {
+		[[0,0,1.4,0.8],[-1.1,0.25,1,0.7],[1.1,0.3,1.05,0.7],[-0.5,-0.4,0.95,0.7],[0.55,-0.35,1,0.7]].forEach(p => {
+			ctx.beginPath(); ctx.ellipse(x + p[0] * u, y + p[1] * u, p[2] * u, p[3] * u, 0, 0, 7); ctx.fill();
+		});
+	}
+	function drawClouds(now, df, bot) {
+		const a0 = clamp(df, 0, 1); if (a0 <= 0.02) return;
+		ctx.save(); ctx.fillStyle = rgb(mix(bot, [255,255,255], 0.5));
+		for (const c of clouds) {
+			const x = ((c.x + now * c.spd) % (W + 300)) - 150;
+			ctx.globalAlpha = c.a * a0 * 0.8; puff(x, c.y, 28 * c.s);
+		}
+		ctx.restore();
+	}
+	function drawMotes(now, nf) {
+		for (const m of motes) {
+			const x = m.x + Math.sin(now * 0.0003 * m.s + m.ph) * 28;
+			const y = m.y + Math.cos(now * 0.00025 * m.s + m.ph) * 20;
+			const tw = 0.4 + 0.6 * Math.abs(Math.sin(now * 0.0012 * m.s + m.ph));
+			const a = tw * (0.5 * nf + 0.18 * (1 - nf)); if (a <= 0.02) continue;
+			const col = nf > 0.5 ? [255,224,150] : [255,255,255];
+			ctx.save(); ctx.globalAlpha = a;
+			if (nf > 0.4) { // fireflies glow at night
+				const g = ctx.createRadialGradient(x, y, 0, x, y, m.r * 4);
+				g.addColorStop(0, rgb(col, 1)); g.addColorStop(1, rgb(col, 0));
+				ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, m.r * 4, 0, 7); ctx.fill();
+			} else {        // dust motes drift by day
+				ctx.fillStyle = rgb(col); ctx.beginPath(); ctx.arc(x, y, m.r, 0, 7); ctx.fill();
+			}
+			ctx.restore();
+		}
+	}
+	function drawVignette(nf) {
+		const g = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.3, W / 2, H / 2, Math.max(W, H) * 0.75);
+		g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, `rgba(0,0,0,${0.25 + 0.45 * nf})`);
+		ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+	}
+	function drawCaption(p) {
+		for (const b of captionBeats) {
+			const a = band(p, b.from, b.to, 0.06); if (a <= 0.01) continue;
+			ctx.save(); ctx.globalAlpha = a; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+			ctx.font = `italic 500 ${Math.min(W * 0.05, 34)}px Newsreader, Georgia, serif`;
+			ctx.fillStyle = 'rgba(255,255,255,0.95)'; ctx.shadowColor = 'rgba(0,0,0,0.6)'; ctx.shadowBlur = 18;
+			ctx.fillText(b.text, W / 2, H * 0.4); ctx.restore();
+		}
+	}
+	function drawSkipHint(p) {
+		const a = clamp(1 - remap(p, 0.7, 0.95), 0, 1) * 0.5; if (a <= 0.02) return;
+		ctx.save(); ctx.globalAlpha = a; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+		ctx.font = 'italic 400 13px Newsreader, Georgia, serif'; ctx.fillStyle = 'rgba(255,255,255,0.8)';
+		ctx.fillText('click anywhere to skip', W / 2, H - 34); ctx.restore();
+	}
+
+	/* —— one frame of the whole production —— */
+	function render(p, now) {
+		T = now; ctx.clearRect(0, 0, W, H);
+		const q  = dir === 1 ? p : 1 - p;                                   // sky progress, day(0)→night(1)
+		const nf = dir === 1 ? remap(p, 0.46, 0.9) : 1 - remap(p, 0.08, 0.5); // night factor
+		const df = 1 - nf;                                                  // day factor
+		const sky = skyAt(q);
+
+		const g = ctx.createLinearGradient(0, 0, 0, H);
+		g.addColorStop(0, rgb(sky.top)); g.addColorStop(1, rgb(sky.bot));
+		ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+
+		drawAurora(now, nf);
+		drawStars(now, nf);
+		drawConstellation(nf);
+		drawShooters(p);
+
+		// celestial trajectories: one body sets, the other rises
+		const setP = easeInOut(remap(p, 0.04, 0.74));
+		const risP = easeOut(remap(p, 0.42, 0.97));
+		const m = Math.min(W, H);
+		const setX = lerp(0.72 * W, 0.12 * W, setP), setY = lerp(0.24 * H, horizonY + 0.05 * H, Math.pow(setP, 1.7));
+		const setR = m * 0.085, setA = 1 - remap(setP, 0.8, 1) * 0.55;
+		const risX = lerp(0.85 * W, 0.60 * W, risP), risY = lerp(horizonY + 0.04 * H, 0.2 * H, risP);
+		const risR = m * 0.07, risA = remap(risP, 0, 0.16);
+
+		if (dir === 1) drawSun(setX, setY, setR, setA, df); else drawMoon(setX, setY, setR, setA);
+		drawHills(nf);                                              // horizon occludes the setting body
+		if (dir === 1) drawMoon(risX, risY, risR, risA); else drawSun(risX, risY, risR, risA, df);
+
+		drawClouds(now, df, sky.bot);
+		drawMotes(now, nf);
+		drawVignette(nf);
+		drawCaption(p);
+		drawSkipHint(p);
+
+		// the grand finale: iris the new, freshly-themed page out of the toggle button
+		if (p > FLIP_AT) {
+			const r = easeInOut(remap(p, FLIP_AT + 0.03, 0.99)) * maxR;
+			ctx.save(); ctx.globalCompositeOperation = 'destination-out';
+			const ag = ctx.createRadialGradient(bx, by, Math.max(0, r - 50), bx, by, r + 1);
+			ag.addColorStop(0, 'rgba(0,0,0,1)'); ag.addColorStop(1, 'rgba(0,0,0,0)');
+			ctx.fillStyle = ag; ctx.beginPath(); ctx.arc(bx, by, r + 1, 0, 7); ctx.fill();
+			ctx.restore();
+		}
+	}
+
+	function frame(now) {
+		if (!running) return;
+		const p = clamp((now - startT) / DURATION, 0, 1);
+		render(p, now);
+		if (!flipped && p >= FLIP_AT) { apply(toTheme); flipped = true; }
+		if (p >= 1) { finish(); return; }
+		raf = requestAnimationFrame(frame);
+	}
+
+	function finish() {
+		if (!flipped) { apply(toTheme); flipped = true; }
+		running = false; cancelAnimationFrame(raf);
+		removeEventListener('resize', size);
+		removeEventListener('keydown', onSkipKey, true);
+		canvas.removeEventListener('click', skip);
+		canvas.classList.remove('show'); canvas.setAttribute('aria-hidden', 'true');
+		ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, canvas.width, canvas.height);
+		toggleBtn.classList.remove('casting'); toggleBtn.classList.add('landed');
+		setTimeout(() => toggleBtn.classList.remove('landed'), 750);
+	}
+
+	// skip / fast-forward: race to the aperture reveal rather than cutting hard
+	function skip() {
+		if (!running) return;
+		const now = performance.now(), cur = clamp((now - startT) / DURATION, 0, 1);
+		if (cur < 0.9) startT = now - DURATION * 0.9;
+	}
+	function onSkipKey(e) {
+		if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') { if (e.key === ' ') e.preventDefault(); skip(); }
+	}
+
+	function play(next) {
+		if (running) return;
+		dir = next === 'dark' ? 1 : -1; toTheme = next; flipped = false; running = true;
+		size(); build();
+		toggleBtn.classList.remove('landed'); toggleBtn.classList.add('casting');
+		canvas.classList.add('show'); canvas.setAttribute('aria-hidden', 'false');
+		addEventListener('resize', size);
+		addEventListener('keydown', onSkipKey, true);
+		canvas.addEventListener('click', skip);
+		startT = performance.now();
+		raf = requestAnimationFrame(frame);
+	}
+
+	function toggle() {
+		const cur = html.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+		const next = cur === 'dark' ? 'light' : 'dark';
+		if (reduce.matches) { apply(next); return; }   // honour reduced-motion: just swap
+		if (running) return;                            // ignore taps mid-cinematic
+		play(next);
+	}
+
+	// restore saved theme instantly on load (no cinematic), then wire the button
+	let saved = 'light';
+	try { saved = localStorage.getItem('theme') || 'light'; } catch (e) {}
+	apply(saved);
+	toggleBtn.addEventListener('click', toggle);
+
+	return { toggle };
 })();
 
 /* ── ink helper (foreground colour) for snake canvas ───────────────── */
@@ -736,7 +1118,7 @@ document.getElementById('playLink').addEventListener('click', () => Snake.start(
 		if (Snake.isRunning()) return;
 		if (e.metaKey || e.ctrlKey || e.altKey) return;
 		const kl = e.key.toLowerCase();
-		if (kl === 'd') { document.getElementById('modeToggle').click(); }
+		if (kl === 'd') { ThemeCinema.toggle(); }
 		if (/^[a-z]$/.test(kl)) {
 			buf = (buf + kl).slice(-6);
 			if (buf.endsWith('snake') || buf.endsWith('play')) { Snake.start(); buf = ''; }
