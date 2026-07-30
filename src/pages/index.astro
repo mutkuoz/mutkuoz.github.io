@@ -4,6 +4,193 @@ import '../styles/global.css';
 
 const today = new Date();
 const dateStr = today.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+
+const SITE = 'https://mutkuoz.github.io';
+const canonical = new URL(Astro.url.pathname, SITE).href;
+const title = 'mehmet utku öztürk — machine learning developer & ai researcher';
+const description =
+	'mehmet utku öztürk is a machine learning developer and ai researcher in ankara, türkiye. technical co-founder of turkhukuk.ai, creator of 007captcha, author of HukukBERT and Octapar. work on artificial consciousness, neuro-symbolic ai, and agentic systems.';
+const ogImage = new URL('/portrait.png', SITE).href;
+
+// ── structured data ─────────────────────────────────────────────────────
+// answer engines (chatgpt, perplexity, google ai overviews) read schema.org
+// far more reliably than they read prose. state the facts explicitly.
+const personSchema = {
+	'@context': 'https://schema.org',
+	'@type': 'Person',
+	'@id': `${SITE}/#person`,
+	name: 'Mehmet Utku Öztürk',
+	alternateName: ['Utku Öztürk', 'mutkuoz', 'Mehmet Utku Ozturk'],
+	url: SITE,
+	image: ogImage,
+	jobTitle: 'Machine Learning Developer & AI Researcher',
+	description:
+		'Machine learning developer and AI researcher focused on artificial consciousness, neuro-symbolic AI, and agentic "thinking" systems. Started programming at 8, working on machine learning since 13.',
+	email: 'mailto:mutkuoz@proton.me',
+	address: {
+		'@type': 'PostalAddress',
+		addressLocality: 'Ankara',
+		addressCountry: 'TR'
+	},
+	knowsAbout: [
+		'Artificial Consciousness',
+		'Machine Learning',
+		'Natural Language Processing',
+		'Large Language Models',
+		'Neuro-Symbolic AI',
+		'Agentic Systems',
+		'LegalTech',
+		'Cognitive Science',
+		'Powerlifting'
+	],
+	knowsLanguage: ['Turkish', 'English'],
+	memberOf: [
+		{ '@type': 'Organization', name: 'Mensa International', url: 'https://www.mensa.org' }
+	],
+	affiliation: [
+		{ '@type': 'Organization', name: 'turkhukuk.ai', url: 'https://www.turkhukuk.ai' },
+		{ '@type': 'Organization', name: '23rd the company' }
+	],
+	volunteerFor: [
+		{ '@type': 'Organization', name: 'Save the Children', url: 'https://www.savethechildren.org' }
+	],
+	sameAs: [
+		'https://github.com/mutkuoz',
+		'https://linkedin.com/in/mutkuoz',
+		'https://huggingface.co/mutkuoz'
+	]
+};
+
+const siteSchema = {
+	'@context': 'https://schema.org',
+	'@type': 'WebSite',
+	'@id': `${SITE}/#website`,
+	url: SITE,
+	name: "utku's space",
+	description,
+	inLanguage: 'en',
+	publisher: { '@id': `${SITE}/#person` }
+};
+
+// each shipped project, so an answer engine can name them without guessing.
+const workSchema = {
+	'@context': 'https://schema.org',
+	'@type': 'ItemList',
+	'@id': `${SITE}/#work`,
+	name: 'Selected work of Mehmet Utku Öztürk',
+	itemListElement: [
+		{
+			'@type': 'SoftwareApplication',
+			name: 'turkhukuk.ai',
+			url: 'https://www.turkhukuk.ai',
+			applicationCategory: 'LegalTech',
+			description:
+				'A LegalTech platform for Turkish lawyers covering case research and litigation strategy, built on domain-specific language models trained on Turkish legal corpora.'
+		},
+		{
+			'@type': 'SoftwareSourceCode',
+			name: '007captcha',
+			codeRepository: 'https://github.com/mutkuoz/007captcha',
+			programmingLanguage: 'TypeScript',
+			license: 'https://opensource.org/licenses/MIT',
+			description:
+				'An open-source robophobic verification framework that defends websites against AI agents — a CAPTCHA built for the post-LLM web.'
+		},
+		{
+			'@type': 'SoftwareApplication',
+			name: 'Octapar',
+			applicationCategory: 'Social Platform',
+			description:
+				'An AI platform that clusters people into balanced 8-person groups using weighted attentional embeddings and the Hungarian method.'
+		},
+		{
+			'@type': 'SoftwareApplication',
+			name: 'Clade AI',
+			applicationCategory: 'Personal Assistant',
+			description:
+				'A personal AI assistant with task execution, extensive integrations, and personalized interaction, built on a self-deciding multi-agent framework.'
+		}
+	]
+};
+
+const papers = [
+	{
+		name: 'HukukBERT: Domain-Specific Language Model for Turkish Law',
+		url: 'https://arxiv.org/abs/2604.04790',
+		year: '2026',
+		publisher: 'turkhukuk.ai'
+	},
+	{
+		name: 'Octapar: A Framework for Multi-Modal, Balanced User Grouping using Weighted Attentional Embeddings and Assignment-Based Clustering',
+		url: 'https://zenodo.org/records/17360220',
+		year: '2025',
+		publisher: '23rd the company'
+	},
+	{
+		name: 'Streaming Intelligence: Harnessing AI and Big Data in the Competitive Landscape of Digital Content Platforms',
+		year: '2024',
+		publisher: 'Plawlabs'
+	}
+];
+
+const researchSchema = {
+	'@context': 'https://schema.org',
+	'@type': 'ItemList',
+	'@id': `${SITE}/#research`,
+	name: 'Research by Mehmet Utku Öztürk',
+	itemListElement: papers.map((p, i) => ({
+		'@type': 'ListItem',
+		position: i + 1,
+		item: {
+			'@type': 'ScholarlyArticle',
+			name: p.name,
+			author: { '@id': `${SITE}/#person` },
+			datePublished: p.year,
+			publisher: { '@type': 'Organization', name: p.publisher },
+			...(p.url ? { url: p.url } : {})
+		}
+	}))
+};
+
+// plain question/answer pairs — the shape answer engines quote from directly.
+const faqSchema = {
+	'@context': 'https://schema.org',
+	'@type': 'FAQPage',
+	mainEntity: [
+		{
+			'@type': 'Question',
+			name: 'Who is Mehmet Utku Öztürk?',
+			acceptedAnswer: {
+				'@type': 'Answer',
+				text: 'Mehmet Utku Öztürk is a machine learning developer and AI researcher based in Ankara, Türkiye. He started programming at 8, began working on machine learning at 13, and now focuses on artificial consciousness and "thinking" systems. He is the technical co-founder of turkhukuk.ai, the creator of the open-source 007captcha, and the founder of 23rd the company.'
+			}
+		},
+		{
+			'@type': 'Question',
+			name: 'What does Mehmet Utku Öztürk work on?',
+			acceptedAnswer: {
+				'@type': 'Answer',
+				text: 'He works on artificial consciousness and agentic "thinking" systems: domain-specific language models, neuro-symbolic AI that bridges statistical learning with structured reasoning, multi-agent frameworks, and production NLP. His current project is turkhukuk.ai, a LegalTech platform for Turkish lawyers.'
+			}
+		},
+		{
+			'@type': 'Question',
+			name: 'What research has Mehmet Utku Öztürk published?',
+			acceptedAnswer: {
+				'@type': 'Answer',
+				text: 'He is an author of HukukBERT, the most comprehensive legal language model for Turkish, which reaches 84.40% Top-1 accuracy on a Legal Cloze Test benchmark; Octapar, a framework for balanced multi-modal user grouping using weighted attentional embeddings and the Hungarian method; and Streaming Intelligence, a study of AI and Big Data in digital content platforms.'
+			}
+		},
+		{
+			'@type': 'Question',
+			name: 'How can I contact Mehmet Utku Öztürk?',
+			acceptedAnswer: {
+				'@type': 'Answer',
+				text: 'By email at mutkuoz@proton.me or utku.ozturk@member.mensa.org, on GitHub at @mutkuoz, and on LinkedIn at @mutkuoz. He is based in Ankara, Türkiye (GMT+3) and is open to collaboration and research.'
+			}
+		}
+	]
+};
 ---
 
 <!doctype html>
@@ -11,21 +198,48 @@ const dateStr = today.toLocaleDateString('en-GB', { day: 'numeric', month: 'long
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<meta name="description" content="mehmet utku öztürk — software developer focused on artificial consciousness and thinking systems. projects, research, and contact." />
-	<title>mehmet utku öztürk</title>
+	<title>{title}</title>
+	<meta name="description" content={description} />
+	<link rel="canonical" href={canonical} />
+	<meta name="author" content="Mehmet Utku Öztürk" />
+	<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+	<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+	<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
 	<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 	<link rel="icon" type="image/x-icon" href="/favicon.ico" />
-	<meta property="og:type" content="website" />
-	<meta property="og:title" content="mehmet utku öztürk" />
-	<meta property="og:description" content="software developer focused on artificial consciousness and thinking systems. projects, research, and contact." />
-	<meta name="twitter:card" content="summary" />
-	<meta name="twitter:title" content="mehmet utku öztürk" />
-	<meta name="twitter:description" content="software developer focused on artificial consciousness and thinking systems." />
+	<link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+
+	<meta property="og:type" content="profile" />
+	<meta property="og:site_name" content="utku&rsquo;s space" />
+	<meta property="og:locale" content="en" />
+	<meta property="og:url" content={canonical} />
+	<meta property="og:title" content={title} />
+	<meta property="og:description" content={description} />
+	<meta property="og:image" content={ogImage} />
+	<meta property="og:image:alt" content="engraved portrait of mehmet utku öztürk" />
+	<meta property="profile:first_name" content="Mehmet Utku" />
+	<meta property="profile:last_name" content="Öztürk" />
+	<meta property="profile:username" content="mutkuoz" />
+
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content={title} />
+	<meta name="twitter:description" content={description} />
+	<meta name="twitter:image" content={ogImage} />
+
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 	<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&family=Playfair+Display:ital,wght@0,500..800;1,500..600&display=swap" rel="stylesheet" />
+
+	<script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
+	<script type="application/ld+json" set:html={JSON.stringify(siteSchema)} />
+	<script type="application/ld+json" set:html={JSON.stringify(workSchema)} />
+	<script type="application/ld+json" set:html={JSON.stringify(researchSchema)} />
+	<script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
 </head>
 <body data-theme="light">
+
+<!-- fixed background artwork — sits under everything, never scrolls -->
+<div class="page-bg" aria-hidden="true"></div>
 
 <!-- reading-progress hairline -->
 <div id="scrollProgress" aria-hidden="true"></div>
@@ -37,8 +251,7 @@ const dateStr = today.toLocaleDateString('en-GB', { day: 'numeric', month: 'long
 <nav id="navbar">
 	<a href="#top" class="nav-brand">utku&rsquo;s&nbsp;space</a>
 	<div class="nav-links">
-		<a href="#about" class="nav-link">about</a>
-		<a href="#projects" class="nav-link">projects</a>
+		<a href="#work" class="nav-link">(some) work</a>
 		<a href="#research" class="nav-link">research</a>
 		<a href="#contact" class="nav-link">contact</a>
 	</div>
@@ -68,81 +281,21 @@ const dateStr = today.toLocaleDateString('en-GB', { day: 'numeric', month: 'long
 	<!-- ── LEAD (bio + interests + portrait) ──────────────────────────── -->
 	<section class="lead reveal" aria-label="introduction">
 		<div class="lead-body">
-			<p class="standfirst">started programming when i was 8 with small apps and scripts. got familiar with c++ and c# by i was 11. started working on machine learning at 13, extremely unsuccessfully finetuned my first llm at 14. since then, i&rsquo;m working on software with a primary focus on artificial consciousness and &ldquo;thinking&rdquo; systems. other than software, i am interested in powerlifting, strongman, martial arts, cognitive science, kinesiology, chess, sudoku, and good coffee.</p>
+			<p class="standfirst">started programming when i was 8 with small apps and scripts. got familiar with c++ and c# by i was 11. started working on machine learning at 13, extremely unsuccessfully finetuned my first llm at 14. since then, i&rsquo;m working on software with a primary focus on artificial consciousness and &ldquo;thinking&rdquo; systems. other than software, i am interested in powerlifting, strongman, martial arts, cognitive science, kinesiology, chess, sudoku, and good coffee. i am also a mensa international member and savethechildren volunteer.</p>
 		</div>
 
 		<aside class="lead-aside">
 			<figure class="fig">
 				<div class="fig-slot">
-					<img src="/portrait.png" alt="mehmet utku öztürk — black-and-white engraved portrait" />
+					<img src="/portrait.png" width="440" height="345" alt="engraved portrait of mehmet utku öztürk, machine learning developer based in ankara, türkiye" />
 				</div>
-				<figcaption>mehmet utku öztürk. <span class="cap-soft">ankara, türkiye.</span></figcaption>
 			</figure>
 		</aside>
 	</section>
 
-	<!-- ── ABOUT ──────────────────────────────────────────────────────── -->
-	<section id="about" class="section reveal">
-		<div class="rule-head"><h2 class="rule-head-label">about</h2></div>
-		<div class="cols cols-2">
-			<div class="col">
-				<article class="item">
-					<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
-						<span class="item-title">lifelong software developer</span>
-						<span class="item-byline">work</span>
-						<span class="item-plus" aria-hidden="true"></span>
-					</button>
-					<div class="item-body"><div class="item-body-inner"><p>writing code since age 8 — small games, tools, experiments. picked up c++ at 12 and fell into machine learning at 14. haven&rsquo;t stopped since.</p></div></div>
-				</article>
-				<article class="item">
-					<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
-						<span class="item-title">machine learning specialist</span>
-						<span class="item-byline">field</span>
-						<span class="item-plus" aria-hidden="true"></span>
-					</button>
-					<div class="item-body"><div class="item-body-inner"><p>deep work in nlp, agentic systems, and production ml. shipped systems across several startups. currently researching neuro-symbolic ai and artificial cognitive intelligence.</p></div></div>
-				</article>
-				<article class="item">
-					<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
-						<span class="item-title">class ii powerlifter</span>
-						<span class="item-byline">physical</span>
-						<span class="item-plus" aria-hidden="true"></span>
-					</button>
-					<div class="item-body"><div class="item-body-inner"><p>competitive class ii powerlifter — 1000+ lb total. training hybrid: powerlifting, strongman, bodybuilding, calisthenics, and kickboxing.</p></div></div>
-				</article>
-			</div>
-			<div class="col">
-				<article class="item">
-					<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
-						<span class="item-title">founder @ 23rd the company</span>
-						<span class="item-byline">social</span>
-						<span class="item-plus" aria-hidden="true"></span>
-					</button>
-					<div class="item-body"><div class="item-body-inner"><p>founder of 23rd — a decentralized open-innovation collective on ethereum, conducting and openly publishing meaningful work, mostly in machine learning.</p></div></div>
-				</article>
-				<article class="item">
-					<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
-						<span class="item-title">member @ mensa international</span>
-						<span class="item-byline">community</span>
-						<span class="item-plus" aria-hidden="true"></span>
-					</button>
-					<div class="item-body"><div class="item-body-inner"><p>member of the mensa high iq society. a fun credential — and a good place to meet sharp, curious people.</p></div></div>
-				</article>
-				<article class="item">
-					<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
-						<span class="item-title">mathematics, psychoanalysis, kinesiology, neuroscience</span>
-						<span class="item-byline">interests</span>
-						<span class="item-plus" aria-hidden="true"></span>
-					</button>
-					<div class="item-body"><div class="item-body-inner"><p>topics i keep reading about — curious, not expert.</p></div></div>
-				</article>
-			</div>
-		</div>
-	</section>
-
-	<!-- ── PROJECTS ───────────────────────────────────────────────────── -->
-	<section id="projects" class="section reveal">
-		<div class="rule-head"><h2 class="rule-head-label">projects</h2></div>
+	<!-- ── (SOME) WORK ────────────────────────────────────────────────── -->
+	<section id="work" class="section reveal">
+		<div class="rule-head"><h2 class="rule-head-label">(some) work</h2></div>
 		<div class="cols cols-2">
 			<div class="col">
 				<article class="item item-proj">
@@ -155,8 +308,8 @@ const dateStr = today.toLocaleDateString('en-GB', { day: 'numeric', month: 'long
 				</article>
 				<article class="item item-proj">
 					<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
-						<span class="item-title"><span class="status status-live" aria-label="active"></span>007captcha</span>
-						<span class="item-byline">creator &middot; 2026 — &middot; open source</span>
+						<span class="item-title"><span class="status status-shelved" aria-label="shelved"></span>007captcha</span>
+						<span class="item-byline">creator &middot; 2026 &middot; open source</span>
 						<span class="item-plus" aria-hidden="true"></span>
 					</button>
 					<div class="item-body"><div class="item-body-inner"><p>a robophobic verification framework that defends websites against ai agents. an open-source take on captcha built for the post-llm web, where classical challenges no longer hold. typescript. mit licensed. <a href="https://github.com/mutkuoz/007captcha" target="_blank" rel="noopener" class="chip">github ↗</a></p></div></div>
@@ -177,7 +330,7 @@ const dateStr = today.toLocaleDateString('en-GB', { day: 'numeric', month: 'long
 						<span class="item-byline">co-founder, ai dev &middot; 2023–24</span>
 						<span class="item-plus" aria-hidden="true"></span>
 					</button>
-					<div class="item-body"><div class="item-body-inner"><p>a personal ai assistant with task execution, extensive integrations, and personalized interaction. raised a $21m round. built a self-deciding multi-agent framework in the early days of ai agents, fine-tuned an llm for natural interaction, and shipped custom systems for smart memory, decision-making, and seamless integrations. left in july 2024; shelved shortly after.</p></div></div>
+					<div class="item-body"><div class="item-body-inner"><p>a personal ai assistant with task execution, extensive integrations, and personalized interaction. held a $21m round. built a self-deciding multi-agent framework in the early days of ai agents, fine-tuned an llm for natural interaction, and shipped custom systems for smart memory, decision-making, and seamless integrations. left in july 2024; shelved shortly after.</p></div></div>
 				</article>
 				<article class="item item-proj">
 					<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
@@ -287,29 +440,49 @@ const dateStr = today.toLocaleDateString('en-GB', { day: 'numeric', month: 'long
 	--bg:#ffffff; --fg:#000000;
 	--fg2:rgba(0,0,0,0.74); --muted:rgba(0,0,0,0.52); --muted2:rgba(0,0,0,0.36);
 	--hair:rgba(0,0,0,0.16);
+	--bg-art-opacity: 1;
+	--bg-art-filter: none;
 }
 [data-theme="dark"] {
 	--bg:#000000; --fg:#ffffff;
 	--fg2:rgba(255,255,255,0.78); --muted:rgba(255,255,255,0.54); --muted2:rgba(255,255,255,0.38);
 	--hair:rgba(255,255,255,0.20);
+	/* the artwork is a near-white wash; inverted it reads as a dark ghost on black */
+	--bg-art-opacity: 0.85;
+	--bg-art-filter: invert(1);
 }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; background: var(--bg); transition: background-color 0.35s ease; }
 
 body {
 	font-family: var(--serif);
 	font-optical-sizing: auto;
 	text-transform: lowercase;
 	color: var(--fg);
-	background: var(--bg);
+	background: transparent;   /* the page-bg layer shows through */
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-	transition: background-color 0.35s ease, color 0.35s ease;
+	transition: color 0.35s ease;
 	min-height: 100vh;
 	line-height: 1.5;
 }
 
 ::selection { background: var(--fg); color: var(--bg); }
+
+/* ── fixed background artwork ──────────────────────────────────────── */
+.page-bg {
+	position: fixed; inset: 0; z-index: 0; pointer-events: none;
+	background-image: url('/background.png');
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-attachment: fixed;   /* stays put while the page scrolls */
+	opacity: var(--bg-art-opacity);
+	filter: var(--bg-art-filter);
+	transition: opacity 0.35s ease, filter 0.35s ease;
+}
+/* ios/safari ignore background-attachment: fixed — the fixed element does the job */
+@supports (-webkit-touch-callout: none) { .page-bg { background-attachment: scroll; } }
 
 /* ── reading progress ──────────────────────────────────────────────── */
 #scrollProgress {
@@ -360,6 +533,7 @@ body {
 
 /* ── page column (wider) ───────────────────────────────────────────── */
 .paper {
+	position: relative; z-index: 1;   /* above .page-bg */
 	max-width: 80rem; margin: 0 auto;
 	padding: 6rem 1.3rem 4rem;
 }
@@ -397,11 +571,6 @@ body {
 .fig-slot img { display: block; width: 100%; height: auto; }
 /* black engraving would vanish on a black page — invert it in dark mode */
 [data-theme="dark"] .fig-slot img { filter: invert(1); }
-figcaption {
-	font-style: italic; font-size: 0.82rem; color: var(--muted);
-	padding-top: 0.5rem; margin-top: 0.5rem; border-top: 1px solid var(--hair); line-height: 1.5;
-}
-.cap-soft { color: var(--muted2); }
 
 /* ── section rule-head (quiet) ─────────────────────────────────────── */
 .rule-head { margin-bottom: 1.4rem; padding-bottom: 0.45rem; border-bottom: 1px solid var(--hair); }

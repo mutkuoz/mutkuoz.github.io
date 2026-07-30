@@ -1,0 +1,59 @@
+# Mehmet Utku Öztürk
+
+> Machine learning developer and AI researcher based in Ankara, Türkiye. Focused on
+> artificial consciousness, neuro-symbolic AI, and agentic "thinking" systems.
+> Technical co-founder of turkhukuk.ai, creator of the open-source 007captcha,
+> founder of 23rd the company. Mensa International member and Save the Children
+> volunteer.
+
+Started programming at 8, picked up C++ and C# by 11, began working on machine
+learning at 13, and fine-tuned a first LLM at 14. Also a competitive Class II
+powerlifter, and interested in strongman, martial arts, cognitive science,
+kinesiology, chess, sudoku, and coffee.
+
+## Work
+
+- [turkhukuk.ai](https://www.turkhukuk.ai): LegalTech platform for Turkish lawyers —
+  case research and litigation strategy. Trained and fine-tuned domain-specific
+  language models on Turkish legal corpora; experimented with neuro-symbolic
+  representations bridging statistical learning and structured legal reasoning.
+  Technical co-founder, 2026 — present. Active.
+- [007captcha](https://github.com/mutkuoz/007captcha): Open-source robophobic
+  verification framework defending websites against AI agents — a CAPTCHA built for
+  the post-LLM web. TypeScript, MIT licensed. Creator, 2026. Shelved.
+- Octapar: AI platform clustering people into balanced 8-person "tribes" via a
+  multi-stage clustering algorithm over weighted attentional embeddings and the
+  Hungarian method. Founder and core developer, 2025. Paused.
+- Clade AI: Personal AI assistant with task execution, integrations, and
+  personalized interaction. Self-deciding multi-agent framework built in the early
+  days of AI agents; fine-tuned an LLM for natural interaction; custom systems for
+  smart memory and decision-making. Co-founder and AI developer, 2023–24. Shelved.
+- Sorubot: AI platform generating exam questions and managing study sessions.
+  Developer, 2022–23. Shelved.
+- Styrk: Sports supplements with AI-driven personalization and AI-generated
+  packaging. Co-founder and backend developer, 2025. Shelved.
+
+## Research
+
+- [HukukBERT: Domain-Specific Language Model for Turkish Law](https://arxiv.org/abs/2604.04790)
+  (turkhukuk.ai, 2026): The most comprehensive legal language model for Turkish,
+  trained on an 18 GB cleaned legal corpus with advanced masking strategies and a
+  48K WordPiece tokenizer plus Domain-Adaptive Pre-Training. Achieves 84.40% Top-1
+  accuracy on a novel Legal Cloze Test benchmark, outperforming BERTurk-Legal.
+- [Octapar: A Framework for Multi-Modal, Balanced User Grouping using Weighted Attentional Embeddings and Assignment-Based Clustering](https://zenodo.org/records/17360220)
+  (23rd the company, 2025): Conversational LLM onboarding extracts semantic user
+  tags; a weighted attention mechanism combines global tag rarity (IDF) with local
+  intra-user tag uniqueness; the Hungarian method guarantees perfectly balanced
+  clusters.
+- Streaming Intelligence: Harnessing AI and Big Data in the Competitive Landscape of
+  Digital Content Platforms (Plawlabs, 2024): How major streaming platforms use AI
+  and Big Data for recommendation, presentation, and personalization, with strategy
+  for an emerging Turkish digital platform.
+
+## Contact
+
+- Email: mutkuoz@proton.me
+- Mensa: utku.ozturk@member.mensa.org
+- GitHub: https://github.com/mutkuoz
+- LinkedIn: https://linkedin.com/in/mutkuoz
+- Location: Ankara, Türkiye (GMT+3)
