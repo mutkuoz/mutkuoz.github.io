@@ -110,6 +110,19 @@ const workSchema = {
 				'A simulator that feeds Doom into the visual pathway of a 139,255-neuron fruit fly connectome and maps its biological motor output back to game controls.'
 		},
 		{
+			'@type': 'SoftwareApplication',
+			name: 'Clade AI',
+			applicationCategory: 'Personal Assistant',
+			description:
+				'A personal AI assistant with task execution, extensive integrations, and personalized interaction, built on a self-deciding multi-agent framework.'
+		},
+		{
+			'@type': 'SoftwareApplication',
+			name: 'Sorubot',
+			applicationCategory: 'Education',
+			description: 'An AI platform that generates exam questions and manages student study sessions.'
+		},
+		{
 			'@type': 'SoftwareSourceCode',
 			name: '007captcha',
 			codeRepository: 'https://github.com/mutkuoz/007captcha',
@@ -127,10 +140,17 @@ const workSchema = {
 		},
 		{
 			'@type': 'SoftwareApplication',
-			name: 'Clade AI',
-			applicationCategory: 'Personal Assistant',
+			name: 'Styrk',
+			applicationCategory: 'Health and Fitness',
+			description: 'Sports supplements with AI-driven personalization and AI-generated packaging.'
+		},
+		{
+			'@type': 'SoftwareSourceCode',
+			name: 'Topazius',
+			codeRepository: 'https://github.com/mutkuoz/topazius',
+			programmingLanguage: 'TypeScript',
 			description:
-				'A personal AI assistant with task execution, extensive integrations, and personalized interaction, built on a self-deciding multi-agent framework.'
+				'A browser-based Markdown notes app that uses a private GitHub repository as its database, with offline editing and optional client-side encryption.'
 		}
 	]
 };
@@ -227,9 +247,9 @@ const faqSchema = {
 	<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
 	<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
 	<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
-	<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 	<link rel="icon" type="image/x-icon" href="/favicon.ico" />
 	<link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+	<link rel="preload" as="image" href="/utku-bg.webp" type="image/webp" fetchpriority="high" />
 
 	<meta property="og:type" content="profile" />
 	<meta property="og:site_name" content="utku&rsquo;s space" />
@@ -247,10 +267,6 @@ const faqSchema = {
 	<meta name="twitter:title" content={title} />
 	<meta name="twitter:description" content={description} />
 	<meta name="twitter:image" content={ogImage} />
-
-	<link rel="preconnect" href="https://fonts.googleapis.com" />
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-	<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&family=Playfair+Display:ital,wght@0,500..800;1,500..600&display=swap" rel="stylesheet" />
 
 	<script is:inline type="application/ld+json" set:html={JSON.stringify(personSchema)} />
 	<script is:inline type="application/ld+json" set:html={JSON.stringify(siteSchema)} />
@@ -323,14 +339,6 @@ const faqSchema = {
 			<div class="col">
 				<article class="item item-proj">
 					<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
-						<span class="item-title"><span class="status status-live" aria-label="active"></span>flydoom</span>
-						<span class="item-byline">creator &middot; 2026 &middot; open source</span>
-						<span class="item-plus" aria-hidden="true"></span>
-					</button>
-					<div class="item-body"><div class="item-body-inner"><p>a real fruit fly connectome playing doom. feeds the game through the visual pathway of 139,255 reconstructed neurons and roughly 2.7 million synapses, then maps biological motor output back to game controls. nothing is trained; the wiring is the fly&rsquo;s. <a href="https://github.com/mutkuoz/flydoom" target="_blank" rel="noopener" class="chip">github ↗</a> <a href="/articles/flydoom/" class="chip">story ↗</a></p></div></div>
-				</article>
-				<article class="item item-proj">
-					<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
 						<span class="item-title"><span class="status status-live" aria-label="active"></span>turkhukuk.ai</span>
 						<span class="item-byline">technical co-founder &middot; 2026 —</span>
 						<span class="item-plus" aria-hidden="true"></span>
@@ -339,22 +347,12 @@ const faqSchema = {
 				</article>
 				<article class="item item-proj">
 					<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
-						<span class="item-title"><span class="status status-shelved" aria-label="shelved"></span>007captcha</span>
+						<span class="item-title"><span class="status status-live" aria-label="active"></span>flydoom</span>
 						<span class="item-byline">creator &middot; 2026 &middot; open source</span>
 						<span class="item-plus" aria-hidden="true"></span>
 					</button>
-					<div class="item-body"><div class="item-body-inner"><p>a robophobic verification framework that defends websites against ai agents. an open-source take on captcha built for the post-llm web, where classical challenges no longer hold. typescript. mit licensed. <a href="https://github.com/mutkuoz/007captcha" target="_blank" rel="noopener" class="chip">github ↗</a></p></div></div>
+					<div class="item-body"><div class="item-body-inner"><p>a real fruit fly connectome playing doom. feeds the game through the visual pathway of 139,255 reconstructed neurons and roughly 2.7 million synapses, then maps biological motor output back to game controls. nothing is trained; the wiring is the fly&rsquo;s. <a href="https://github.com/mutkuoz/flydoom" target="_blank" rel="noopener" class="chip">github ↗</a> <a href="/articles/flydoom/" class="chip">story ↗</a></p></div></div>
 				</article>
-				<article class="item item-proj">
-					<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
-						<span class="item-title"><span class="status status-paused" aria-label="paused"></span>octapar</span>
-						<span class="item-byline">founder &amp; core dev &middot; 2025</span>
-						<span class="item-plus" aria-hidden="true"></span>
-					</button>
-					<div class="item-body"><div class="item-body-inner"><p>an ai platform that clusters people into 8-person &ldquo;tribes&rdquo; — balanced, semantically coherent groups for authentic connection and mutual growth. designed a multi-stage clustering algorithm around weighted attentional embeddings and the hungarian method. paper published via 23rd.</p></div></div>
-				</article>
-			</div>
-			<div class="col">
 				<article class="item item-proj">
 					<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
 						<span class="item-title"><span class="status status-shelved" aria-label="shelved"></span>clade ai</span>
@@ -371,6 +369,24 @@ const faqSchema = {
 					</button>
 					<div class="item-body"><div class="item-body-inner"><p>an ai platform that generates exam questions and manages students&rsquo; study sessions. very unsuccessfully fine-tuned an llm. amateur work — but not bad for a 14-year-old.</p></div></div>
 				</article>
+			</div>
+			<div class="col">
+				<article class="item item-proj">
+					<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
+						<span class="item-title"><span class="status status-shelved" aria-label="shelved"></span>007captcha</span>
+						<span class="item-byline">creator &middot; 2026 &middot; open source</span>
+						<span class="item-plus" aria-hidden="true"></span>
+					</button>
+					<div class="item-body"><div class="item-body-inner"><p>a robophobic verification framework that defends websites against ai agents. an open-source take on captcha built for the post-llm web, where classical challenges no longer hold. typescript. mit licensed. <a href="https://github.com/mutkuoz/007captcha" target="_blank" rel="noopener" class="chip">github ↗</a></p></div></div>
+				</article>
+				<article class="item item-proj">
+					<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
+						<span class="item-title"><span class="status status-paused" aria-label="paused"></span>octapar</span>
+						<span class="item-byline">founder &amp; core dev &middot; 2025</span>
+						<span class="item-plus" aria-hidden="true"></span>
+					</button>
+					<div class="item-body"><div class="item-body-inner"><p>an ai platform that clusters people into 8-person &ldquo;tribes&rdquo; — balanced, semantically coherent groups for authentic connection and mutual growth. designed a multi-stage clustering algorithm around weighted attentional embeddings and the hungarian method. paper published via 23rd.</p></div></div>
+				</article>
 				<article class="item item-proj">
 					<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
 						<span class="item-title"><span class="status status-shelved" aria-label="shelved"></span>styrk</span>
@@ -378,6 +394,14 @@ const faqSchema = {
 						<span class="item-plus" aria-hidden="true"></span>
 					</button>
 					<div class="item-body"><div class="item-body-inner"><p>sports supplements with ai-driven personalization and ai-generated packaging. a fun weekend project. shelved.</p></div></div>
+				</article>
+				<article class="item item-proj">
+					<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
+						<span class="item-title"><span class="status status-live" aria-label="active"></span>topazius</span>
+						<span class="item-byline">creator &middot; 2026 &middot; open source</span>
+						<span class="item-plus" aria-hidden="true"></span>
+					</button>
+					<div class="item-body"><div class="item-body-inner"><p>a browser-based markdown notes app whose database is a private github repository you own. works offline, commits edits in the background, supports wikilinks and backlinks, and can encrypt individual notes entirely on the client. no server, account, analytics, or third-party storage. <a href="https://github.com/mutkuoz/topazius" target="_blank" rel="noopener" class="chip">github ↗</a></p></div></div>
 				</article>
 			</div>
 		</div>
@@ -526,6 +550,7 @@ body {
 .page-bg {
 	position: fixed; inset: 0; z-index: 0; pointer-events: none;
 	background-image: url('/utku-bg.png');
+	background-image: image-set(url('/utku-bg.webp') type('image/webp'), url('/utku-bg.png') type('image/png'));
 	background-position: center center;
 	background-repeat: no-repeat;
 	background-size: cover;

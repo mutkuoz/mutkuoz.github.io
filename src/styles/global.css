@@ -2,3 +2,35 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+	font-family: 'Newsreader';
+	font-style: normal;
+	font-weight: 400 600;
+	font-display: swap;
+	src: url('/fonts/newsreader-normal-latin.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: 'Newsreader';
+	font-style: italic;
+	font-weight: 400 500;
+	font-display: swap;
+	src: url('/fonts/newsreader-italic-latin.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: 'Playfair Display';
+	font-style: normal;
+	font-weight: 500 800;
+	font-display: swap;
+	src: url('/fonts/playfair-display-normal-latin.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: 'Playfair Display';
+	font-style: italic;
+	font-weight: 500 600;
+	font-display: swap;
+	src: url('/fonts/playfair-display-italic-latin.woff2') format('woff2');
+}

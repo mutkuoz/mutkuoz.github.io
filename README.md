@@ -2,6 +2,8 @@
 
 Personal website for Mehmet Utku Öztürk, built with Astro and deployed to GitHub Pages. The site uses a newspaper-inspired, black-and-white design with light and dark themes.
 
+The background is served as a preloaded WebP with a PNG fallback, and the display fonts are self-hosted to keep first paint independent of third-party font services.
+
 ## Site structure
 
 ```text
