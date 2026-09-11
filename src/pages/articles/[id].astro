@@ -1,0 +1,227 @@
+---
+import { getCollection, render } from 'astro:content';
+import '../../styles/global.css';
+
+export async function getStaticPaths() {
+	const articles = await getCollection('articles');
+	return articles.map((article) => ({
+		params: { id: article.id },
+		props: { article }
+	}));
+}
+
+const { article } = Astro.props;
+const { Content } = await render(article);
+
+const SITE = 'https://utku.space';
+const canonical = new URL(`/articles/${article.id}/`, SITE).href;
+const title = `${article.data.title} — mehmet utku öztürk`;
+const published = article.data.published.toLocaleDateString('en-GB', {
+	day: 'numeric',
+	month: 'long',
+	year: 'numeric',
+	timeZone: 'UTC'
+});
+
+const articleSchema = {
+	'@context': 'https://schema.org',
+	'@type': 'BlogPosting',
+	headline: article.data.title,
+	description: article.data.description,
+	datePublished: article.data.published.toISOString(),
+	...(article.data.updated ? { dateModified: article.data.updated.toISOString() } : {}),
+	url: canonical,
+	inLanguage: 'en',
+	author: {
+		'@type': 'Person',
+		'@id': `${SITE}/#person`,
+		name: 'Mehmet Utku Öztürk',
+		url: SITE
+	},
+	publisher: { '@id': `${SITE}/#person` },
+	keywords: article.data.tags.join(', ')
+};
+---
+
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>{title}</title>
+	<meta name="description" content={article.data.description} />
+	<meta name="author" content="Mehmet Utku Öztürk" />
+	<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+	<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+	<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
+	<link rel="canonical" href={canonical} />
+	<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+	<link rel="icon" type="image/x-icon" href="/favicon.ico" />
+
+	<meta property="og:type" content="article" />
+	<meta property="og:site_name" content="utku’s space" />
+	<meta property="og:url" content={canonical} />
+	<meta property="og:title" content={article.data.title} />
+	<meta property="og:description" content={article.data.description} />
+	<meta property="article:published_time" content={article.data.published.toISOString()} />
+	<meta property="article:author" content="Mehmet Utku Öztürk" />
+	<meta name="twitter:card" content="summary" />
+	<meta name="twitter:title" content={article.data.title} />
+	<meta name="twitter:description" content={article.data.description} />
+
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&family=Playfair+Display:ital,wght@0,500..800;1,500..600&display=swap" rel="stylesheet" />
+	<script is:inline type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+</head>
+<body data-theme="light">
+	<div class="page-bg" aria-hidden="true"></div>
+	<div id="scrollProgress" aria-hidden="true"></div>
+
+	<nav id="navbar">
+		<a href="/" class="nav-brand">utku&rsquo;s&nbsp;space</a>
+		<div class="nav-links">
+			<a href="/#work" class="nav-link">(some) work</a>
+			<a href="/#research" class="nav-link">research</a>
+			<a href="/#articles" class="nav-link">articles</a>
+			<a href="/#contact" class="nav-link">contact</a>
+		</div>
+		<button class="mode-toggle" id="modeToggle" aria-label="toggle dark mode" title="day / night (d)">
+			<svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+				<circle cx="12" cy="12" r="4.5"></circle>
+				<path d="M12 1.5v2.5M12 20v2.5M4.2 4.2l1.8 1.8M18 18l1.8 1.8M1.5 12h2.5M20 12h2.5M4.2 19.8l1.8-1.8M18 6l1.8-1.8"></path>
+			</svg>
+			<svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+				<path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"></path>
+			</svg>
+		</button>
+	</nav>
+
+	<main class="paper">
+		<header class="article-header">
+			<a class="back-link" href="/#articles">← articles</a>
+			<p class="article-kicker">field notes</p>
+			<h1>{article.data.title}</h1>
+			<p class="article-deck">{article.data.description}</p>
+			<div class="article-meta">
+				<time datetime={article.data.published.toISOString()}>{published}</time>
+				<span aria-hidden="true">·</span>
+				<span>{article.data.readingTime}</span>
+			</div>
+		</header>
+
+		<article class="prose">
+			<Content />
+		</article>
+
+		<footer class="article-footer">
+			<a href="/#articles">← back to articles</a>
+			<a href="mailto:m@utku.space">start a conversation ↗</a>
+		</footer>
+	</main>
+
+	<script is:inline>
+		(function () {
+			const html = document.documentElement;
+			const body = document.body;
+			const button = document.getElementById('modeToggle');
+			let saved = 'light';
+			try { saved = localStorage.getItem('theme') || 'light'; } catch (e) {}
+			function apply(theme) {
+				html.setAttribute('data-theme', theme);
+				body.setAttribute('data-theme', theme);
+				try { localStorage.setItem('theme', theme); } catch (e) {}
+			}
+			apply(saved);
+			button.addEventListener('click', function () {
+				apply(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+			});
+			document.addEventListener('keydown', function (event) {
+				if (event.key.toLowerCase() === 'd' && !event.metaKey && !event.ctrlKey && !event.altKey) button.click();
+			});
+
+			const bar = document.getElementById('scrollProgress');
+			let raf = 0;
+			window.addEventListener('scroll', function () {
+				if (raf) return;
+				raf = requestAnimationFrame(function () {
+					const max = document.documentElement.scrollHeight - innerHeight;
+					bar.style.width = (max > 0 ? scrollY / max * 100 : 0) + '%';
+					raf = 0;
+				});
+			}, { passive: true });
+		})();
+	</script>
+</body>
+</html>
+
+<style is:global>
+	*, *::before, *::after { box-sizing: border-box; }
+	:root {
+		--serif: 'Newsreader', Georgia, 'Times New Roman', serif;
+		--display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+	}
+	[data-theme="light"] {
+		--bg: #fff; --fg: #000; --fg2: rgba(0,0,0,.74); --muted: rgba(0,0,0,.52);
+		--hair: rgba(0,0,0,.16); --bg-art-opacity: 1; --bg-art-filter: none;
+	}
+	[data-theme="dark"] {
+		--bg: #000; --fg: #fff; --fg2: rgba(255,255,255,.78); --muted: rgba(255,255,255,.54);
+		--hair: rgba(255,255,255,.2); --bg-art-opacity: .85; --bg-art-filter: invert(1);
+	}
+	html { background: var(--bg); scroll-behavior: smooth; transition: background-color .35s ease; }
+	body {
+		margin: 0; min-height: 100vh; color: var(--fg); background: transparent;
+		font-family: var(--serif); font-optical-sizing: auto; text-transform: lowercase;
+		-webkit-font-smoothing: antialiased; line-height: 1.5; transition: color .35s ease;
+	}
+	::selection { color: var(--bg); background: var(--fg); }
+	.page-bg {
+		position: fixed; inset: 0; z-index: 0; pointer-events: none;
+		background: url('/utku-bg.png') center / cover no-repeat fixed;
+		opacity: var(--bg-art-opacity); filter: var(--bg-art-filter);
+		transition: opacity .35s ease, filter .35s ease;
+	}
+	#scrollProgress { position: fixed; inset: 0 auto auto 0; z-index: 200; width: 0; height: 2px; background: var(--fg); opacity: .6; }
+	#navbar {
+		position: fixed; inset: 0 0 auto; z-index: 100; display: flex; align-items: center;
+		justify-content: space-between; gap: 1rem; height: 3.4rem; padding: 0 1.3rem;
+		background: color-mix(in srgb, var(--bg) 86%, transparent); border-bottom: 1px solid var(--hair);
+		backdrop-filter: blur(7px); -webkit-backdrop-filter: blur(7px);
+	}
+	.nav-brand { color: var(--fg); font-family: var(--display); font-size: 1.02rem; font-style: italic; font-weight: 600; text-decoration: none; white-space: nowrap; }
+	.nav-links { display: none; gap: 1.6rem; margin-left: auto; margin-right: 1.3rem; }
+	.nav-link { position: relative; padding-bottom: 2px; color: var(--muted); font-size: .86rem; letter-spacing: .02em; text-decoration: none; }
+	.nav-link:hover { color: var(--fg); }
+	.mode-toggle {
+		display: flex; align-items: center; justify-content: center; width: 2rem; height: 2rem;
+		border: 1px solid var(--hair); border-radius: 50%; color: var(--fg); background: transparent; cursor: pointer;
+		transition: border-color .2s ease, transform .35s ease;
+	}
+	.mode-toggle:hover { border-color: var(--fg); transform: rotate(-22deg); }
+	.mode-toggle:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+	.mode-toggle svg { width: .95rem; height: .95rem; }
+	[data-theme="light"] .icon-moon, [data-theme="dark"] .icon-sun { display: none; }
+	.paper { position: relative; z-index: 1; max-width: 80rem; margin: 0 auto; padding: 6.8rem 1.3rem 4rem; }
+	.article-header { max-width: 58rem; margin: 0 auto 3rem; padding-bottom: 2rem; border-bottom: 1px solid var(--hair); text-align: center; }
+	.back-link { display: inline-block; margin-bottom: 2rem; color: var(--muted); font-size: .8rem; letter-spacing: .03em; text-decoration: none; }
+	.back-link:hover { color: var(--fg); }
+	.article-kicker { margin: 0 0 .8rem; color: var(--muted); font-size: .72rem; letter-spacing: .1em; }
+	.article-header h1 { margin: 0; font-family: var(--display); font-size: clamp(2.25rem, 7vw, 4.8rem); line-height: 1.04; letter-spacing: -.025em; }
+	.article-deck { max-width: 42rem; margin: 1.25rem auto 0; color: var(--fg2); font-size: clamp(1.08rem, 2vw, 1.3rem); line-height: 1.65; }
+	.article-meta { display: flex; justify-content: center; gap: .55rem; margin-top: 1.2rem; color: var(--muted); font-size: .75rem; letter-spacing: .035em; }
+	.prose { max-width: 44rem; margin: 0 auto; color: var(--fg2); font-size: clamp(1.08rem, 1.6vw, 1.2rem); line-height: 1.85; }
+	.prose > :first-child::first-letter { float: left; margin: .06em .1em 0 0; color: var(--fg); font-family: var(--display); font-size: 4.2em; font-weight: 700; line-height: .76; }
+	.prose p { margin: 0 0 1.45em; }
+	.prose h2 { margin: 2.6em 0 .75em; padding-bottom: .35em; border-bottom: 1px solid var(--hair); color: var(--fg); font-family: var(--display); font-size: 1.55rem; line-height: 1.25; }
+	.prose a { color: var(--fg); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+	.prose a:hover { opacity: .58; }
+	.prose strong { color: var(--fg); font-weight: 600; }
+	.prose em { color: var(--fg); }
+	.article-footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; max-width: 44rem; margin: 4rem auto 0; padding-top: 1.1rem; border-top: 1px solid var(--hair); }
+	.article-footer a { color: var(--muted); font-size: .82rem; text-decoration: none; }
+	.article-footer a:hover { color: var(--fg); }
+	@media (min-width: 700px) { #navbar { padding: 0 2rem; } .nav-links { display: flex; } }
+	@media (min-width: 720px) { .paper { padding: 7.5rem 2.4rem 5rem; } }
+	@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>

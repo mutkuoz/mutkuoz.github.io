@@ -1,43 +1,55 @@
-# Astro Starter Kit: Minimal
+# utku.space
 
-```sh
-pnpm create astro@latest -- --template minimal
-```
+Personal website for Mehmet Utku Öztürk, built with Astro and deployed to GitHub Pages. The site uses a newspaper-inspired, black-and-white design with light and dark themes.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
+## Site structure
 
 ```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+src/
+├── content/
+│   └── articles/          # one Markdown file per article
+├── content.config.ts      # article frontmatter schema
+├── pages/
+│   ├── articles/[id].astro
+│   ├── sitemap.xml.ts
+│   └── index.astro
+└── styles/global.css
+public/                    # static assets, metadata, and CNAME
+news-site/                 # separate static newsletter
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+The homepage contains the biography, selected work, research, articles, and contact sections. Article index entries and individual `/articles/<id>/` pages are generated from the Markdown files in `src/content/articles/` during the Astro build.
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+## Publishing an article
 
-Any static assets, like images, can be placed in the `public/` directory.
+Add a Markdown file to `src/content/articles/`. Its filename becomes the URL, so `flydoom.md` is published at `/articles/flydoom/`.
 
-## 🧞 Commands
+Every article begins with this frontmatter:
 
-All commands are run from the root of the project, from a terminal:
+```yaml
+---
+title: "article title"
+description: "a short summary used on the homepage and in social metadata."
+published: 2026-09-11
+updated: 2026-09-12 # optional
+readingTime: "4 min read"
+tags:
+  - topic
+---
+```
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `pnpm install`             | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
+Write the article body below the frontmatter using standard Markdown. The collection schema validates the metadata, the homepage sorts articles newest first, and Astro generates each article page automatically. The XML sitemap is rebuilt from the same collection.
 
-## 👀 Want to learn more?
+## Development
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Requires Node.js 22.12 or newer and pnpm.
+
+| Command | Action |
+| :-- | :-- |
+| `pnpm install` | Install dependencies |
+| `pnpm dev` | Start the local site at `localhost:4321` |
+| `pnpm build` | Build the production site in `dist/` |
+| `pnpm preview` | Preview the production build locally |
+| `pnpm astro check` | Run Astro and TypeScript checks |
+
+Pushes to `main` trigger `.github/workflows/astro.yml`, which builds the site and deploys `dist/` to GitHub Pages for [utku.space](https://utku.space).

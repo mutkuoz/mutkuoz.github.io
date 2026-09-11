@@ -2,7 +2,7 @@
 
 > Machine learning developer and AI researcher based in Ankara, Türkiye. Focused on
 > artificial consciousness, neuro-symbolic AI, and agentic "thinking" systems.
-> Technical co-founder of turkhukuk.ai, creator of the open-source 007captcha,
+> Technical co-founder of turkhukuk.ai, creator of FlyDOOM and the open-source 007captcha,
 > founder of 23rd the company. Mensa International member and Save the Children
 > volunteer.
 
@@ -13,6 +13,10 @@ kinesiology, chess, sudoku, and coffee.
 
 ## Work
 
+- [FlyDOOM](https://github.com/mutkuoz/flydoom): A real fruit fly connectome playing
+  Doom. Feeds game frames through the visual pathway of 139,255 reconstructed neurons
+  and roughly 2.7 million synapses, then maps biological motor output back to game
+  controls. Nothing is trained. Creator, 2026. Active.
 - [turkhukuk.ai](https://www.turkhukuk.ai): LegalTech platform for Turkish lawyers —
   case research and litigation strategy. Trained and fine-tuned domain-specific
   language models on Turkish legal corpora; experimented with neuro-symbolic
@@ -50,10 +54,17 @@ kinesiology, chess, sudoku, and coffee.
   and Big Data for recommendation, presentation, and personalization, with strategy
   for an emerging Turkish digital platform.
 
+## Articles
+
+- [A fruit fly brain played Doom. Then the internet found it.](https://utku.space/articles/flydoom/)
+  (11 September 2026): How the FlyDOOM connectome experiment resurfaced, acquired its
+  own funding vehicle, and became a reason to finish the research properly.
+
 ## Contact
 
 - Email: m@utku.space
 - Mensa: utku.ozturk@member.mensa.org
 - GitHub: https://github.com/mutkuoz
+- X: https://x.com/mutkuoz
 - LinkedIn: https://linkedin.com/in/mutkuoz
 - Location: Ankara, Türkiye (GMT+3)
