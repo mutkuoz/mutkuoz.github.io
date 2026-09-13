@@ -1,45 +1,82 @@
 ---
-import { getCollection, render } from 'astro:content';
+import type { InferGetStaticPropsType } from 'astro';
+import { render } from 'astro:content';
 import '../../styles/global.css';
+import {
+	AUTHOR_NAME,
+	PERSON_ID,
+	SITE,
+	articleMarkdownUrl,
+	articleUrl,
+	formatDate,
+	getArticles,
+	lastModified,
+	wordCount
+} from '../../lib/site';
 
 export async function getStaticPaths() {
-	const articles = await getCollection('articles');
+	const articles = await getArticles();
 	return articles.map((article) => ({
 		params: { id: article.id },
-		props: { article }
+		props: { article, others: articles.filter((other) => other.id !== article.id).slice(0, 5) }
 	}));
 }
 
-const { article } = Astro.props;
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { article, others } = Astro.props;
 const { Content } = await render(article);
 
-const SITE = 'https://utku.space';
-const canonical = new URL(`/articles/${article.id}/`, SITE).href;
+const canonical = articleUrl(article);
 const title = `${article.data.title} — mehmet utku öztürk`;
-const published = article.data.published.toLocaleDateString('en-GB', {
-	day: 'numeric',
-	month: 'long',
-	year: 'numeric',
-	timeZone: 'UTC'
-});
+const published = formatDate(article.data.published);
+const modified = lastModified(article);
+const ogImage = `${SITE}/portrait.png`;
 
+// one @graph per page: the post, where it sits in the site, and who wrote it.
 const articleSchema = {
 	'@context': 'https://schema.org',
-	'@type': 'BlogPosting',
-	headline: article.data.title,
-	description: article.data.description,
-	datePublished: article.data.published.toISOString(),
-	...(article.data.updated ? { dateModified: article.data.updated.toISOString() } : {}),
-	url: canonical,
-	inLanguage: 'en',
-	author: {
-		'@type': 'Person',
-		'@id': `${SITE}/#person`,
-		name: 'Mehmet Utku Öztürk',
-		url: SITE
-	},
-	publisher: { '@id': `${SITE}/#person` },
-	keywords: article.data.tags.join(', ')
+	'@graph': [
+		{
+			'@type': 'BlogPosting',
+			'@id': `${canonical}#article`,
+			headline: article.data.title,
+			description: article.data.description,
+			datePublished: article.data.published.toISOString(),
+			dateModified: modified.toISOString(),
+			url: canonical,
+			mainEntityOfPage: canonical,
+			inLanguage: 'en',
+			image: ogImage,
+			wordCount: wordCount(article),
+			keywords: article.data.tags,
+			author: {
+				'@type': 'Person',
+				'@id': PERSON_ID,
+				name: AUTHOR_NAME,
+				url: `${SITE}/`
+			},
+			publisher: { '@id': PERSON_ID },
+			isPartOf: {
+				'@type': 'WebSite',
+				'@id': `${SITE}/#website`,
+				name: "utku's space",
+				url: `${SITE}/`
+			},
+			encoding: {
+				'@type': 'MediaObject',
+				encodingFormat: 'text/markdown',
+				contentUrl: articleMarkdownUrl(article)
+			}
+		},
+		{
+			'@type': 'BreadcrumbList',
+			itemListElement: [
+				{ '@type': 'ListItem', position: 1, name: "utku's space", item: `${SITE}/` },
+				{ '@type': 'ListItem', position: 2, name: article.data.title, item: canonical }
+			]
+		}
+	]
 };
 ---
 
@@ -50,24 +87,35 @@ const articleSchema = {
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<title>{title}</title>
 	<meta name="description" content={article.data.description} />
-	<meta name="author" content="Mehmet Utku Öztürk" />
+	<meta name="author" content={AUTHOR_NAME} />
 	<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
 	<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
 	<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
 	<link rel="canonical" href={canonical} />
+	<link rel="author" href="/" />
+	<link rel="alternate" type="text/markdown" href={articleMarkdownUrl(article)} title="markdown version" />
+	<link rel="alternate" type="application/rss+xml" href="/rss.xml" title="utku’s space — articles" />
 	<link rel="icon" type="image/x-icon" href="/favicon.ico" />
 	<link rel="preload" as="image" href="/utku-bg.webp" type="image/webp" fetchpriority="high" />
 
 	<meta property="og:type" content="article" />
 	<meta property="og:site_name" content="utku’s space" />
+	<meta property="og:locale" content="en_GB" />
 	<meta property="og:url" content={canonical} />
 	<meta property="og:title" content={article.data.title} />
 	<meta property="og:description" content={article.data.description} />
+	<meta property="og:image" content={ogImage} />
+	<meta property="og:image:alt" content="engraved portrait of mehmet utku öztürk" />
 	<meta property="article:published_time" content={article.data.published.toISOString()} />
-	<meta property="article:author" content="Mehmet Utku Öztürk" />
+	<meta property="article:modified_time" content={modified.toISOString()} />
+	<meta property="article:author" content={`${SITE}/`} />
+	{article.data.tags.map((tag) => <meta property="article:tag" content={tag} />)}
 	<meta name="twitter:card" content="summary" />
+	<meta name="twitter:site" content="@mutkuoz" />
+	<meta name="twitter:creator" content="@mutkuoz" />
 	<meta name="twitter:title" content={article.data.title} />
 	<meta name="twitter:description" content={article.data.description} />
+	<meta name="twitter:image" content={ogImage} />
 
 	<script is:inline type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
 </head>
@@ -101,7 +149,15 @@ const articleSchema = {
 			<h1>{article.data.title}</h1>
 			<p class="article-deck">{article.data.description}</p>
 			<div class="article-meta">
+				<span>by <a href="/" rel="author">{AUTHOR_NAME}</a></span>
+				<span aria-hidden="true">·</span>
 				<time datetime={article.data.published.toISOString()}>{published}</time>
+				{article.data.updated && (
+					<>
+						<span aria-hidden="true">·</span>
+						<span>updated <time datetime={article.data.updated.toISOString()}>{formatDate(article.data.updated)}</time></span>
+					</>
+				)}
 				<span aria-hidden="true">·</span>
 				<span>{article.data.readingTime}</span>
 			</div>
@@ -110,6 +166,21 @@ const articleSchema = {
 		<article class="prose">
 			<Content />
 		</article>
+
+		<aside class="article-author" aria-label="about the author">
+			<p><a href="/" rel="author">{AUTHOR_NAME}</a> is a machine learning developer and AI researcher in Ankara, Türkiye, working on artificial consciousness, connectomics, and agentic systems. Creator of <a href="https://github.com/mutkuoz/flydoom">FlyDOOM</a> and first author of <a href="https://doi.org/10.47852/bonviewJCLLT620210346">HukukBERT</a>.</p>
+		</aside>
+
+		{others.length > 0 && (
+			<nav class="more-articles" aria-label="more articles">
+				<p class="article-kicker">more articles</p>
+				<ul>
+					{others.map((other) => (
+						<li><a href={`/articles/${other.id}/`}>{other.data.title}</a></li>
+					))}
+				</ul>
+			</nav>
+		)}
 
 		<footer class="article-footer">
 			<a href="/#articles">← back to articles</a>
@@ -208,7 +279,9 @@ const articleSchema = {
 	.article-kicker { margin: 0 0 .8rem; color: var(--muted); font-size: .72rem; letter-spacing: .1em; }
 	.article-header h1 { margin: 0; font-family: var(--display); font-size: clamp(2.25rem, 7vw, 4.8rem); line-height: 1.04; letter-spacing: -.025em; }
 	.article-deck { max-width: 42rem; margin: 1.25rem auto 0; color: var(--fg2); font-size: clamp(1.08rem, 2vw, 1.3rem); line-height: 1.65; }
-	.article-meta { display: flex; justify-content: center; gap: .55rem; margin-top: 1.2rem; color: var(--muted); font-size: .75rem; letter-spacing: .035em; }
+	.article-meta { display: flex; flex-wrap: wrap; justify-content: center; gap: .55rem; margin-top: 1.2rem; color: var(--muted); font-size: .75rem; letter-spacing: .035em; }
+	.article-meta a { color: var(--fg2); text-decoration: none; }
+	.article-meta a:hover { color: var(--fg); }
 	.prose { max-width: 44rem; margin: 0 auto; color: var(--fg2); font-size: clamp(1.08rem, 1.6vw, 1.2rem); line-height: 1.85; }
 	.prose > :first-child::first-letter { float: left; margin: .06em .1em 0 0; color: var(--fg); font-family: var(--display); font-size: 4.2em; font-weight: 700; line-height: .76; }
 	.prose p { margin: 0 0 1.45em; }
@@ -217,7 +290,15 @@ const articleSchema = {
 	.prose a:hover { opacity: .58; }
 	.prose strong { color: var(--fg); font-weight: 600; }
 	.prose em { color: var(--fg); }
-	.article-footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; max-width: 44rem; margin: 4rem auto 0; padding-top: 1.1rem; border-top: 1px solid var(--hair); }
+	.article-author { max-width: 44rem; margin: 4rem auto 0; padding-top: 1.3rem; border-top: 1px solid var(--hair); color: var(--muted); font-size: .92rem; line-height: 1.7; }
+	.article-author p { margin: 0; }
+	.article-author a { color: var(--fg); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+	.more-articles { max-width: 44rem; margin: 2.6rem auto 0; }
+	.more-articles ul { margin: 0; padding: 0; list-style: none; }
+	.more-articles li { padding: .6rem 0; border-bottom: 1px solid var(--hair); font-family: var(--display); font-size: 1.08rem; line-height: 1.35; }
+	.more-articles a { color: var(--fg); text-decoration: none; }
+	.more-articles a:hover { opacity: .58; }
+	.article-footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; max-width: 44rem; margin: 3rem auto 0; padding-top: 1.1rem; border-top: 1px solid var(--hair); }
 	.article-footer a { color: var(--muted); font-size: .82rem; text-decoration: none; }
 	.article-footer a:hover { color: var(--fg); }
 	@media (min-width: 700px) { #navbar { padding: 0 2rem; } .nav-links { display: flex; } }

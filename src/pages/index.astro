@@ -1,41 +1,36 @@
 ---
 // src/pages/index.astro — a quiet newspaper-style personal record, pure black on pure white, full lowercase, serif.
 import '../styles/global.css';
-import { getCollection } from 'astro:content';
+import { papers } from '../data/research';
+import { AUTHOR_NAME, PERSON_ID, SITE, articleUrl, formatDate, getArticles, lastModified } from '../lib/site';
 
 const today = new Date();
 const dateStr = today.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
-const articles = (await getCollection('articles')).sort(
-	(a, b) => b.data.published.valueOf() - a.data.published.valueOf()
-);
-const formatArticleDate = (date: Date) => date.toLocaleDateString('en-GB', {
-	day: 'numeric',
-	month: 'long',
-	year: 'numeric',
-	timeZone: 'UTC'
-});
+const articles = await getArticles();
 
-const SITE = 'https://utku.space';
 const canonical = new URL(Astro.url.pathname, SITE).href;
 const title = 'mehmet utku öztürk — machine learning developer & ai researcher';
 const description =
 	'mehmet utku öztürk is a machine learning developer and ai researcher in ankara, türkiye. technical co-founder of turkhukuk.ai, creator of FlyDOOM and 007captcha, author of HukukBERT and Octapar. work on artificial consciousness, connectomics, neuro-symbolic ai, and agentic systems.';
 const ogImage = new URL('/portrait.png', SITE).href;
+const WEBSITE_ID = `${SITE}/#website`;
 
 // ── structured data ─────────────────────────────────────────────────────
 // answer engines (chatgpt, perplexity, google ai overviews) read schema.org
-// far more reliably than they read prose. state the facts explicitly.
-const personSchema = {
-	'@context': 'https://schema.org',
+// far more reliably than they read prose. state the facts explicitly, and keep
+// every entity in one @graph so they reference each other by @id.
+const person = {
 	'@type': 'Person',
-	'@id': `${SITE}/#person`,
-	name: 'Mehmet Utku Öztürk',
-	alternateName: ['Utku Öztürk', 'mutkuoz', 'Mehmet Utku Ozturk'],
-	url: SITE,
+	'@id': PERSON_ID,
+	name: AUTHOR_NAME,
+	alternateName: ['Utku Öztürk', 'mutkuoz', 'Mehmet Utku Ozturk', 'Utku Ozturk'],
+	url: `${SITE}/`,
 	image: ogImage,
 	jobTitle: 'Machine Learning Developer & AI Researcher',
 	description:
 		'Machine learning developer and AI researcher focused on artificial consciousness, neuro-symbolic AI, and agentic "thinking" systems. Started programming at 8, working on machine learning since 13.',
+	disambiguatingDescription:
+		'Machine learning developer from Ankara, Türkiye; technical co-founder of turkhukuk.ai, creator of FlyDOOM and 007captcha, and first author of HukukBERT.',
 	email: 'mailto:m@utku.space',
 	address: {
 		'@type': 'PostalAddress',
@@ -75,129 +70,152 @@ const personSchema = {
 	]
 };
 
-const siteSchema = {
-	'@context': 'https://schema.org',
+const website = {
 	'@type': 'WebSite',
-	'@id': `${SITE}/#website`,
-	url: SITE,
+	'@id': WEBSITE_ID,
+	url: `${SITE}/`,
 	name: "utku's space",
 	description,
 	inLanguage: 'en',
-	publisher: { '@id': `${SITE}/#person` }
+	publisher: { '@id': PERSON_ID }
+};
+
+const profilePage = {
+	'@type': 'ProfilePage',
+	'@id': `${canonical}#profile`,
+	url: canonical,
+	name: title,
+	description,
+	inLanguage: 'en',
+	isPartOf: { '@id': WEBSITE_ID },
+	mainEntity: { '@id': PERSON_ID },
+	...(articles[0] ? { dateModified: lastModified(articles[0]).toISOString() } : {})
 };
 
 // each shipped project, so an answer engine can name them without guessing.
-const workSchema = {
-	'@context': 'https://schema.org',
-	'@type': 'ItemList',
-	'@id': `${SITE}/#work`,
-	name: 'Selected work of Mehmet Utku Öztürk',
-	itemListElement: [
-		{
-			'@type': 'SoftwareApplication',
-			name: 'turkhukuk.ai',
-			url: 'https://www.turkhukuk.ai',
-			applicationCategory: 'LegalTech',
-			description:
-				'A LegalTech platform for Turkish lawyers covering case research and litigation strategy, built on domain-specific language models trained on Turkish legal corpora.'
-		},
-		{
-			'@type': 'SoftwareSourceCode',
-			name: 'FlyDOOM',
-			codeRepository: 'https://github.com/mutkuoz/flydoom',
-			programmingLanguage: 'Python',
-			description:
-				'A simulator that feeds Doom into the visual pathway of a 139,255-neuron fruit fly connectome and maps its biological motor output back to game controls.'
-		},
-		{
-			'@type': 'SoftwareApplication',
-			name: 'Clade AI',
-			applicationCategory: 'Personal Assistant',
-			description:
-				'A personal AI assistant with task execution, extensive integrations, and personalized interaction, built on a self-deciding multi-agent framework.'
-		},
-		{
-			'@type': 'SoftwareApplication',
-			name: 'Sorubot',
-			applicationCategory: 'Education',
-			description: 'An AI platform that generates exam questions and manages student study sessions.'
-		},
-		{
-			'@type': 'SoftwareSourceCode',
-			name: '007captcha',
-			codeRepository: 'https://github.com/mutkuoz/007captcha',
-			programmingLanguage: 'TypeScript',
-			license: 'https://opensource.org/licenses/MIT',
-			description:
-				'An open-source robophobic verification framework that defends websites against AI agents — a CAPTCHA built for the post-LLM web.'
-		},
-		{
-			'@type': 'SoftwareApplication',
-			name: 'Octapar',
-			applicationCategory: 'Social Platform',
-			description:
-				'An AI platform that clusters people into balanced 8-person groups using weighted attentional embeddings and the Hungarian method.'
-		},
-		{
-			'@type': 'SoftwareApplication',
-			name: 'Styrk',
-			applicationCategory: 'Health and Fitness',
-			description: 'Sports supplements with AI-driven personalization and AI-generated packaging.'
-		},
-		{
-			'@type': 'SoftwareSourceCode',
-			name: 'Topazius',
-			codeRepository: 'https://github.com/mutkuoz/topazius',
-			programmingLanguage: 'TypeScript',
-			description:
-				'A browser-based Markdown notes app that uses a private GitHub repository as its database, with offline editing and optional client-side encryption.'
-		}
-	]
-};
-
-const papers = [
+const projects = [
 	{
-		name: 'HukukBERT: Domain-Specific Language Model for Turkish Law',
-		url: 'https://arxiv.org/abs/2604.04790',
-		year: '2026',
-		publisher: 'turkhukuk.ai'
+		'@type': 'SoftwareApplication',
+		name: 'turkhukuk.ai',
+		url: 'https://www.turkhukuk.ai',
+		applicationCategory: 'LegalTech',
+		description:
+			'A LegalTech platform for Turkish lawyers covering case research and litigation strategy, built on domain-specific language models trained on Turkish legal corpora.'
 	},
 	{
-		name: 'Octapar: A Framework for Multi-Modal, Balanced User Grouping using Weighted Attentional Embeddings and Assignment-Based Clustering',
-		url: 'https://zenodo.org/records/17360220',
-		year: '2025',
-		publisher: '23rd the company'
+		'@type': 'SoftwareSourceCode',
+		name: 'FlyDOOM',
+		codeRepository: 'https://github.com/mutkuoz/flydoom',
+		programmingLanguage: 'Python',
+		description:
+			'A simulator that feeds Doom into the visual pathway of a 139,255-neuron fruit fly connectome and maps its biological motor output back to game controls.'
 	},
 	{
-		name: 'Streaming Intelligence: Harnessing AI and Big Data in the Competitive Landscape of Digital Content Platforms',
-		year: '2024',
-		publisher: 'Plawlabs'
+		'@type': 'SoftwareApplication',
+		name: 'Clade AI',
+		applicationCategory: 'Personal Assistant',
+		description:
+			'A personal AI assistant with task execution, extensive integrations, and personalized interaction, built on a self-deciding multi-agent framework.'
+	},
+	{
+		'@type': 'SoftwareApplication',
+		name: 'Sorubot',
+		applicationCategory: 'Education',
+		description: 'An AI platform that generates exam questions and manages student study sessions.'
+	},
+	{
+		'@type': 'SoftwareSourceCode',
+		name: '007captcha',
+		codeRepository: 'https://github.com/mutkuoz/007captcha',
+		programmingLanguage: 'TypeScript',
+		license: 'https://opensource.org/licenses/MIT',
+		description:
+			'An open-source robophobic verification framework that defends websites against AI agents — a CAPTCHA built for the post-LLM web.'
+	},
+	{
+		'@type': 'SoftwareApplication',
+		name: 'Octapar',
+		applicationCategory: 'Social Platform',
+		description:
+			'An AI platform that clusters people into balanced 8-person groups using weighted attentional embeddings and the Hungarian method.'
+	},
+	{
+		'@type': 'SoftwareApplication',
+		name: 'Styrk',
+		applicationCategory: 'Health and Fitness',
+		description: 'Sports supplements with AI-driven personalization and AI-generated packaging.'
+	},
+	{
+		'@type': 'SoftwareSourceCode',
+		name: 'Topazius',
+		codeRepository: 'https://github.com/mutkuoz/topazius',
+		programmingLanguage: 'TypeScript',
+		description:
+			'A browser-based Markdown notes app that uses a private GitHub repository as its database, with offline editing and optional client-side encryption.'
 	}
 ];
 
-const researchSchema = {
-	'@context': 'https://schema.org',
+const work = {
+	'@type': 'ItemList',
+	'@id': `${SITE}/#work`,
+	name: `Selected work of ${AUTHOR_NAME}`,
+	itemListElement: projects.map((project, i) => ({
+		'@type': 'ListItem',
+		position: i + 1,
+		item: { ...project, creator: { '@id': PERSON_ID } }
+	}))
+};
+
+const research = {
 	'@type': 'ItemList',
 	'@id': `${SITE}/#research`,
-	name: 'Research by Mehmet Utku Öztürk',
-	itemListElement: papers.map((p, i) => ({
+	name: `Research by ${AUTHOR_NAME}`,
+	itemListElement: papers.map((paper, i) => ({
 		'@type': 'ListItem',
 		position: i + 1,
 		item: {
 			'@type': 'ScholarlyArticle',
-			name: p.name,
-			author: { '@id': `${SITE}/#person` },
-			datePublished: p.year,
-			publisher: { '@type': 'Organization', name: p.publisher },
-			...(p.url ? { url: p.url } : {})
+			name: paper.name,
+			headline: paper.name,
+			abstract: paper.abstract,
+			datePublished: paper.year,
+			author: [
+				{ '@id': PERSON_ID },
+				...(paper.coAuthors ?? []).map((name) => ({ '@type': 'Person', name }))
+			],
+			publisher: { '@type': 'Organization', name: paper.publisher ?? paper.venue },
+			...(paper.journal ? { isPartOf: { '@type': 'Periodical', name: paper.journal } } : {}),
+			...(paper.doi ? { identifier: { '@type': 'PropertyValue', propertyID: 'DOI', value: paper.doi } } : {}),
+			...(paper.links.length ? { url: paper.links[0].url, sameAs: paper.links.map((link) => link.url) } : {})
 		}
 	}))
 };
 
+const blog = {
+	'@type': 'Blog',
+	'@id': `${SITE}/#articles`,
+	name: `Articles by ${AUTHOR_NAME}`,
+	url: `${SITE}/#articles`,
+	inLanguage: 'en',
+	author: { '@id': PERSON_ID },
+	blogPost: articles.map((article) => ({
+		'@type': 'BlogPosting',
+		'@id': `${articleUrl(article)}#article`,
+		headline: article.data.title,
+		description: article.data.description,
+		url: articleUrl(article),
+		datePublished: article.data.published.toISOString(),
+		dateModified: lastModified(article).toISOString(),
+		keywords: article.data.tags,
+		author: { '@id': PERSON_ID }
+	}))
+};
+
 // plain question/answer pairs — the shape answer engines quote from directly.
-const faqSchema = {
-	'@context': 'https://schema.org',
+const faq = {
 	'@type': 'FAQPage',
+	'@id': `${SITE}/#faq`,
+	isPartOf: { '@id': WEBSITE_ID },
 	mainEntity: [
 		{
 			'@type': 'Question',
@@ -217,10 +235,26 @@ const faqSchema = {
 		},
 		{
 			'@type': 'Question',
+			name: 'What is FlyDOOM?',
+			acceptedAnswer: {
+				'@type': 'Answer',
+				text: 'FlyDOOM is an open-source experiment by Mehmet Utku Öztürk that runs Doom through a real fruit fly connectome. Game frames enter the visual pathway of 139,255 reconstructed neurons and roughly 2.7 million synapses from the FAFB dataset, and the fly\'s motor output is mapped back to game controls. Nothing is trained; the wiring is the fly\'s own. The code is at https://github.com/mutkuoz/flydoom and the story is at https://utku.space/articles/flydoom/.'
+			}
+		},
+		{
+			'@type': 'Question',
 			name: 'What research has Mehmet Utku Öztürk published?',
 			acceptedAnswer: {
 				'@type': 'Answer',
-				text: 'He is an author of HukukBERT, the most comprehensive legal language model for Turkish, which reaches 84.40% Top-1 accuracy on a Legal Cloze Test benchmark; Octapar, a framework for balanced multi-modal user grouping using weighted attentional embeddings and the Hungarian method; and Streaming Intelligence, a study of AI and Big Data in digital content platforms.'
+				text: 'Mehmet Utku Öztürk is the first author of HukukBERT, the most comprehensive legal language model for Turkish, published in the Journal of Computational Law and Legal Technology (2026; arXiv:2604.04790), which reaches 84.40% Top-1 accuracy on a Legal Cloze Test benchmark. Other research includes Octapar, a framework for balanced multi-modal user grouping using weighted attentional embeddings and the Hungarian method, and Streaming Intelligence, a study of AI and Big Data in digital content platforms.'
+			}
+		},
+		{
+			'@type': 'Question',
+			name: 'What articles has Mehmet Utku Öztürk written?',
+			acceptedAnswer: {
+				'@type': 'Answer',
+				text: `Articles by Mehmet Utku Öztürk on utku.space include ${articles.map((article) => `"${article.data.title}" (${formatDate(article.data.published)}, ${articleUrl(article)})`).join('; ')}. All articles are listed at ${SITE}/#articles and published as an RSS feed at ${SITE}/rss.xml.`
 			}
 		},
 		{
@@ -232,6 +266,11 @@ const faqSchema = {
 			}
 		}
 	]
+};
+
+const schema = {
+	'@context': 'https://schema.org',
+	'@graph': [website, profilePage, person, work, research, blog, faq]
 };
 ---
 
@@ -249,11 +288,14 @@ const faqSchema = {
 	<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
 	<link rel="icon" type="image/x-icon" href="/favicon.ico" />
 	<link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+	<link rel="alternate" type="application/rss+xml" href="/rss.xml" title="utku&rsquo;s space — articles" />
+	<link rel="alternate" type="text/plain" href="/llms.txt" title="plain-text profile for language models" />
+	{person.sameAs.map((url) => <link rel="me" href={url} />)}
 	<link rel="preload" as="image" href="/utku-bg.webp" type="image/webp" fetchpriority="high" />
 
 	<meta property="og:type" content="profile" />
 	<meta property="og:site_name" content="utku&rsquo;s space" />
-	<meta property="og:locale" content="en" />
+	<meta property="og:locale" content="en_GB" />
 	<meta property="og:url" content={canonical} />
 	<meta property="og:title" content={title} />
 	<meta property="og:description" content={description} />
@@ -264,15 +306,14 @@ const faqSchema = {
 	<meta property="profile:username" content="mutkuoz" />
 
 	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:site" content="@mutkuoz" />
+	<meta name="twitter:creator" content="@mutkuoz" />
 	<meta name="twitter:title" content={title} />
 	<meta name="twitter:description" content={description} />
 	<meta name="twitter:image" content={ogImage} />
 
-	<script is:inline type="application/ld+json" set:html={JSON.stringify(personSchema)} />
-	<script is:inline type="application/ld+json" set:html={JSON.stringify(siteSchema)} />
-	<script is:inline type="application/ld+json" set:html={JSON.stringify(workSchema)} />
-	<script is:inline type="application/ld+json" set:html={JSON.stringify(researchSchema)} />
-	<script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+	<script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
+	<noscript><style is:inline>body .reveal { opacity: 1; transform: none; }</style></noscript>
 </head>
 <body data-theme="light">
 
@@ -412,30 +453,16 @@ const faqSchema = {
 	<section id="research" class="section reveal">
 		<div class="rule-head"><h2 class="rule-head-label">research</h2></div>
 		<div class="papers">
-			<article class="item item-paper">
-				<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
-					<span class="item-title">HukukBERT Domain-Specific Language Model for Turkish Law</span>
-					<span class="item-byline">turkhukuk.ai &middot; 2026</span>
-					<span class="item-plus" aria-hidden="true"></span>
-				</button>
-				<div class="item-body"><div class="item-body-inner"><p class="abstract">Recent advances in natural language processing (NLP) have opened significant doors for LegalTech applications; however, existing studies specific to Turkish law have been severely limited by data constraints. While extensive models like LEGAL-BERT have been developed for English legal texts, the Turkish legal domain lacks a high-volume, domain-specific counterpart. In this paper, we introduce HukukBERT, the most comprehensive legal language model for Turkish, trained on an 18 GB cleaned legal corpus using advanced masking strategies. We systematically compare our 48K WordPiece tokenizer and Domain-Adaptive Pre-Training (DAPT) approach against general-purpose and existing domain-specific Turkish models. Evaluated on a novel Legal Cloze Test benchmark, HukukBERT achieves state-of-the-art performance with 84.40% Top-1 accuracy, substantially outperforming existing models such as BERTurk-Legal. We release HukukBERT to serve as a foundational model for downstream Turkish legal tasks.</p><a href="https://doi.org/10.47852/bonviewJCLLT620210346" target="_blank" rel="noopener" class="chip">jcllt ↗</a><a href="https://arxiv.org/abs/2604.04790" target="_blank" rel="noopener" class="chip">arxiv ↗</a></div></div>
-			</article>
-			<article class="item item-paper">
-				<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
-					<span class="item-title">Octapar: A Framework for Multi-Modal, Balanced User Grouping using Weighted Attentional Embeddings and Assignment-Based Clustering</span>
-					<span class="item-byline">23rd the company &middot; 2025</span>
-					<span class="item-plus" aria-hidden="true"></span>
-				</button>
-				<div class="item-body"><div class="item-body-inner"><p class="abstract">The formation of coherent, effective, and equitably sized user groups is a critical and persistent challenge in the design of online social platforms, collaborative learning environments, and enterprise-level teamwork tools. Existing automated methods, while scalable, often fail to produce groups of a consistent, predetermined size, leading to significant logistical issues and imbalanced user experiences. Furthermore, they often rely on shallow or easily manipulated user data. This paper introduces Octapar, a novel, multi-stage algorithmic framework designed to generate semantically coherent, perfectly balanced user clusters from deep, multi-modal user profiles. The framework pioneers a conversational onboarding process, using specialized chatbots and Large Language Models (LLMs) to extract nuanced user characteristics across both skill and philosophical domains. These characteristics are formalized as a rich set of semantic tags. The core technical innovation is a custom weighted attention mechanism that generates a sophisticated user vector by incorporating not only global tag rarity (IDF) but also a novel metric of local, intra-user tag uniqueness. This allows the model to identify and amplify a user's most distinctive traits. Final group formation is achieved via an iterative, assignment-based clustering algorithm that utilizes the Hungarian method to guarantee perfectly balanced clusters. This approach ensures structural consistency and fairness in group formation, a critical and often unmet requirement for many practical applications. We provide a detailed walkthrough of the architecture, the mathematical foundations of its components, and a discussion of its implications for the future of computational group formation.</p><a href="https://zenodo.org/records/17360220" target="_blank" rel="noopener" class="chip">zenodo ↗</a></div></div>
-			</article>
-			<article class="item item-paper">
-				<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
-					<span class="item-title">Streaming Intelligence: Harnessing AI and Big Data in the Competitive Landscape of Digital Content Platforms</span>
-					<span class="item-byline">Plawlabs &middot; 2024</span>
-					<span class="item-plus" aria-hidden="true"></span>
-				</button>
-				<div class="item-body"><div class="item-body-inner"><p class="abstract">In the rapidly evolving realm of digital entertainment, Artificial Intelligence (AI) and Big Data stand at the forefront, reshaping the future of content consumption and curation. Esteemed global streaming giants such as Netflix, YouTube, Hulu, Amazon Prime Video, HBO Max, Disney+, and even social platforms like Instagram and TikTok, are skillfully leveraging these technologies to transform content recommendation, presentation, and personalization processes. This not only elevates the user experience but also sets unprecedented standards for operational efficiency across the industry. Our article delves into the intricate use of AI and Big Data by these leading platforms, highlighting their critical role in captivating audiences and streamlining content strategies. Furthermore, our research offers concrete insights and forward-looking strategies for one of the Turkey's emerging digital platform, in collaboration with PlawLabs, on surpassing its global competitors with the development of advanced AI technology. This initiative is aimed at overcoming unique challenges brought forth by these technological advancements and seizing expansive opportunities. By capitalizing on the technological expertise and strategic foresights of current industry leaders, this platform is poised to gain a significant competitive edge in the rapidly growing market of digital streaming services, both domestically and internationally. Adopting our technology foresights will not only enhance the quality of content and increase user engagement but will also seamlessly align with the changing preferences and demands of today's diverse digital audience, supporting the platform's financial outcomes. Through this comprehensive analysis, we aim to illuminate a path for our national platform to leverage AI and Big Data, catalyze its growth, and redefine content maturity in the digital space.</p></div></div>
-			</article>
+			{papers.map((paper) => (
+				<article class="item item-paper">
+					<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
+						<span class="item-title">{paper.name}</span>
+						<span class="item-byline">{paper.venue} &middot; {paper.year}</span>
+						<span class="item-plus" aria-hidden="true"></span>
+					</button>
+					<div class="item-body"><div class="item-body-inner"><p class="abstract">{paper.abstract}</p>{paper.links.map((link) => <a href={link.url} target="_blank" rel="noopener" class="chip">{link.label} ↗</a>)}</div></div>
+				</article>
+			))}
 		</div>
 		<p class="more-note">more coming.</p>
 	</section>
@@ -451,7 +478,7 @@ const faqSchema = {
 						<p>{article.data.description}</p>
 					</div>
 					<div class="article-details">
-						<time datetime={article.data.published.toISOString()}>{formatArticleDate(article.data.published)}</time>
+						<time datetime={article.data.published.toISOString()}>{formatDate(article.data.published)}</time>
 						<span>{article.data.readingTime}</span>
 					</div>
 					<span class="article-arrow" aria-hidden="true">↗</span>
@@ -468,10 +495,10 @@ const faqSchema = {
 		<dl class="contact-list">
 			<a href="mailto:m@utku.space" class="c-link"><dt>email</dt><dd>m@utku.space</dd></a>
 			<a href="mailto:utku.ozturk@member.mensa.org" class="c-link"><dt>mensa</dt><dd>utku.ozturk@member.mensa.org</dd></a>
-			<a href="https://github.com/mutkuoz" target="_blank" rel="noopener" class="c-link"><dt>github</dt><dd>@mutkuoz</dd></a>
-			<a href="https://x.com/mutkuoz" target="_blank" rel="noopener" class="c-link"><dt>x</dt><dd>@mutkuoz</dd></a>
-			<a href="https://linkedin.com/in/mutkuoz" target="_blank" rel="noopener" class="c-link"><dt>linkedin</dt><dd>@mutkuoz</dd></a>
-			<a href="https://orcid.org/0009-0008-2400-5646" target="_blank" rel="noopener" class="c-link"><dt>orcid</dt><dd>0009-0008-2400-5646</dd></a>
+			<a href="https://github.com/mutkuoz" target="_blank" rel="me noopener" class="c-link"><dt>github</dt><dd>@mutkuoz</dd></a>
+			<a href="https://x.com/mutkuoz" target="_blank" rel="me noopener" class="c-link"><dt>x</dt><dd>@mutkuoz</dd></a>
+			<a href="https://linkedin.com/in/mutkuoz" target="_blank" rel="me noopener" class="c-link"><dt>linkedin</dt><dd>@mutkuoz</dd></a>
+			<a href="https://orcid.org/0009-0008-2400-5646" target="_blank" rel="me noopener" class="c-link"><dt>orcid</dt><dd>0009-0008-2400-5646</dd></a>
 		</dl>
 	</section>
 

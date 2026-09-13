@@ -1,7 +1,9 @@
 User-agent: *
 Allow: /
 
-# answer engines / llm crawlers — explicitly welcome
+# answer engines / llm crawlers — explicitly welcome.
+# plain-markdown profile for language models: https://utku.space/llms.txt
+# full text of every article: https://utku.space/llms-full.txt
 User-agent: GPTBot
 Allow: /
 
@@ -14,7 +16,16 @@ Allow: /
 User-agent: PerplexityBot
 Allow: /
 
+User-agent: Perplexity-User
+Allow: /
+
 User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: Claude-User
 Allow: /
 
 User-agent: Claude-Web
@@ -24,6 +35,18 @@ User-agent: Google-Extended
 Allow: /
 
 User-agent: Applebot-Extended
+Allow: /
+
+User-agent: DuckAssistBot
+Allow: /
+
+User-agent: MistralAI-User
+Allow: /
+
+User-agent: meta-externalagent
+Allow: /
+
+User-agent: Amazonbot
 Allow: /
 
 User-agent: CCBot

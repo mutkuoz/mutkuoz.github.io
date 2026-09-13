@@ -47,3 +47,31 @@ jobs:
       - name: deploy to github pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  # tell bing, yandex, seznam, and naver that pages changed instead of waiting for
+  # the next crawl. bing's index feeds chatgpt search and copilot. never blocks a deploy.
+  indexnow:
+    needs: deploy
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    env:
+      INDEXNOW_KEY: 368e2a1fa1756870fd5bf2c029204108
+    steps:
+      - name: download built site
+        uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+
+      - name: submit sitemap urls to indexnow
+        run: |
+          tar -xf artifact.tar ./sitemap.xml
+          urls=$(grep -o '<loc>[^<]*</loc>' sitemap.xml | sed -e 's/<loc>//' -e 's/<\/loc>//' | jq -R . | jq -sc .)
+          for attempt in $(seq 1 12); do
+            curl -fsS "https://utku.space/$INDEXNOW_KEY.txt" -o /dev/null && break
+            sleep 10
+          done
+          jq -n --arg key "$INDEXNOW_KEY" --argjson urls "$urls" \
+            '{host: "utku.space", key: $key, keyLocation: "https://utku.space/\($key).txt", urlList: $urls}' \
+            | curl -sS -X POST https://api.indexnow.org/indexnow \
+                -H 'Content-Type: application/json; charset=utf-8' \
+                --data-binary @- -w 'indexnow responded %{http_code}\n'

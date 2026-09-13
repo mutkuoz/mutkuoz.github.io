@@ -1,31 +1,20 @@
 import type { APIRoute } from 'astro';
-import { getCollection } from 'astro:content';
-
-const SITE = 'https://utku.space';
-
-const escapeXml = (value: string) => value
-	.replaceAll('&', '&amp;')
-	.replaceAll('<', '&lt;')
-	.replaceAll('>', '&gt;')
-	.replaceAll('"', '&quot;')
-	.replaceAll("'", '&apos;');
+import { SITE, articleUrl, escapeXml, getArticles, isoDate, lastModified } from '../lib/site';
 
 export const GET: APIRoute = async () => {
-	const articles = (await getCollection('articles')).sort(
-		(a, b) => b.data.published.valueOf() - a.data.published.valueOf()
-	);
-	const latestDate = articles[0]?.data.updated ?? articles[0]?.data.published;
+	const articles = await getArticles();
+	const latestDate = articles[0] && lastModified(articles[0]);
 
 	const urls = [
 		{
 			loc: `${SITE}/`,
-			lastmod: latestDate?.toISOString().slice(0, 10),
+			lastmod: latestDate && isoDate(latestDate),
 			changefreq: 'monthly',
 			priority: '1.0'
 		},
 		...articles.map((article) => ({
-			loc: `${SITE}/articles/${article.id}/`,
-			lastmod: (article.data.updated ?? article.data.published).toISOString().slice(0, 10),
+			loc: articleUrl(article),
+			lastmod: isoDate(lastModified(article)),
 			changefreq: 'monthly',
 			priority: '0.8'
 		}))

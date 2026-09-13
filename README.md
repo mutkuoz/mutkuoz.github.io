@@ -11,12 +11,20 @@ src/
 ├── content/
 │   └── articles/          # one Markdown file per article
 ├── content.config.ts      # article frontmatter schema
+├── data/research.ts       # papers: homepage, json-ld, and llms.txt read from here
+├── lib/
+│   ├── site.ts            # site constants and article helpers
+│   └── llms.ts            # llms.txt and llms-full.txt builders
 ├── pages/
 │   ├── articles/[id].astro
+│   ├── articles/[id].md.ts  # markdown twin of each article
+│   ├── llms.txt.ts
+│   ├── llms-full.txt.ts
+│   ├── rss.xml.ts
 │   ├── sitemap.xml.ts
 │   └── index.astro
 └── styles/global.css
-public/                    # static assets, metadata, and CNAME
+public/                    # static assets, robots.txt, indexnow key, and CNAME
 news-site/                 # separate static newsletter
 ```
 
@@ -40,7 +48,11 @@ tags:
 ---
 ```
 
-Write the article body below the frontmatter using standard Markdown. The collection schema validates the metadata, the homepage sorts articles newest first, and Astro generates each article page automatically. The XML sitemap is rebuilt from the same collection.
+Write the article body below the frontmatter using standard Markdown. The collection schema validates the metadata, the homepage sorts articles newest first, and Astro generates each article page automatically. The sitemap, RSS feed, `llms.txt`, `llms-full.txt`, homepage JSON-LD, and `/articles/<id>.md` are rebuilt from the same collection, so nothing else needs editing.
+
+The title and description are what search engines and language models quote. Page CSS lowercases everything, so writing them in normal sentence case changes nothing on the site but reads better in search results and AI answers.
+
+After each deploy, the `indexnow` job submits the sitemap URLs to Bing, Yandex, Seznam, and Naver. Its key is public by design and lives in `public/<key>.txt`.
 
 ## Development
 
