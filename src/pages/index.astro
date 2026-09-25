@@ -327,20 +327,41 @@ const schema = {
 <!-- ═══ NAVBAR ════════════════════════════════════════════════════════════ -->
 <nav id="navbar">
 	<a href="#top" class="nav-brand">utku&rsquo;s&nbsp;space</a>
+	<div class="player" id="player" role="group" aria-label="music player">
+		<div class="player-controls">
+			<button class="player-btn" id="playerPrev" aria-label="previous track"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="5.5" width="2.2" height="13" rx="0.6"/><path d="M19 6.2v11.6a.8.8 0 0 1-1.2.7L9.4 12.7a.8.8 0 0 1 0-1.4l8.4-5.8a.8.8 0 0 1 1.2.7z"/></svg></button>
+			<button class="disc" id="playerPlay" aria-label="play">
+				<svg class="disc-vinyl" viewBox="0 0 40 40" aria-hidden="true">
+					<circle cx="20" cy="20" r="19.6" fill="#0c0c0c"/>
+					<g fill="none" stroke="#fff" stroke-opacity="0.13" stroke-width="0.35">
+						<circle cx="20" cy="20" r="18.2"/><circle cx="20" cy="20" r="16.9"/><circle cx="20" cy="20" r="15.5"/>
+						<circle cx="20" cy="20" r="14.3"/><circle cx="20" cy="20" r="13"/><circle cx="20" cy="20" r="11.8"/><circle cx="20" cy="20" r="10.6"/>
+					</g>
+					<circle cx="20" cy="20" r="8" fill="#f2eee6"/>
+					<circle cx="20" cy="20" r="7.2" fill="none" stroke="#0c0c0c" stroke-width="0.35"/>
+					<path d="M20 13.6a6.4 6.4 0 0 1 6.4 6.4h-2.2a4.2 4.2 0 0 0-4.2-4.2z" fill="#0c0c0c"/>
+					<circle cx="20" cy="20" r="1.1" fill="#0c0c0c"/>
+				</svg>
+				<span class="disc-sheen"></span>
+				<span class="disc-icon" aria-hidden="true"><svg class="i-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.6v12.8a.9.9 0 0 0 1.4.8l10-6.4a.9.9 0 0 0 0-1.6l-10-6.4A.9.9 0 0 0 8 5.6z"/></svg><svg class="i-pause" viewBox="0 0 24 24" fill="currentColor"><rect x="6.5" y="5.5" width="3.8" height="13" rx="1"/><rect x="13.7" y="5.5" width="3.8" height="13" rx="1"/></svg></span>
+			</button>
+			<button class="player-btn" id="playerNext" aria-label="next track"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="16.8" y="5.5" width="2.2" height="13" rx="0.6"/><path d="M5 6.2v11.6a.8.8 0 0 0 1.2.7l8.4-5.8a.8.8 0 0 0 0-1.4L6.2 5.5a.8.8 0 0 0-1.2.7z"/></svg></button>
+		</div>
+		<span class="player-track" id="playerTrack" aria-live="polite">
+			<span class="player-title">fly me to the moon</span>
+			<span class="player-artist">frank sinatra</span>
+		</span>
+		<div class="player-vol">
+			<button class="player-btn player-mute" id="playerMute" aria-label="mute"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.2L12 5.5v13l-4.8-4H4z" fill="currentColor" stroke="none"/><path class="wave" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/><path class="cross" d="M16 9.5l5 5M21 9.5l-5 5"/></svg></button>
+			<span class="vol-wedge" id="playerWedge" style="--v:60%"><input id="playerVol" type="range" min="0" max="100" value="60" aria-label="volume" /></span>
+		</div>
+		<div class="player-yt" aria-hidden="true"><div id="playerYT"></div></div>
+	</div>
 	<div class="nav-links">
 		<a href="#work" class="nav-link">(some) work</a>
 		<a href="#research" class="nav-link">research</a>
 		<a href="#articles" class="nav-link">articles</a>
 		<a href="#contact" class="nav-link">contact</a>
-	</div>
-	<div class="player" id="player" aria-label="music player">
-		<span class="player-disc" aria-hidden="true"></span>
-		<button class="player-btn" id="playerPrev" aria-label="previous track"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
-		<button class="player-btn player-play" id="playerPlay" aria-label="play"><svg class="i-play" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15L20 12z"/></svg><svg class="i-pause" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4.5h4v15H6zM14 4.5h4v15h-4z"/></svg></button>
-		<button class="player-btn" id="playerNext" aria-label="next track"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 5h2v14h-2zM4 5v14l11-7z"/></svg></button>
-		<span class="player-track" id="playerTrack" aria-live="polite"><span class="player-track-text">fly me to the moon — frank sinatra</span></span>
-		<input class="player-vol" id="playerVol" type="range" min="0" max="100" value="60" aria-label="volume" />
-		<div class="player-yt" aria-hidden="true"><div id="playerYT"></div></div>
 	</div>
 	<button class="mode-toggle" id="modeToggle" aria-label="toggle dark mode" title="day / night (d)">
 		<svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -618,7 +639,7 @@ body {
 	font-size: 1.02rem; color: var(--fg); text-decoration: none; white-space: nowrap;
 }
 .nav-links { display: none; gap: 1.6rem; margin-left: auto; margin-right: 1.3rem; }
-@media (min-width: 700px) { .nav-links { display: flex; } }
+@media (min-width: 1040px) { .nav-links { display: flex; } }
 .nav-link {
 	font-family: var(--serif); font-size: 0.86rem; letter-spacing: 0.02em;
 	color: var(--muted); text-decoration: none;
@@ -643,58 +664,90 @@ body {
 [data-theme="light"] .icon-moon { display: none; }
 [data-theme="dark"]  .icon-sun  { display: none; }
 
-/* ── music player (navbar) ─────────────────────────────────────────── */
+/* ── music player (navbar, beside the brand) ────────────────────────── */
 .player {
-	display: flex; align-items: center; gap: 0.35rem; min-width: 0;
-	margin-left: auto; margin-right: 0.9rem;
+	display: flex; align-items: center; gap: 0.7rem; min-width: 0;
+	margin-left: 1.1rem; margin-right: auto; padding-left: 1.1rem;
+	border-left: 1px solid var(--hair); height: 1.9rem;
 	font-family: var(--serif); color: var(--fg);
 }
-@media (min-width: 700px) { .nav-links { margin-left: auto; } .player { margin-left: 0; } }
-.player-disc {
-	flex: none; width: 1.55rem; height: 1.55rem; border-radius: 50%; margin-right: 0.15rem;
-	background:
-		radial-gradient(circle, var(--bg) 0 8%, var(--fg) 9% 26%, transparent 27%),
-		repeating-radial-gradient(circle, var(--fg) 0 1px, color-mix(in srgb, var(--fg) 78%, var(--bg)) 1px 2px);
-	box-shadow: 0 0 0 1px var(--hair);
-	animation: disc-spin 3.2s linear infinite; animation-play-state: paused;
+/* a vinyl record — grooves and label turn, the light on it stays put */
+.disc {
+	position: relative; flex: none; width: 2.3rem; height: 2.3rem; margin: 0 0.15rem; padding: 0;
+	border: none; border-radius: 50%; background: none; cursor: pointer;
+	box-shadow: 0 0 0 1px var(--hair), 0 1px 3px rgba(0,0,0,0.25);
+	transition: transform 0.15s ease, box-shadow 0.2s ease;
 }
-.player.playing .player-disc { animation-play-state: running; }
+.disc:hover { transform: scale(1.06); box-shadow: 0 0 0 1px var(--fg), 0 2px 6px rgba(0,0,0,0.3); }
+.disc:active { transform: scale(0.94); }
+.disc:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+/* play / pause glyph printed on the label — it stays upright while the record turns */
+.disc-icon {
+	position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+	color: #0c0c0c; pointer-events: none; transition: opacity 0.2s ease;
+}
+.disc-icon svg { width: 0.66rem; height: 0.66rem; padding: 0.12rem; border-radius: 50%; background: #f2eee6; }
+.disc-icon .i-play { transform: translateX(0.5px); }
+.player.playing .disc-icon { opacity: 0; }
+.player.playing .disc:hover .disc-icon, .player.playing .disc:focus-visible .disc-icon { opacity: 1; }
+.disc-vinyl { display: block; width: 100%; height: 100%; animation: disc-spin 1.8s linear infinite; animation-play-state: paused; }
+.player.playing .disc-vinyl { animation-play-state: running; }
+.disc-sheen {
+	position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
+	background: conic-gradient(from 20deg, transparent 0 8%, rgba(255,255,255,0.22) 13%, transparent 20% 52%, rgba(255,255,255,0.16) 60%, transparent 68%);
+	-webkit-mask: radial-gradient(circle, transparent 0 41%, #000 42%);
+	        mask: radial-gradient(circle, transparent 0 41%, #000 42%);
+}
 @keyframes disc-spin { to { transform: rotate(360deg); } }
+
+.player-controls { display: flex; align-items: center; gap: 0.15rem; flex: none; }
 .player-btn {
 	flex: none; display: flex; align-items: center; justify-content: center;
-	width: 1.5rem; height: 1.5rem; padding: 0; border: none; background: none;
-	color: var(--muted); cursor: pointer; transition: color 0.18s ease;
+	width: 1.7rem; height: 1.7rem; padding: 0; border: none; border-radius: 50%;
+	background: none; color: var(--fg2); cursor: pointer;
+	transition: color 0.18s ease, background-color 0.18s ease, transform 0.12s ease;
 }
-.player-btn:hover { color: var(--fg); }
-.player-btn:focus-visible { outline: 2px solid var(--fg); outline-offset: 1px; border-radius: 3px; }
-.player-btn svg { width: 0.72rem; height: 0.72rem; }
-.player-play { color: var(--fg); }
-.player-play svg { width: 0.85rem; height: 0.85rem; }
+.player-btn:hover { color: var(--fg); background: color-mix(in srgb, var(--fg) 8%, transparent); }
+.player-btn:active { transform: scale(0.9); }
+.player-btn:focus-visible { outline: 2px solid var(--fg); outline-offset: 1px; }
+.player-btn svg { width: 0.95rem; height: 0.95rem; }
 .player .i-pause, .player.playing .i-play { display: none; }
 .player.playing .i-pause { display: block; }
-.player-track {
-	min-width: 0; width: 11rem; overflow: hidden; white-space: nowrap;
-	font-size: 0.8rem; font-style: italic; color: var(--muted);
-	-webkit-mask-image: linear-gradient(90deg, #000 85%, transparent);
-	        mask-image: linear-gradient(90deg, #000 85%, transparent);
+
+/* fixed width so the title never shoves the controls around */
+.player-track { display: flex; flex-direction: column; justify-content: center; width: 10.5rem; min-width: 0; line-height: 1.15; }
+.player-title, .player-artist { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.player-title { font-family: var(--display); font-style: italic; font-weight: 600; font-size: 0.84rem; color: var(--fg); }
+.player-artist { font-size: 0.7rem; letter-spacing: 0.02em; color: var(--muted); }
+
+/* volume: speaker + the familiar rising wedge */
+.player-vol { display: flex; align-items: center; gap: 0.2rem; flex: none; }
+.player-mute svg { width: 1.05rem; height: 1.05rem; }
+.player-mute .cross, .player.muted .player-mute .wave { display: none; }
+.player.muted .player-mute .cross { display: inline; }
+.vol-wedge { position: relative; display: block; width: 3.6rem; height: 0.95rem; border-radius: 2px; }
+.vol-wedge::before {
+	content: ''; position: absolute; inset: 0;
+	clip-path: polygon(0 100%, 100% 100%, 100% 0);
+	background: linear-gradient(90deg, var(--fg) var(--v), var(--muted2) var(--v));
 }
-.player-track-text { display: inline-block; }
-.player.playing .player-track-text.long { animation: track-scroll 11s linear infinite; padding-right: 2rem; }
-@keyframes track-scroll { 0%, 12% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
-.player-vol {
-	flex: none; width: 4.2rem; height: 1rem; margin-left: 0.3rem; cursor: pointer;
-	-webkit-appearance: none; appearance: none; background: transparent;
-}
-.player-vol::-webkit-slider-runnable-track { height: 1px; background: var(--muted2); }
-.player-vol::-moz-range-track { height: 1px; background: var(--muted2); }
-.player-vol::-webkit-slider-thumb { -webkit-appearance: none; width: 9px; height: 9px; margin-top: -4px; border-radius: 50%; background: var(--fg); border: none; }
-.player-vol::-moz-range-thumb { width: 9px; height: 9px; border-radius: 50%; background: var(--fg); border: none; }
-.player-vol:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+.player.muted .vol-wedge::before { opacity: 0.4; }
+.vol-wedge input { position: absolute; inset: -0.3rem 0; width: 100%; height: calc(100% + 0.6rem); margin: 0; opacity: 0; cursor: pointer; }
+.vol-wedge:has(input:focus-visible) { outline: 2px solid var(--fg); outline-offset: 3px; }
+
 /* the youtube iframe does the playing; it stays out of sight */
 .player-yt { position: fixed; left: -9999px; top: 0; width: 200px; height: 200px; overflow: hidden; pointer-events: none; opacity: 0; }
-@media (max-width: 999px) and (min-width: 700px) { .player-track { width: 7rem; } .player-vol { width: 3.2rem; } }
-@media (max-width: 560px) { .player-vol { display: none; } .player-track { width: 7.5rem; } }
-@media (max-width: 400px) { .player-track { width: 4.5rem; } .nav-brand { font-size: 0.92rem; } }
+
+@media (max-width: 620px) {
+	.player { margin-left: 0.7rem; padding-left: 0.7rem; gap: 0.4rem; }
+	.player-vol { display: none; }
+	.player-track { width: 7rem; }
+}
+@media (max-width: 400px) {
+	.player { margin-left: 0.6rem; padding-left: 0.6rem; }
+	.player-track { width: 4.6rem; }
+	.nav-brand { font-size: 0.92rem; }
+}
 
 /* ── page column (wider) ───────────────────────────────────────────── */
 .paper {
@@ -979,28 +1032,38 @@ function toggleWork(btn) {
 /* ── music player — youtube iframe api, loaded on first play ──────── */
 (function () {
 	const TRACKS = [
-		{ id: 'JYuyWrkwpok', name: 'fly me to the moon — frank sinatra' },
-		{ id: 'Rbm6GXllBiw', name: 'paradise city — guns n’ roses' },
-		{ id: 'fJ9rUzIMcZQ', name: 'bohemian rhapsody — queen' },
-		{ id: 'KrZHPOeOxQQ', name: 'you give love a bad name — bon jovi' },
-		{ id: '9n-hyA2-FDg', name: 'la vie en rose — louis armstrong' },
-		{ id: 'echO1rg4E08', name: 'kızılcıklar oldu mu — kübra şenyaylar' },
+		{ id: 'JYuyWrkwpok', title: 'fly me to the moon', artist: 'frank sinatra' },
+		{ id: 'Rbm6GXllBiw', title: 'paradise city', artist: 'guns n’ roses' },
+		{ id: 'fJ9rUzIMcZQ', title: 'bohemian rhapsody', artist: 'queen' },
+		{ id: 'KrZHPOeOxQQ', title: 'you give love a bad name', artist: 'bon jovi' },
+		{ id: '9n-hyA2-FDg', title: 'la vie en rose', artist: 'louis armstrong' },
+		{ id: 'echO1rg4E08', title: 'kızılcıklar oldu mu', artist: 'kübra şenyaylar' },
 	];
 	const root = document.getElementById('player');
 	if (!root) return;
 	const playBtn = document.getElementById('playerPlay');
-	const trackEl = document.getElementById('playerTrack');
+	const muteBtn = document.getElementById('playerMute');
+	const titleEl = root.querySelector('.player-title');
+	const artistEl = root.querySelector('.player-artist');
+	const wedge = document.getElementById('playerWedge');
 	const vol = document.getElementById('playerVol');
-	let i = 0, yt = null, ready = false, loading = false, wantPlay = false;
+	let i = 0, yt = null, ready = false, loading = false, wantPlay = false, muted = false;
 
 	function paint() {
-		const t = trackEl.firstElementChild;
-		t.textContent = TRACKS[i].name;
-		t.classList.toggle('long', t.scrollWidth > trackEl.clientWidth);
+		titleEl.textContent = TRACKS[i].title; titleEl.title = TRACKS[i].title;
+		artistEl.textContent = TRACKS[i].artist;
 	}
 	function setPlaying(on) {
 		root.classList.toggle('playing', on);
 		playBtn.setAttribute('aria-label', on ? 'pause' : 'play');
+	}
+	function applyVolume() {
+		wedge.style.setProperty('--v', vol.value + '%');
+		root.classList.toggle('muted', muted || +vol.value === 0);
+		muteBtn.setAttribute('aria-label', muted ? 'unmute' : 'mute');
+		if (!ready) return;
+		yt.setVolume(+vol.value);
+		muted ? yt.mute() : yt.unMute();
 	}
 	function load() {
 		if (loading) return;
@@ -1012,7 +1075,7 @@ function toggleWork(btn) {
 				width: 200, height: 200, videoId: TRACKS[i].id,
 				playerVars: { autoplay: 1, controls: 0, disablekb: 1, playsinline: 1, rel: 0 },
 				events: {
-					onReady: function () { ready = true; yt.setVolume(+vol.value); if (wantPlay) yt.playVideo(); },
+					onReady: function () { ready = true; applyVolume(); if (wantPlay) yt.playVideo(); },
 					onStateChange: function (e) {
 						if (e.data === YT.PlayerState.ENDED) go(1);
 						else if (e.data === YT.PlayerState.PLAYING) setPlaying(true);
@@ -1029,17 +1092,18 @@ function toggleWork(btn) {
 	function go(step) {
 		i = (i + step + TRACKS.length) % TRACKS.length;
 		paint();
-		if (ready) { yt.loadVideoById(TRACKS[i].id); wantPlay = true; }
+		wantPlay = true; setPlaying(true);
+		if (ready) yt.loadVideoById(TRACKS[i].id); else load();
 	}
 	playBtn.addEventListener('click', function () {
 		if (!ready) { wantPlay = !wantPlay; setPlaying(wantPlay); load(); return; }
 		if (root.classList.contains('playing')) { wantPlay = false; yt.pauseVideo(); setPlaying(false); }
 		else { wantPlay = true; yt.playVideo(); setPlaying(true); }
 	});
-	document.getElementById('playerNext').addEventListener('click', function () { go(1); if (!ready) { wantPlay = true; setPlaying(true); load(); } });
-	document.getElementById('playerPrev').addEventListener('click', function () { go(-1); if (!ready) { wantPlay = true; setPlaying(true); load(); } });
-	vol.addEventListener('input', function () { if (ready) yt.setVolume(+vol.value); });
-	addEventListener('resize', paint);
+	document.getElementById('playerNext').addEventListener('click', function () { go(1); });
+	document.getElementById('playerPrev').addEventListener('click', function () { go(-1); });
+	muteBtn.addEventListener('click', function () { muted = !muted; applyVolume(); });
+	vol.addEventListener('input', function () { muted = false; applyVolume(); });
 	paint();
 })();
 
