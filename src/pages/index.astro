@@ -487,6 +487,12 @@ const schema = {
 		</div>
 	</section>
 
+	<!-- ── PLATE (desk engraving) ─────────────────────────────────────── -->
+	<figure class="plate reveal">
+		<img src="/desk.webp" width="1024" height="682" loading="lazy" decoding="async" alt="stipple engraving of mehmet utku öztürk asleep on the floor beneath a cluttered desk of laptops, mugs, cables, and circuit boards" />
+		<figcaption>fig. 1 — the desk, some night.</figcaption>
+	</figure>
+
 	<!-- ── CONTACT ────────────────────────────────────────────────────── -->
 	<section id="contact" class="section reveal">
 		<div class="rule-head"><h2 class="rule-head-label">contact</h2></div>
@@ -676,6 +682,12 @@ body {
 .fig-slot img { display: block; width: 100%; height: auto; }
 /* black engraving would vanish on a black page — invert it in dark mode */
 [data-theme="dark"] .fig-slot img { filter: invert(1); }
+
+/* ── plate — full-width engraving between sections ─────────────────── */
+.plate { margin: 3.5rem 0 0; }
+.plate img { display: block; width: 100%; height: auto; border: 1px solid var(--hair); }
+[data-theme="dark"] .plate img { filter: invert(1); }
+.plate figcaption { margin-top: 0.6rem; font-size: 0.9rem; font-style: italic; color: var(--muted); text-align: center; }
 
 /* ── section rule-head (quiet) ─────────────────────────────────────── */
 .rule-head { margin-bottom: 1.4rem; padding-bottom: 0.45rem; border-bottom: 1px solid var(--hair); }
