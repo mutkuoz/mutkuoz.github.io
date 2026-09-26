@@ -579,9 +579,10 @@ const schema = {
 	--bg:#000000; --fg:#ffffff;
 	--fg2:rgba(255,255,255,0.78); --muted:rgba(255,255,255,0.54); --muted2:rgba(255,255,255,0.38);
 	--hair:rgba(255,255,255,0.20);
-	/* the artwork is a near-white wash; inverted it reads as a dark ghost on black */
-	--bg-art-opacity: 0.85;
-	--bg-art-filter: invert(1);
+	/* keep the artwork's real tones (inverting turns it into an x-ray negative);
+	   dimmed right down it reads as a faint print in a dark room */
+	--bg-art-opacity: 1;
+	--bg-art-filter: grayscale(1) brightness(0.13) contrast(1.2);
 }
 
 html { scroll-behavior: smooth; background: var(--bg); transition: background-color 0.35s ease; }
@@ -784,8 +785,16 @@ body {
 .fig { margin: 0 auto; max-width: 22rem; }
 .fig-slot { position: relative; }
 .fig-slot img { display: block; width: 100%; height: auto; }
-/* black engraving would vanish on a black page — invert it in dark mode */
-[data-theme="dark"] .fig-slot img { filter: invert(1); }
+/* dark mode: never invert (faces turn into negatives). the black-ink cutout
+   would vanish on black, so it stands in a soft pool of light instead —
+   like a print lit on a dark wall. */
+.fig-slot::before {
+	content: ''; position: absolute; inset: -12% -14% -2%; z-index: -1; pointer-events: none;
+	background: radial-gradient(ellipse 50% 52% at 50% 52%, rgba(246,243,236,0.96) 0 42%, rgba(246,243,236,0.55) 66%, rgba(246,243,236,0.12) 86%, transparent 100%);
+	opacity: 0; transition: opacity 0.35s ease;
+}
+.fig-slot { isolation: isolate; }
+[data-theme="dark"] .fig-slot::before { opacity: 1; }
 
 
 /* ── section rule-head (quiet) ─────────────────────────────────────── */
@@ -796,7 +805,8 @@ body {
 .work-grid { display: grid; grid-template-columns: 1fr; gap: 1.6rem; }
 @media (min-width: 840px) { .work-grid { grid-template-columns: 1.15fr 1fr; gap: 3rem; align-items: start; } }
 .work-fig img { display: block; width: 100%; height: auto; border: 1px solid var(--hair); }
-[data-theme="dark"] .work-fig img { filter: invert(1); }
+/* dark mode: show the print as it is, just taken off full glare */
+[data-theme="dark"] .work-fig img { filter: brightness(0.86) contrast(1.05); border-color: transparent; }
 @media (min-width: 840px) { .work-fig { position: sticky; top: 4.8rem; } }
 .work-list > .item:first-child { border-top: none; }
 /* the older four sit folded below — hover (or tap the hint) to unfold */
