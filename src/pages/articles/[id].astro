@@ -145,7 +145,6 @@ const articleSchema = {
 	<main class="paper">
 		<header class="article-header">
 			<a class="back-link" href="/#articles">← articles</a>
-			<p class="article-kicker">field notes</p>
 			<h1>{article.data.title}</h1>
 			<p class="article-deck">{article.data.description}</p>
 			<div class="article-meta">
@@ -166,10 +165,6 @@ const articleSchema = {
 		<article class="prose">
 			<Content />
 		</article>
-
-		<aside class="article-author" aria-label="about the author">
-			<p><a href="/" rel="author">{AUTHOR_NAME}</a> is a machine learning developer and AI researcher in Ankara, Türkiye, working on artificial consciousness, connectomics, and agentic systems. Creator of <a href="https://github.com/mutkuoz/flydoom">FlyDOOM</a> and first author of <a href="https://doi.org/10.47852/bonviewJCLLT620210346">HukukBERT</a>.</p>
-		</aside>
 
 		{others.length > 0 && (
 			<nav class="more-articles" aria-label="more articles">
@@ -235,7 +230,7 @@ const articleSchema = {
 	}
 	[data-theme="dark"] {
 		--bg: #000; --fg: #fff; --fg2: rgba(255,255,255,.78); --muted: rgba(255,255,255,.54);
-		--hair: rgba(255,255,255,.2); --bg-art-opacity: .85; --bg-art-filter: invert(1);
+		--hair: rgba(255,255,255,.2); --bg-art-opacity: 1; --bg-art-filter: grayscale(1) brightness(.13) contrast(1.2);
 	}
 	html { background: var(--bg); scroll-behavior: smooth; transition: background-color .35s ease; }
 	body {
@@ -290,10 +285,7 @@ const articleSchema = {
 	.prose a:hover { opacity: .58; }
 	.prose strong { color: var(--fg); font-weight: 600; }
 	.prose em { color: var(--fg); }
-	.article-author { max-width: 44rem; margin: 4rem auto 0; padding-top: 1.3rem; border-top: 1px solid var(--hair); color: var(--muted); font-size: .92rem; line-height: 1.7; }
-	.article-author p { margin: 0; }
-	.article-author a { color: var(--fg); text-decoration-thickness: 1px; text-underline-offset: 3px; }
-	.more-articles { max-width: 44rem; margin: 2.6rem auto 0; }
+	.more-articles { max-width: 44rem; margin: 4rem auto 0; padding-top: 1.3rem; border-top: 1px solid var(--hair); }
 	.more-articles ul { margin: 0; padding: 0; list-style: none; }
 	.more-articles li { padding: .6rem 0; border-bottom: 1px solid var(--hair); font-family: var(--display); font-size: 1.08rem; line-height: 1.35; }
 	.more-articles a { color: var(--fg); text-decoration: none; }
