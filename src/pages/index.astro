@@ -797,8 +797,11 @@ body {
    would vanish on black, so it stands in a soft pool of light instead —
    like a print lit on a dark wall. */
 .fig-slot::before {
-	content: ''; position: absolute; inset: 0 8% 0; z-index: -1; pointer-events: none;
-	background: radial-gradient(ellipse 46% 50% at 50% 50%, rgba(246,243,236,0.95) 0 38%, rgba(246,243,236,0.5) 62%, rgba(246,243,236,0.1) 84%, transparent 100%);
+	content: ''; position: absolute; inset: -10% -12% 0; z-index: -1; pointer-events: none;
+	background: radial-gradient(ellipse 50% 60% at 50% 66%, rgba(246,243,236,0.95) 0%, rgba(246,243,236,0.9) 22%, rgba(246,243,236,0.74) 38%, rgba(246,243,236,0.52) 52%, rgba(246,243,236,0.32) 65%, rgba(246,243,236,0.16) 77%, rgba(246,243,236,0.06) 88%, transparent 100%);
+	/* fade the glow out where the cutout ends so no hard bottom edge shows */
+	-webkit-mask-image: linear-gradient(to bottom, #000 80%, transparent 100%);
+	        mask-image: linear-gradient(to bottom, #000 80%, transparent 100%);
 	opacity: 0; transition: opacity 0.35s ease;
 }
 .fig-slot { isolation: isolate; }
