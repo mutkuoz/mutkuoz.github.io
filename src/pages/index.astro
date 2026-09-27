@@ -315,6 +315,13 @@ const schema = {
 </head>
 <body data-theme="light">
 
+<!-- konami: recolours black ink to red, keeps white paper white -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+	<filter id="redInk" color-interpolation-filters="sRGB">
+		<feColorMatrix type="matrix" values="0.0368 0.1237 0.0125 0 0.827  0.1992 0.6701 0.0677 0 0.063  0.1892 0.6365 0.0643 0 0.110  0 0 0 1 0" />
+	</filter>
+</svg>
+
 <!-- fixed background artwork — sits under everything, never scrolls -->
 <div class="page-bg" aria-hidden="true"></div>
 
@@ -592,6 +599,23 @@ const schema = {
 	--bg-art-opacity: 1;
 	--bg-art-filter: grayscale(1) brightness(0.13) contrast(1.2);
 }
+
+/* ── konami: red instead of black, everywhere ──────────────────────── */
+[data-konami][data-theme="light"] {
+	--fg:#d3101c;
+	--fg2:rgba(211,16,28,0.82); --muted:rgba(211,16,28,0.62); --muted2:rgba(211,16,28,0.42);
+	--hair:rgba(211,16,28,0.24);
+	--bg-art-filter: url(#redInk);
+}
+[data-konami][data-theme="dark"] {
+	--bg:#d3101c;
+	--fg2:rgba(255,255,255,0.86); --muted:rgba(255,255,255,0.66); --muted2:rgba(255,255,255,0.46);
+	--hair:rgba(255,255,255,0.3);
+	--bg-art-opacity: 0.9;
+	--bg-art-filter: grayscale(1) brightness(0.13) contrast(1.2) url(#redInk);
+}
+[data-konami] img, [data-konami] .disc { filter: url(#redInk); }
+[data-konami][data-theme="dark"] .work-fig img { filter: brightness(0.86) contrast(1.05) url(#redInk); }
 
 html { scroll-behavior: smooth; background: var(--bg); transition: background-color 0.35s ease; }
 
@@ -1653,6 +1677,25 @@ document.getElementById('playLink').addEventListener('click', () => Snake.start(
 			buf = (buf + kl).slice(-6);
 			if (buf.endsWith('snake') || buf.endsWith('play')) { Snake.start(); buf = ''; }
 		}
+	});
+})();
+
+/* ── konami code: ↑↑↓↓←→←→ b a turns the whole site red (again to undo) ── */
+(function () {
+	const CODE = ['arrowup','arrowup','arrowdown','arrowdown','arrowleft','arrowright','arrowleft','arrowright','b','a'];
+	let pos = 0;
+	addEventListener('keydown', e => {
+		const t = e.target;
+		if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+		if (Snake.isRunning()) return;
+		const k = e.key.toLowerCase();
+		if (k === CODE[pos]) pos++;
+		else if (k !== 'arrowup' || pos !== 2) pos = k === CODE[0] ? 1 : 0;   // ↑↑↑… still counts
+		if (pos < CODE.length) return;
+		pos = 0;
+		const on = !document.documentElement.hasAttribute('data-konami');
+		for (const el of [document.documentElement, document.body]) el.toggleAttribute('data-konami', on);
+		toast(on ? '↑↑↓↓←→←→ b a — seeing red.' : 'back to black.', 2600);
 	});
 })();
 </script>
