@@ -57,7 +57,11 @@ const work = `## Work
 - [Topazius](https://github.com/mutkuoz/topazius): Browser-based Markdown notes app
   backed by a private GitHub repository. Offline-first editing, background commits,
   wikilinks, backlinks, and optional client-side encryption. No backend or third-party
-  storage. Creator, 2026. Active.`;
+  storage. Creator, 2026. Active.
+- Mentoring at [BİLSEM](https://turkmaarifansiklopedisi.org.tr/bilim-ve-sanat-merkezleri-bilsem):
+  Senior student and instructor at BİLSEM, Türkiye's national supplementary education
+  program for gifted students. Mentors and teaches engineering fundamentals, robotics,
+  artificial intelligence, and software development. 2024–present. Active.`;
 
 const contact = `## Contact
 
