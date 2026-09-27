@@ -61,7 +61,7 @@ const work = `## Work
 - Mentoring at [BİLSEM](https://turkmaarifansiklopedisi.org.tr/bilim-ve-sanat-merkezleri-bilsem):
   Senior student and instructor at BİLSEM, Türkiye's national supplementary education
   program for gifted students. Mentors and teaches engineering fundamentals, robotics,
-  artificial intelligence, and software development. Active.`;
+  artificial intelligence, and software development. 2024–present. Active.`;
 
 const contact = `## Contact
 
