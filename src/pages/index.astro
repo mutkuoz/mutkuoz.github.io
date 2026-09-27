@@ -407,6 +407,14 @@ const schema = {
 			<div class="work-list" id="workList">
 				<article class="item item-proj">
 					<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
+						<span class="item-title"><span class="status status-live" aria-label="active"></span>mentoring @ bilsem</span>
+						<span class="item-byline">senior student &amp; instructor</span>
+						<span class="item-plus" aria-hidden="true"></span>
+					</button>
+					<div class="item-body"><div class="item-body-inner"><p>senior student &amp; instructor at bilsem, a national supplementary education program for gifted students (top 2% iq). mentoring and instructing them in fundamental engineering principles, robotics, artificial intelligence, and software development. <a href="https://turkmaarifansiklopedisi.org.tr/bilim-ve-sanat-merkezleri-bilsem" target="_blank" rel="noopener" class="chip">about bilsem ↗</a></p></div></div>
+				</article>
+				<article class="item item-proj">
+					<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
 						<span class="item-title"><span class="status status-live" aria-label="active"></span>turkhukuk.ai</span>
 						<span class="item-byline">technical co-founder &middot; 2026 —</span>
 						<span class="item-plus" aria-hidden="true"></span>
@@ -429,15 +437,15 @@ const schema = {
 					</button>
 					<div class="item-body"><div class="item-body-inner"><p>a robophobic verification framework that defends websites against ai agents. an open-source take on captcha built for the post-llm web, where classical challenges no longer hold. typescript. mit licensed. <a href="https://github.com/mutkuoz/007captcha" target="_blank" rel="noopener" class="chip">github ↗</a></p></div></div>
 				</article>
-				<article class="item item-proj">
-					<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
-						<span class="item-title"><span class="status status-live" aria-label="active"></span>topazius</span>
-						<span class="item-byline">creator &middot; 2026 &middot; open source</span>
-						<span class="item-plus" aria-hidden="true"></span>
-					</button>
-					<div class="item-body"><div class="item-body-inner"><p>a browser-based markdown notes app whose database is a private github repository you own. works offline, commits edits in the background, supports wikilinks and backlinks, and can encrypt individual notes entirely on the client. no server, account, analytics, or third-party storage. <a href="https://github.com/mutkuoz/topazius" target="_blank" rel="noopener" class="chip">github ↗</a></p></div></div>
-				</article>
 				<div class="work-more"><div class="work-more-inner">
+					<article class="item item-proj">
+						<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
+							<span class="item-title"><span class="status status-live" aria-label="active"></span>topazius</span>
+							<span class="item-byline">creator &middot; 2026 &middot; open source</span>
+							<span class="item-plus" aria-hidden="true"></span>
+						</button>
+						<div class="item-body"><div class="item-body-inner"><p>a browser-based markdown notes app whose database is a private github repository you own. works offline, commits edits in the background, supports wikilinks and backlinks, and can encrypt individual notes entirely on the client. no server, account, analytics, or third-party storage. <a href="https://github.com/mutkuoz/topazius" target="_blank" rel="noopener" class="chip">github ↗</a></p></div></div>
+					</article>
 					<article class="item item-proj">
 						<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
 							<span class="item-title"><span class="status status-paused" aria-label="paused"></span>octapar</span>
@@ -471,7 +479,7 @@ const schema = {
 						<div class="item-body"><div class="item-body-inner"><p>an ai platform that generates exam questions and manages students&rsquo; study sessions. very unsuccessfully fine-tuned an llm. amateur work — but not bad for a 14-year-old.</p></div></div>
 					</article>
 				</div></div>
-				<button class="work-more-hint" aria-expanded="false" aria-controls="workList" onclick="toggleWork(this)"><span class="work-more-label">+ 4 older</span></button>
+				<button class="work-more-hint" aria-expanded="false" aria-controls="workList" onclick="toggleWork(this)"><span class="work-more-label">+ 5 older</span></button>
 			</div>
 		</div>
 		<p class="legend"><span class="status status-live"></span> active &nbsp;·&nbsp; <span class="status status-paused"></span> paused &nbsp;·&nbsp; <span class="status status-shelved"></span> shelved</p>
@@ -789,8 +797,8 @@ body {
    would vanish on black, so it stands in a soft pool of light instead —
    like a print lit on a dark wall. */
 .fig-slot::before {
-	content: ''; position: absolute; inset: -12% -14% -2%; z-index: -1; pointer-events: none;
-	background: radial-gradient(ellipse 50% 52% at 50% 52%, rgba(246,243,236,0.96) 0 42%, rgba(246,243,236,0.55) 66%, rgba(246,243,236,0.12) 86%, transparent 100%);
+	content: ''; position: absolute; inset: 0 8% 0; z-index: -1; pointer-events: none;
+	background: radial-gradient(ellipse 46% 50% at 50% 50%, rgba(246,243,236,0.95) 0 38%, rgba(246,243,236,0.5) 62%, rgba(246,243,236,0.1) 84%, transparent 100%);
 	opacity: 0; transition: opacity 0.35s ease;
 }
 .fig-slot { isolation: isolate; }
