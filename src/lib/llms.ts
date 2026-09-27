@@ -36,6 +36,9 @@ const work = `## Work
   language models on Turkish legal corpora; experimented with neuro-symbolic
   representations bridging statistical learning and structured legal reasoning.
   Technical co-founder, 2026 — present. Active.
+- LabGPT: Test result analysis for doctors — trend analysis, clinical finding
+  extraction, and a corpus spanning years of medical research. TÜBİTAK-backed.
+  R&D, neuro-symbolic AI, 2025 — present. Active.
 - [FlyDOOM](https://github.com/mutkuoz/flydoom): A real fruit fly connectome playing
   Doom. Feeds game frames through the visual pathway of 139,255 reconstructed neurons
   and roughly 2.7 million synapses, then maps biological motor output back to game
