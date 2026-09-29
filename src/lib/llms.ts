@@ -18,8 +18,9 @@ const intro = `# ${AUTHOR_NAME}
 > Machine learning developer and AI researcher based in Ankara, Türkiye. Focused on
 > artificial consciousness, neuro-symbolic AI, connectomics, and agentic "thinking"
 > systems. Technical co-founder of turkhukuk.ai, creator of FlyDOOM and the open-source
-> 007captcha, first author of HukukBERT, founder of 23rd the company. Mensa
-> International member and Save the Children volunteer.
+> 007captcha, first author of HukukBERT, founder of 23rd the company. Member of
+> Mensa International and the International Association for Artificial Intelligence
+> and Law (IAAIL); Save the Children volunteer; senior student and mentor at BİLSEM.
 
 Started programming at 8, picked up C++ and C# by 11, began working on machine
 learning at 13, and fine-tuned a first LLM at 14. Also a competitive Class II
@@ -66,6 +67,18 @@ const work = `## Work
   program for gifted students. Voluntarily mentors and teaches primary schoolers there
   in project management, robotics, artificial intelligence, and software development. 2024–present. Active.`;
 
+const associations = `## Associations
+
+- [BİLSEM](https://turkmaarifansiklopedisi.org.tr/bilim-ve-sanat-merkezleri-bilsem):
+  Senior student and mentor. Government-led special education program for gifted
+  children in Türkiye.
+- [Mensa International](https://www.mensa.org/): Member. The largest and oldest
+  high-IQ society in the world.
+- [IAAIL](https://iaail.org/): Member. International Association for Artificial
+  Intelligence and Law.
+- [Save the Children](https://www.savethechildren.net/): Volunteer. Global charity
+  working for children's rights, health, and education.`;
+
 const contact = `## Contact
 
 - Email: m@utku.space
@@ -100,6 +113,7 @@ export const llmsTxt = async () => {
 	return [
 		intro,
 		work,
+		associations,
 		`## Research\n\n${papers.map(paperEntry).join('\n')}`,
 		`## Articles\n\n${articles.map(articleEntry).join('\n')}`,
 		contact,
