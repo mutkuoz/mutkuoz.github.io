@@ -392,7 +392,7 @@ const schema = {
 	<!-- ── LEAD (bio + interests + portrait) ──────────────────────────── -->
 	<section class="lead reveal" aria-label="introduction">
 		<div class="lead-body">
-			<p class="standfirst">started programming when i was 8 with small apps and scripts. got familiar with c++ and c# by i was 11. started working on machine learning at 13, extremely unsuccessfully finetuned my first llm at 14. since then, i&rsquo;m working on software with a primary focus on artificial consciousness and &ldquo;thinking&rdquo; systems. other than software, i am interested in powerlifting, strongman, martial arts, cognitive science, kinesiology, chess, sudoku, and good coffee. i am also a mensa international member and savethechildren volunteer.</p>
+			<p class="standfirst">started programming when i was 8 with small apps and scripts. got familiar with c++ and c# by i was 11. started working on machine learning at 13, extremely unsuccessfully finetuned my first llm at 14. since then, i&rsquo;m working on software with a primary focus on artificial consciousness and &ldquo;thinking&rdquo; systems. other than software, i am interested in powerlifting, strongman, martial arts, cognitive science, kinesiology, chess, sudoku, and good coffee.</p>
 		</div>
 
 		<aside class="lead-aside">
@@ -854,6 +854,7 @@ body {
 }
 
 /* portrait — transparent line-art cutout, floats on the page */
+@media (max-width: 839px) { .lead-aside { display: none; } }
 .fig { margin: 0 auto; max-width: 22rem; }
 .fig-slot { position: relative; }
 .fig-slot img { display: block; width: 100%; height: auto; }
