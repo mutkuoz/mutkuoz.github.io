@@ -332,9 +332,7 @@ const schema = {
 		<div class="intro-panel intro-panel-l"><img alt="" width="1060" height="1060" data-src="/intro-scene-l.webp" /></div>
 		<div class="intro-panel intro-panel-r"><img alt="" width="1136" height="1060" data-src="/intro-scene-r.webp" /></div>
 	</div>
-	<span class="intro-dim"></span>
-	<span class="intro-glint"></span>
-	<span class="intro-rays"><i style="--r:-2deg;--l:0.53;--w:1px;--d:0.01s"></i><i style="--r:21deg;--l:0.65;--w:1px;--d:0.07s"></i><i style="--r:36deg;--l:0.50;--w:2px;--d:0.01s"></i><i style="--r:54deg;--l:0.68;--w:3px;--d:0.01s"></i><i style="--r:76deg;--l:0.80;--w:1px;--d:0.05s"></i><i style="--r:99deg;--l:0.99;--w:1px;--d:0.04s"></i><i style="--r:115deg;--l:0.68;--w:3px;--d:0.01s"></i><i style="--r:137deg;--l:0.90;--w:1px;--d:0.01s"></i><i style="--r:161deg;--l:0.55;--w:1px;--d:0.04s"></i><i style="--r:174deg;--l:0.48;--w:1px;--d:0.04s"></i><i style="--r:200deg;--l:0.88;--w:2px;--d:0.05s"></i><i style="--r:219deg;--l:0.61;--w:1px;--d:0.06s"></i><i style="--r:236deg;--l:0.77;--w:3px;--d:0.04s"></i><i style="--r:258deg;--l:0.70;--w:3px;--d:0.08s"></i><i style="--r:275deg;--l:0.68;--w:2px;--d:0.01s"></i><i style="--r:300deg;--l:0.47;--w:1px;--d:0.06s"></i><i style="--r:321deg;--l:0.93;--w:2px;--d:0.03s"></i><i style="--r:338deg;--l:0.72;--w:2px;--d:0.01s"></i></span>
+	<span class="intro-spark"></span>
 	<span class="intro-flash"></span>
 	<pre class="intro-log"></pre>
 	<span class="intro-skip">click or press any key to skip</span>
@@ -694,21 +692,17 @@ html.intro-on #intro {
 .intro-panel-r img { width: calc(var(--iw) * 0.55146); left: calc(var(--iw) * -0.03301); }
 /* impact: a four-point glint, a burst of rays, then the screen whites out */
 /* the lights cut out on contact, so the glint and the burst read against the dark */
-.intro-dim { position: absolute; inset: 0; background: #000; opacity: 0; pointer-events: none; }
-.intro-glint { position: absolute; left: 50%; top: 50%; width: 0; height: 0; opacity: 0; }
-.intro-glint::before, .intro-glint::after {
-	content: ''; position: absolute; left: -80px; top: -1.5px; width: 160px; height: 3px;
-	background: linear-gradient(90deg, transparent, rgba(255, 246, 228, 0.8) 30%, #fff 48%, #fff 52%, rgba(255, 246, 228, 0.8) 70%, transparent);
-	box-shadow: 0 0 10px 1px rgba(255, 244, 222, 0.9);
+/* impact: a warm spark at the fingertips, then white light bursts outward from it */
+.intro-spark {
+	position: absolute; left: 50%; top: 50%; width: 10px; height: 10px; margin: -5px 0 0 -5px;
+	border-radius: 50%; background: #fff; opacity: 0; transform: scale(0);
+	box-shadow: 0 0 10px 3px #fff, 0 0 34px 12px rgba(255, 236, 200, 0.75), 0 0 90px 30px rgba(255, 220, 170, 0.35);
 }
-.intro-glint::after { transform: rotate(90deg); }
-.intro-rays { position: absolute; left: 50%; top: 50%; width: 0; height: 0; }
-.intro-rays i {
-	position: absolute; left: 0; top: calc(var(--w) / -2); width: calc(70vmax * var(--l)); height: var(--w); transform-origin: 0 50%;
-	transform: rotate(var(--r)) scaleX(0); opacity: 0;
-	background: linear-gradient(90deg, #fff, rgba(255, 246, 228, 0.6) 25%, transparent 70%);
+.intro-flash {
+	position: absolute; left: 50%; top: 50%; width: 24px; height: 24px; margin: -12px 0 0 -12px;
+	border-radius: 50%; background: radial-gradient(circle, #fff 0 45%, rgba(255, 248, 232, 0) 70%);
+	opacity: 0; transform: scale(0); pointer-events: none;
 }
-.intro-flash { position: absolute; inset: 0; opacity: 0; pointer-events: none; background: #fffdf8; }
 .intro-log {
 	position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
 	width: min(90vw, 48rem); margin: 0; white-space: pre-wrap;
@@ -722,22 +716,17 @@ html.intro-on #intro {
 	font: italic 0.72rem/1 var(--serif); letter-spacing: 0.04em; color: rgba(128, 122, 112, 0.75); white-space: nowrap;
 }
 /* under the white-out the backdrop turns black, so the boot log opens on a dark screen */
-#intro.play { animation: intro-night 0.01s linear 2.9s forwards; }
+#intro.play { animation: intro-night 0.01s linear 4.45s forwards; }
 #intro.log-only { background: #000; }
-#intro.play .intro-panel-l { animation: intro-in-l 2.2s cubic-bezier(0.62, 0, 0.32, 1) 0.15s forwards; }
-#intro.play .intro-panel-r { animation: intro-in-r 2.2s cubic-bezier(0.62, 0, 0.32, 1) 0.15s forwards; }
-#intro.play .intro-scene   { animation: intro-shake 0.4s linear 2.35s, intro-hide 0.01s linear 2.9s forwards; }
-#intro.play .intro-dim     { animation: intro-dim 0.55s ease-out 2.35s forwards; }
-#intro.play .intro-glint   { animation: intro-glint 0.55s ease-out 2.36s forwards, intro-hide 0.01s linear 2.9s forwards; }
-#intro.play .intro-rays i  { animation: intro-ray 0.7s cubic-bezier(0.15, 0.7, 0.3, 1) calc(2.4s + var(--d)) forwards; }
-#intro.play .intro-flash   { animation: intro-flash 1.05s ease-out 2.62s forwards; }
+#intro.play .intro-panel-l { animation: intro-in-l 3.4s cubic-bezier(0.5, 0, 0.25, 1) 0.2s forwards; }
+#intro.play .intro-panel-r { animation: intro-in-r 3.4s cubic-bezier(0.5, 0, 0.25, 1) 0.2s forwards; }
+#intro.play .intro-spark   { animation: intro-spark 0.6s ease-out 3.5s forwards, intro-hide 0.01s linear 4.45s forwards; }
+#intro.play .intro-flash   { animation: intro-flash 1.3s cubic-bezier(0.4, 0, 0.2, 1) 3.95s forwards; }
+#intro.play .intro-scene   { animation: intro-hide 0.01s linear 4.45s forwards; }
 @keyframes intro-in-l  { to { transform: translateX(0); } }
 @keyframes intro-in-r  { to { transform: translateX(0); } }
-@keyframes intro-shake { 0%, 100% { transform: none; } 20% { transform: translate(-6px, 3px); } 40% { transform: translate(5px, -4px); } 60% { transform: translate(-3px, -2px); } 80% { transform: translate(2px, 2px); } }
-@keyframes intro-glint { 0% { opacity: 0; transform: scale(0) rotate(0deg); } 40% { opacity: 1; transform: scale(1.3) rotate(20deg); } 100% { opacity: 1; transform: scale(2.4) rotate(45deg); } }
-@keyframes intro-ray   { 0% { opacity: 1; transform: rotate(var(--r)) scaleX(0); } 100% { opacity: 0; transform: rotate(var(--r)) scaleX(1); } }
-@keyframes intro-flash { 0% { opacity: 0; } 22% { opacity: 1; } 40% { opacity: 1; } 100% { opacity: 0; } }
-@keyframes intro-dim   { 0% { opacity: 0; } 25% { opacity: 0.86; } 100% { opacity: 0.86; } }
+@keyframes intro-spark { 0% { opacity: 0; transform: scale(0); } 35% { opacity: 1; transform: scale(1.4); } 60% { transform: scale(0.8); } 100% { opacity: 1; transform: scale(1.6); } }
+@keyframes intro-flash { 0% { opacity: 1; transform: scale(0); } 45% { opacity: 1; transform: scale(260); } 100% { opacity: 0; transform: scale(300); } }
 @keyframes intro-hide  { to { opacity: 0; } }
 @keyframes intro-night { to { background-color: #000; } }
 @keyframes intro-blink { 50% { opacity: 0; } }
@@ -1274,7 +1263,7 @@ body {
 		if (done) return;
 		if (lineIdx >= LINES.length) {
 			log.insertAdjacentHTML('beforeend', '<span class="caret"></span>');
-			later(() => finish(false), 800);
+			later(() => finish(false), 1000);
 			return;
 		}
 		const text = LINES[lineIdx];
@@ -1287,9 +1276,9 @@ body {
 			const ch = text[i++];
 			if (ch === '~') {
 				const d = document.createElement('span'); d.className = 'dim'; d.textContent = ' \u2026';
-				line.appendChild(d); later(step, 150);
+				line.appendChild(d); later(step, 220);
 			} else {
-				line.appendChild(document.createTextNode(ch)); later(step, 12);
+				line.appendChild(document.createTextNode(ch)); later(step, 20);
 			}
 		})();
 	}
@@ -1297,7 +1286,7 @@ body {
 	function play() {
 		if (done || root.classList.contains('play')) return;
 		root.classList.add('play');
-		later(() => type(0), 3550);
+		later(() => type(0), 5300);
 	}
 	// if the fresco can't load, don't bail out: drop the scene and go straight to the boot log
 	function logOnly() {
