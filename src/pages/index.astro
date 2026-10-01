@@ -329,10 +329,9 @@ const schema = {
 <!-- ═══ INTRO — the touch, then a boot log (once per visit, skippable) ═══ -->
 <div id="intro" aria-hidden="true">
 	<div class="intro-scene">
-		<div class="intro-panel intro-panel-l"><img alt="" width="2060" height="1060" data-src="/intro-scene.webp" /></div>
-		<div class="intro-panel intro-panel-r"><img alt="" width="2060" height="1060" data-src="/intro-scene.webp" /></div>
+		<div class="intro-panel intro-panel-l"><img alt="" width="1060" height="1060" data-src="/intro-scene-l.webp" /></div>
+		<div class="intro-panel intro-panel-r"><img alt="" width="1136" height="1060" data-src="/intro-scene-r.webp" /></div>
 	</div>
-	<span class="intro-vignette"></span>
 	<span class="intro-dim"></span>
 	<span class="intro-glint"></span>
 	<span class="intro-rays"><i style="--r:-2deg;--l:0.53;--w:1px;--d:0.01s"></i><i style="--r:21deg;--l:0.65;--w:1px;--d:0.07s"></i><i style="--r:36deg;--l:0.50;--w:2px;--d:0.01s"></i><i style="--r:54deg;--l:0.68;--w:3px;--d:0.01s"></i><i style="--r:76deg;--l:0.80;--w:1px;--d:0.05s"></i><i style="--r:99deg;--l:0.99;--w:1px;--d:0.04s"></i><i style="--r:115deg;--l:0.68;--w:3px;--d:0.01s"></i><i style="--r:137deg;--l:0.90;--w:1px;--d:0.01s"></i><i style="--r:161deg;--l:0.55;--w:1px;--d:0.04s"></i><i style="--r:174deg;--l:0.48;--w:1px;--d:0.04s"></i><i style="--r:200deg;--l:0.88;--w:2px;--d:0.05s"></i><i style="--r:219deg;--l:0.61;--w:1px;--d:0.06s"></i><i style="--r:236deg;--l:0.77;--w:3px;--d:0.04s"></i><i style="--r:258deg;--l:0.70;--w:3px;--d:0.08s"></i><i style="--r:275deg;--l:0.68;--w:2px;--d:0.01s"></i><i style="--r:300deg;--l:0.47;--w:1px;--d:0.06s"></i><i style="--r:321deg;--l:0.93;--w:2px;--d:0.03s"></i><i style="--r:338deg;--l:0.72;--w:2px;--d:0.01s"></i></span>
@@ -671,32 +670,28 @@ const schema = {
 html.intro-on body { overflow: hidden; }
 html.intro-on #intro {
 	display: block; position: fixed; inset: 0; z-index: 10000;
-	background: #000; overflow: hidden; cursor: pointer;
+	background: #e7e4dc;   /* the fresco's own paper tone, so the halves dissolve into it */
+	overflow: hidden; cursor: pointer;
 	transition: opacity 0.6s ease;
 }
 #intro.out { opacity: 0; pointer-events: none; }
+#intro.log-only .intro-scene { display: none; }
 #intro.out.fast { transition-duration: 0.3s; }
-/* the contact point (fingertips) is pinned to the centre of the screen */
 /* the fresco, split at the gap between the fingertips: each half is zoomed onto
-   its arm, fills its side of the screen, and slides in until they meet */
+   its arm and slides in from its side until the fingertips meet at the centre */
 .intro-scene { position: absolute; inset: 0; }
-.intro-panel { position: absolute; top: 0; bottom: 0; width: 50%; overflow: hidden; will-change: transform; }
+.intro-panel { position: absolute; top: 0; bottom: 0; width: 50%; will-change: transform; }
 .intro-panel-l { left: 0; transform: translateX(-101%); }
 .intro-panel-r { right: 0; transform: translateX(101%); }
 .intro-panel img {
 	--iw: max(125vw, 900px);                    /* displayed width of the whole fresco crop */
-	position: absolute; width: var(--iw); height: auto; max-width: none;
+	position: absolute; height: auto; max-width: none;
 	top: calc(50% - var(--iw) * 0.2495);        /* fingertips (48.5% down the crop) on the vertical centre */
-	-webkit-mask-image: linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent);
-	        mask-image: linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent);
 }
-.intro-panel-l img { left: calc(100% - var(--iw) * 0.48155); }   /* seam (48.155% across) on the panel's inner edge */
-.intro-panel-r img { left: calc(var(--iw) * -0.48155); }
-/* darkens the edges so the light lives at the touch */
-.intro-vignette {
-	position: absolute; inset: 0; pointer-events: none;
-	background: radial-gradient(ellipse 75% 70% at 50% 50%, transparent 35%, rgba(0, 0, 0, 0.55) 75%, rgba(0, 0, 0, 0.9) 100%);
-}
+/* each half is its own image with soft edges baked in. both reach 34px (3.3% of the crop)
+   past the seam and fade out inside that overlap, so the joined fresco has no seam line */
+.intro-panel-l img { width: calc(var(--iw) * 0.51456); right: calc(var(--iw) * -0.03301); }
+.intro-panel-r img { width: calc(var(--iw) * 0.55146); left: calc(var(--iw) * -0.03301); }
 /* impact: a four-point glint, a burst of rays, then the screen whites out */
 /* the lights cut out on contact, so the glint and the burst read against the dark */
 .intro-dim { position: absolute; inset: 0; background: #000; opacity: 0; pointer-events: none; }
@@ -724,8 +719,11 @@ html.intro-on #intro {
 .intro-log .caret { display: inline-block; width: 0.6em; height: 1.05em; margin-left: 0.1em; vertical-align: -0.15em; background: #e9e5db; animation: intro-blink 0.9s steps(1) infinite; }
 .intro-skip {
 	position: absolute; left: 50%; bottom: 1.6rem; transform: translateX(-50%);
-	font: italic 0.72rem/1 var(--serif); letter-spacing: 0.04em; color: rgba(255, 255, 255, 0.32); white-space: nowrap;
+	font: italic 0.72rem/1 var(--serif); letter-spacing: 0.04em; color: rgba(128, 122, 112, 0.75); white-space: nowrap;
 }
+/* under the white-out the backdrop turns black, so the boot log opens on a dark screen */
+#intro.play { animation: intro-night 0.01s linear 2.9s forwards; }
+#intro.log-only { background: #000; }
 #intro.play .intro-panel-l { animation: intro-in-l 2.2s cubic-bezier(0.62, 0, 0.32, 1) 0.15s forwards; }
 #intro.play .intro-panel-r { animation: intro-in-r 2.2s cubic-bezier(0.62, 0, 0.32, 1) 0.15s forwards; }
 #intro.play .intro-scene   { animation: intro-shake 0.4s linear 2.35s, intro-hide 0.01s linear 2.9s forwards; }
@@ -741,6 +739,7 @@ html.intro-on #intro {
 @keyframes intro-flash { 0% { opacity: 0; } 22% { opacity: 1; } 40% { opacity: 1; } 100% { opacity: 0; } }
 @keyframes intro-dim   { 0% { opacity: 0; } 25% { opacity: 0.86; } 100% { opacity: 0.86; } }
 @keyframes intro-hide  { to { opacity: 0; } }
+@keyframes intro-night { to { background-color: #000; } }
 @keyframes intro-blink { 50% { opacity: 0; } }
 
 /* ── konami: red instead of black, everywhere ──────────────────────── */
@@ -1261,8 +1260,8 @@ body {
 	}
 	addEventListener('keydown', skip, true);
 	root.addEventListener('pointerdown', () => finish(true));
-	root.addEventListener('wheel', () => finish(true), { passive: true });
-	root.addEventListener('touchmove', () => finish(true), { passive: true });
+	// a deliberate scroll skips; trackpad inertia and touch jitter don't
+	root.addEventListener('wheel', e => { if (Math.abs(e.deltaY) > 40) finish(true); }, { passive: true });
 
 	// the boot log: [text, pause-after-ms]; "~" marks a dim ellipsis beat
 	const LINES = [
@@ -1300,15 +1299,21 @@ body {
 		root.classList.add('play');
 		later(() => type(0), 3550);
 	}
+	// if the fresco can't load, don't bail out: drop the scene and go straight to the boot log
+	function logOnly() {
+		if (done || root.classList.contains('play') || root.classList.contains('log-only')) return;
+		root.classList.add('log-only');
+		later(() => type(0), 250);
+	}
 	// load the fresco only for people who will see it, start once it's decoded
 	const imgs = [...root.querySelectorAll('img[data-src]')];
 	let pending = imgs.length;
 	imgs.forEach(img => {
 		img.addEventListener('load', () => { if (--pending === 0) play(); }, { once: true });
-		img.addEventListener('error', () => finish(true), { once: true });
+		img.addEventListener('error', logOnly, { once: true });
 		img.src = img.dataset.src;
 	});
-	later(play, 1500);   // slow network: go anyway
+	later(() => { pending > 0 ? logOnly() : play(); }, 2500);   // very slow network: don't wait forever
 })();
 </script>
 
