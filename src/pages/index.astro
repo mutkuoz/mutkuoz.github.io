@@ -1239,8 +1239,8 @@ body {
 
 	// the boot log: [text, pause-after-ms]; "~" marks a dim ellipsis beat
 	const LINES = [
-		'> initializing self-model~',
-		'> loading memories: first app (8)~ c++ (11)~ first llm (14)~ ok',
+		'> initializing kernel~',
+		'> loading model: utku-quantized-gguf~ ok',
 		'> calibrating curiosity~ ok',
 		'> i think, therefore\u2014',
 	];
@@ -1248,7 +1248,7 @@ body {
 		if (done) return;
 		if (lineIdx >= LINES.length) {
 			log.insertAdjacentHTML('beforeend', '<span class="caret"></span>');
-			later(() => finish(false), 420);
+			later(() => finish(false), 800);
 			return;
 		}
 		const text = LINES[lineIdx];
