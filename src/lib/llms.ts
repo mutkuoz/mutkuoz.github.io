@@ -32,6 +32,32 @@ GitHub @mutkuoz, and ORCID 0009-0008-2400-5646.`;
 
 const work = `## Work
 
+### Open source
+
+- [FlyDOOM](https://github.com/mutkuoz/flydoom): A real fruit fly connectome playing
+  Doom. Feeds game frames through the visual pathway of 139,255 reconstructed neurons
+  and roughly 2.7 million synapses, then maps biological motor output back to game
+  controls. Nothing is trained. Creator, 2026. Active.
+- [007captcha](https://github.com/mutkuoz/007captcha): Open-source robophobic
+  verification framework defending websites against AI agents — a CAPTCHA built for
+  the post-LLM web. TypeScript, MIT licensed. Creator, 2026. Shelved.
+- Octapar: AI platform clustering people into balanced 8-person "tribes" via a
+  multi-stage clustering algorithm over weighted attentional embeddings and the
+  Hungarian method. Founder and core developer, 2025. Paused.
+- [Topazius](https://github.com/mutkuoz/topazius): Browser-based Markdown notes app
+  backed by a private GitHub repository. Offline-first editing, background commits,
+  wikilinks, backlinks, and optional client-side encryption. No backend or third-party
+  storage. Creator, 2026. Active.
+- [trstemmer](https://github.com/mutkuoz/trstemmer): Simple Turkish word stemmer for
+  Python that strips verb suffixes; on PyPI (https://pypi.org/project/trstemmer/).
+  Creator, 2023. Shelved.
+- [turkic-relevance-laya](https://huggingface.co/mutkuoz/turkic-relevance-laya-multilingual):
+  Classifier that labels a Turkish Wikipedia article as core Turkic heritage, modern
+  Turkey, or unrelated. Laya-multilingual fine-tuned for Project: Turkic Blue, where it
+  selected 14,244 core articles from a ~59,000-article crawl. Creator, 2026. Active.
+
+### Work
+
 - [turkhukuk.ai](https://www.turkhukuk.ai): LegalTech platform for Turkish lawyers —
   case research and litigation strategy. Trained and fine-tuned domain-specific
   language models on Turkish legal corpora; experimented with neuro-symbolic
@@ -40,32 +66,23 @@ const work = `## Work
 - LabGPT: Test result analysis for doctors — trend analysis, clinical finding
   extraction, and a corpus spanning years of medical research. TÜBİTAK-backed.
   R&D, neuro-symbolic AI, 2025 — present. Active.
-- [FlyDOOM](https://github.com/mutkuoz/flydoom): A real fruit fly connectome playing
-  Doom. Feeds game frames through the visual pathway of 139,255 reconstructed neurons
-  and roughly 2.7 million synapses, then maps biological motor output back to game
-  controls. Nothing is trained. Creator, 2026. Active.
 - Clade AI: Personal AI assistant with task execution, integrations, and
   personalized interaction. Self-deciding multi-agent framework built in the early
   days of AI agents; fine-tuned an LLM for natural interaction; custom systems for
   smart memory and decision-making. Co-founder and AI developer, 2023–24. Shelved.
-- Sorubot: AI platform generating exam questions and managing study sessions.
-  Developer, 2022–23. Shelved.
-- [007captcha](https://github.com/mutkuoz/007captcha): Open-source robophobic
-  verification framework defending websites against AI agents — a CAPTCHA built for
-  the post-LLM web. TypeScript, MIT licensed. Creator, 2026. Shelved.
-- Octapar: AI platform clustering people into balanced 8-person "tribes" via a
-  multi-stage clustering algorithm over weighted attentional embeddings and the
-  Hungarian method. Founder and core developer, 2025. Paused.
-- Styrk: Sports supplements with AI-driven personalization and AI-generated
-  packaging. Co-founder and backend developer, 2025. Shelved.
-- [Topazius](https://github.com/mutkuoz/topazius): Browser-based Markdown notes app
-  backed by a private GitHub repository. Offline-first editing, background commits,
-  wikilinks, backlinks, and optional client-side encryption. No backend or third-party
-  storage. Creator, 2026. Active.
 - Mentoring at [BİLSEM](https://turkmaarifansiklopedisi.org.tr/bilim-ve-sanat-merkezleri-bilsem):
   Senior student and instructor at BİLSEM, Türkiye's government-led supplementary education
   program for gifted students. Voluntarily mentors and teaches primary schoolers there
-  in project management, robotics, artificial intelligence, and software development. 2024–present. Active.`;
+  in project management, robotics, artificial intelligence, and software development. 2024–present. Active.
+- Sorubot: AI platform generating exam questions and managing study sessions.
+  Developer, 2022–23. Shelved.
+
+### Unpublished
+
+- A.D.A (ADA's Damn Awesome, a recursive name in honour of Ada Lovelace): Parser-based,
+  deterministic personal assistant. Creator, 2020.
+- Ananas Studios: Indie game development studio. Founder, 2019–2022.
+- Shoelace: Peer-based encryption algorithm. Creator, 2020.`;
 
 const associations = `## Associations
 
