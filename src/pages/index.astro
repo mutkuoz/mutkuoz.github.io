@@ -1435,6 +1435,103 @@ function toggleWork(open) {
 	cover.addEventListener('pointerleave', () => clearTimeout(t));
 })();
 
+/* ── music player — youtube iframe api, loaded on first hover / play ─ */
+(function () {
+	const TRACKS = [
+		{ id: 'JYuyWrkwpok', title: 'fly me to the moon', artist: 'frank sinatra' },
+		{ id: 'Rbm6GXllBiw', title: 'paradise city', artist: 'guns n’ roses' },
+		{ id: 'fJ9rUzIMcZQ', title: 'bohemian rhapsody', artist: 'queen' },
+		{ id: 'KrZHPOeOxQQ', title: 'you give love a bad name', artist: 'bon jovi' },
+		{ id: '9n-hyA2-FDg', title: 'la vie en rose', artist: 'louis armstrong' },
+		{ id: 'echO1rg4E08', title: 'kızılcıklar oldu mu', artist: 'kübra şenyaylar' },
+	];
+	const root = document.getElementById('player');
+	if (!root) return;
+	const playBtn = document.getElementById('playerPlay');
+	const muteBtn = document.getElementById('playerMute');
+	const titleEl = root.querySelector('.player-title');
+	const artistEl = root.querySelector('.player-artist');
+	const wedge = document.getElementById('playerWedge');
+	const vol = document.getElementById('playerVol');
+	let i = 0, yt = null, ready = false, loading = false, wantPlay = false, muted = false;
+	let fails = 0, gaveUp = false;   // youtube refusals in a row; stop once every track has been refused
+
+	function paint() {
+		titleEl.textContent = TRACKS[i].title; titleEl.title = TRACKS[i].title;
+		artistEl.textContent = TRACKS[i].artist;
+	}
+	function setPlaying(on) {
+		root.classList.toggle('playing', on);
+		playBtn.setAttribute('aria-label', on ? 'pause' : 'play');
+	}
+	function applyVolume() {
+		wedge.style.setProperty('--v', vol.value + '%');
+		root.classList.toggle('muted', muted || +vol.value === 0);
+		muteBtn.setAttribute('aria-label', muted ? 'unmute' : 'mute');
+		if (!ready) return;
+		yt.setVolume(+vol.value);
+		muted ? yt.mute() : yt.unMute();
+	}
+	function load() {
+		if (loading) return;
+		loading = true;
+		const prev = window.onYouTubeIframeAPIReady;
+		window.onYouTubeIframeAPIReady = function () {
+			if (prev) prev();
+			yt = new YT.Player('playerYT', {
+				width: 200, height: 200, videoId: TRACKS[i].id,
+				// no autoplay: the player may be created early (on hover), so it only plays when asked
+				playerVars: { autoplay: 0, controls: 0, disablekb: 1, playsinline: 1, rel: 0 },
+				events: {
+					onReady: function () { ready = true; applyVolume(); if (wantPlay) yt.playVideo(); },
+					onStateChange: function (e) {
+						if (e.data === YT.PlayerState.ENDED) go(1);
+						else if (e.data === YT.PlayerState.PLAYING) { fails = 0; setPlaying(true); }
+						else if (e.data === YT.PlayerState.PAUSED) setPlaying(false);
+					},
+					// the owner blocks embedding (101/150) or the video is gone: try the next one,
+					// but don't spin forever if youtube refuses all of them
+					onError: function () {
+						if (++fails >= TRACKS.length) return giveUp();
+						if (wantPlay) return go(1);
+						// refused while only warming up: line up the next track, quietly
+						i = (i + 1) % TRACKS.length; paint(); yt.cueVideoById(TRACKS[i].id);
+					},
+				},
+			});
+		};
+		const s = document.createElement('script');
+		s.src = 'https://www.youtube.com/iframe_api';
+		document.head.appendChild(s);
+	}
+	function giveUp() {
+		gaveUp = true; wantPlay = false; setPlaying(false);
+		titleEl.textContent = titleEl.title = 'music unavailable';
+		artistEl.textContent = 'youtube refused playback';
+	}
+	function go(step) {
+		i = (i + step + TRACKS.length) % TRACKS.length;
+		paint();
+		wantPlay = true; setPlaying(true);
+		if (ready) yt.loadVideoById(TRACKS[i].id); else load();
+	}
+	// warm the player up as soon as someone reaches for it, so the click can start
+	// playback straight away (browsers only allow sound right after a click)
+	root.addEventListener('pointerenter', load, { once: true });
+	root.addEventListener('focusin', load, { once: true });
+	playBtn.addEventListener('click', function () {
+		if (gaveUp) { gaveUp = false; fails = 0; go(0); return; }   // try again
+		if (!ready) { wantPlay = !wantPlay; setPlaying(wantPlay); load(); return; }
+		if (root.classList.contains('playing')) { wantPlay = false; yt.pauseVideo(); setPlaying(false); }
+		else { wantPlay = true; yt.playVideo(); setPlaying(true); }
+	});
+	document.getElementById('playerNext').addEventListener('click', function () { gaveUp = false; fails = 0; go(1); });
+	document.getElementById('playerPrev').addEventListener('click', function () { gaveUp = false; fails = 0; go(-1); });
+	muteBtn.addEventListener('click', function () { muted = !muted; applyVolume(); });
+	vol.addEventListener('input', function () { muted = false; applyVolume(); });
+	paint();
+})();
+
 /* ── small toast ───────────────────────────────────────────────────── */
 const toast = (function () {
 	const el = document.getElementById('toast');
