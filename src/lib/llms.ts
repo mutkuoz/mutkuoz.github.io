@@ -17,8 +17,10 @@ const intro = `# ${AUTHOR_NAME}
 
 > Machine learning developer and AI researcher based in Ankara, Türkiye. Focused on
 > artificial consciousness, neuro-symbolic AI, connectomics, and agentic "thinking"
-> systems. Technical co-founder of turkhukuk.ai, creator of FlyDOOM and the open-source
-> 007captcha, first author of HukukBERT, founder of 23rd the company. Member of
+> systems. Technical co-founder of turkhukuk.ai and R&D on LabGPT (TÜBİTAK-backed);
+> creator of the open-source FlyDOOM, 007captcha, Topazius, trstemmer, and
+> turkic-relevance-laya; author of Octapar; first author of HukukBERT; founder of 23rd
+> the company and, earlier, the indie game studio Ananas Studios. Member of
 > Mensa International and the International Association for Artificial Intelligence
 > and Law (IAAIL); Save the Children volunteer; senior student and mentor at BİLSEM.
 

@@ -9,7 +9,7 @@ const articles = await getArticles();
 const canonical = new URL(Astro.url.pathname, SITE).href;
 const title = 'mehmet utku öztürk — machine learning developer & ai researcher';
 const description =
-	'mehmet utku öztürk is a machine learning developer and ai researcher in ankara, türkiye. technical co-founder of turkhukuk.ai, creator of FlyDOOM and 007captcha, author of HukukBERT and Octapar. work on artificial consciousness, connectomics, neuro-symbolic ai, and agentic systems.';
+	'mehmet utku öztürk is a machine learning developer and ai researcher in ankara, türkiye. technical co-founder of turkhukuk.ai, r&d on LabGPT, creator of FlyDOOM, 007captcha, Topazius and other open-source tools, author of HukukBERT and Octapar. work on artificial consciousness, connectomics, neuro-symbolic ai, and agentic systems.';
 const ogImage = new URL('/portrait.png', SITE).href;
 const WEBSITE_ID = `${SITE}/#website`;
 
@@ -28,7 +28,7 @@ const person = {
 	description:
 		'Machine learning developer and AI researcher focused on artificial consciousness, neuro-symbolic AI, and agentic "thinking" systems. Started programming at 8, working on machine learning since 13.',
 	disambiguatingDescription:
-		'Machine learning developer from Ankara, Türkiye; technical co-founder of turkhukuk.ai, creator of FlyDOOM and 007captcha, and first author of HukukBERT.',
+		'Machine learning developer from Ankara, Türkiye; technical co-founder of turkhukuk.ai, R&D on LabGPT, creator of FlyDOOM, 007captcha and Topazius, and first author of HukukBERT.',
 	email: 'mailto:m@utku.space',
 	address: {
 		'@type': 'PostalAddress',
@@ -45,12 +45,21 @@ const person = {
 		'LegalTech',
 		'Cognitive Science',
 		'Connectomics',
+		'Turkish NLP',
+		'Medical AI',
 		'Neuromorphic Computing',
 		'Powerlifting'
 	],
 	knowsLanguage: ['Turkish', 'English'],
 	memberOf: [
-		{ '@type': 'Organization', name: 'Mensa International', url: 'https://www.mensa.org' }
+		{ '@type': 'Organization', name: 'Mensa International', url: 'https://www.mensa.org' },
+		{ '@type': 'Organization', name: 'International Association for Artificial Intelligence and Law', alternateName: 'IAAIL', url: 'https://iaail.org' },
+		{
+			'@type': 'EducationalOrganization',
+			name: 'BİLSEM (Bilim ve Sanat Merkezleri)',
+			url: 'https://turkmaarifansiklopedisi.org.tr/bilim-ve-sanat-merkezleri-bilsem',
+			description: 'Government-led special education program for gifted children in Türkiye; senior student and volunteer mentor.'
+		}
 	],
 	affiliation: [
 		{ '@type': 'Organization', name: 'turkhukuk.ai', url: 'https://www.turkhukuk.ai' },
@@ -167,6 +176,28 @@ const projects = [
 		applicationCategory: 'Medical',
 		description:
 			'Test result analysis for doctors with trend analysis, clinical finding extraction, and a corpus spanning years of medical research. TÜBİTAK-backed.'
+	},
+	// unpublished
+	{
+		'@type': 'SoftwareApplication',
+		name: 'A.D.A',
+		alternateName: "ADA's Damn Awesome",
+		applicationCategory: 'Personal Assistant',
+		dateCreated: '2020',
+		description: 'An unpublished parser-based, deterministic personal assistant; the recursive name honours Ada Lovelace.'
+	},
+	{
+		'@type': 'Organization',
+		name: 'Ananas Studios',
+		foundingDate: '2019',
+		dissolutionDate: '2022',
+		description: 'An indie game development studio.'
+	},
+	{
+		'@type': 'CreativeWork',
+		name: 'Shoelace',
+		dateCreated: '2020',
+		description: 'An unpublished peer-based encryption algorithm.'
 	}
 ];
 
@@ -177,7 +208,7 @@ const work = {
 	itemListElement: projects.map((project, i) => ({
 		'@type': 'ListItem',
 		position: i + 1,
-		item: { ...project, creator: { '@id': PERSON_ID } }
+		item: { ...project, ...(project['@type'] === 'Organization' ? { founder: { '@id': PERSON_ID } } : { creator: { '@id': PERSON_ID } }) }
 	}))
 };
 
@@ -445,154 +476,147 @@ const schema = {
 	</section>
 
 	<!-- ── (SOME) WORK ────────────────────────────────────────────────── -->
-	<!-- collapsed: the desk engraving. expanded: it gives way to three columns of projects -->
+	<!-- collapsed: the desk engraving beside the "work" column. hovering either (or the
+	     button) expands it to the full list: open-source, work, unpublished -->
 	<section id="work" class="section reveal">
 		<div class="rule-head work-head">
 			<h2 class="rule-head-label">(some) work</h2>
 			<button class="work-hide" aria-expanded="false" aria-controls="workPanel" onclick="toggleWork(false)" tabindex="-1">&minus; hide</button>
 		</div>
-		<div class="work-cover" id="workCover">
-			<div class="work-cover-inner">
-				<button class="work-cover-img" aria-expanded="false" aria-controls="workPanel" onclick="toggleWork(true)" aria-label="see projects">
-					<img src="/desk.webp" width="1024" height="682" loading="lazy" decoding="async" alt="stipple engraving of mehmet utku öztürk asleep on the floor beneath a cluttered desk of laptops, mugs, cables, and circuit boards" />
-				</button>
-				<button class="work-see" aria-expanded="false" aria-controls="workPanel" onclick="toggleWork(true)">see projects <span aria-hidden="true">+</span></button>
+		<div class="work-board" id="workPanel">
+			<button class="work-cover-img" aria-expanded="false" aria-controls="workPanel" onclick="toggleWork(true)" aria-label="see all projects">
+				<img src="/desk.webp" width="1024" height="682" loading="lazy" decoding="async" alt="stipple engraving of mehmet utku öztürk asleep on the floor beneath a cluttered desk of laptops, mugs, cables, and circuit boards" />
+			</button>
+			<div class="work-col work-col-os">
+				<h3 class="work-cat"><svg class="work-cat-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M12 1.8c-3.1 0-5.2 2.4-5.2 5.6v2.9c-1.9 1.9-3.4 4.6-3.4 7.3 0 2.9 2.4 4.6 5.6 4.6h6c3.2 0 5.6-1.7 5.6-4.6 0-2.7-1.5-5.4-3.4-7.3V7.4c0-3.2-2.1-5.6-5.2-5.6zM12 11.3c-2.2 0-3.9 2.4-3.9 5.2 0 2.5 1.7 4.1 3.9 4.1s3.9-1.6 3.9-4.1c0-2.8-1.7-5.2-3.9-5.2zM10.3 6.1a.95.95 0 1 0 0 1.9.95.95 0 0 0 0-1.9zm3.4 0a.95.95 0 1 0 0 1.9.95.95 0 0 0 0-1.9zM12 8.6l-1.5 1.1 1.5 1 1.5-1z"/><path d="M7.6 21.2h3.3l-.4 1.3H7.2zM13.1 21.2h3.3l.4 1.3h-3.3z"/></svg>open-source<span class="work-count">6</span></h3>
+				<div class="work-items">
+					<article class="item item-proj">
+						<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
+							<span class="item-title"><span class="status status-live" aria-label="active"></span>flydoom</span>
+							<span class="item-byline">creator &middot; 2026</span>
+							<span class="item-plus" aria-hidden="true"></span>
+						</button>
+						<div class="item-body"><div class="item-body-inner"><p>a real fruit fly connectome playing doom. feeds the game through the visual pathway of 139,255 reconstructed neurons and roughly 2.7 million synapses, then maps biological motor output back to game controls. nothing is trained; the wiring is the fly&rsquo;s. <a href="https://github.com/mutkuoz/flydoom" target="_blank" rel="noopener" class="chip">github ↗</a> <a href="/articles/flydoom/" class="chip">story ↗</a></p></div></div>
+					</article>
+					<article class="item item-proj">
+						<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
+							<span class="item-title"><span class="status status-shelved" aria-label="shelved"></span>007captcha</span>
+							<span class="item-byline">creator &middot; 2026</span>
+							<span class="item-plus" aria-hidden="true"></span>
+						</button>
+						<div class="item-body"><div class="item-body-inner"><p>a robophobic verification framework that defends websites against ai agents. an open-source take on captcha built for the post-llm web, where classical challenges no longer hold. typescript. mit licensed. <a href="https://github.com/mutkuoz/007captcha" target="_blank" rel="noopener" class="chip">github ↗</a></p></div></div>
+					</article>
+					<article class="item item-proj">
+						<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
+							<span class="item-title"><span class="status status-paused" aria-label="paused"></span>octapar</span>
+							<span class="item-byline">founder &amp; core dev &middot; 2025</span>
+							<span class="item-plus" aria-hidden="true"></span>
+						</button>
+						<div class="item-body"><div class="item-body-inner"><p>an ai platform that clusters people into 8-person &ldquo;tribes&rdquo; — balanced, semantically coherent groups for authentic connection and mutual growth. designed a multi-stage clustering algorithm around weighted attentional embeddings and the hungarian method. paper published via 23rd.</p></div></div>
+					</article>
+					<article class="item item-proj">
+						<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
+							<span class="item-title"><span class="status status-live" aria-label="active"></span>topazius</span>
+							<span class="item-byline">creator &middot; 2026</span>
+							<span class="item-plus" aria-hidden="true"></span>
+						</button>
+						<div class="item-body"><div class="item-body-inner"><p>a browser-based markdown notes app whose database is a private github repository you own. works offline, commits edits in the background, supports wikilinks and backlinks, and can encrypt individual notes entirely on the client. no server, account, analytics, or third-party storage. <a href="https://github.com/mutkuoz/topazius" target="_blank" rel="noopener" class="chip">github ↗</a></p></div></div>
+					</article>
+					<article class="item item-proj">
+						<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
+							<span class="item-title"><span class="status status-shelved" aria-label="shelved"></span>trstemmer</span>
+							<span class="item-byline">creator &middot; 2023</span>
+							<span class="item-plus" aria-hidden="true"></span>
+						</button>
+						<div class="item-body"><div class="item-body-inner"><p>a simple turkish word stemmer for python. it strips the suffixes off verbs: &ldquo;seviyorum, yapmışım, koşarlar&rdquo; comes out as &ldquo;sev yap koş&rdquo;. early and verb-only, but on pypi. <a href="https://github.com/mutkuoz/trstemmer" target="_blank" rel="noopener" class="chip">github ↗</a> <a href="https://pypi.org/project/trstemmer/" target="_blank" rel="noopener" class="chip">pypi ↗</a></p></div></div>
+					</article>
+					<article class="item item-proj">
+						<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
+							<span class="item-title"><span class="status status-live" aria-label="active"></span>turkic-relevance-laya</span>
+							<span class="item-byline">creator &middot; 2026</span>
+							<span class="item-plus" aria-hidden="true"></span>
+						</button>
+						<div class="item-body"><div class="item-body-inner"><p>a classifier that reads a turkish wikipedia article and says how it relates to the turkic world: core, modern, or unrelated. laya-multilingual fine-tuned for project: turkic blue, where it sifted ~59,000 articles down to 14,244 core ones. <a href="https://huggingface.co/mutkuoz/turkic-relevance-laya-multilingual" target="_blank" rel="noopener" class="chip">hugging face ↗</a></p></div></div>
+					</article>
+				</div>
+			</div>
+			<div class="work-col work-col-work">
+				<h3 class="work-cat"><svg class="work-cat-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M9.4 3.5h5.2c.9 0 1.6.7 1.6 1.6V7h3.3c1.2 0 2.2 1 2.2 2.2v9.6c0 1.2-1 2.2-2.2 2.2H4.5c-1.2 0-2.2-1-2.2-2.2V9.2C2.3 8 3.3 7 4.5 7h3.3V5.1c0-.9.7-1.6 1.6-1.6zm.2 1.8V7h4.8V5.3zM2.3 12.6h8.1v.6c0 .4.3.7.7.7h1.8c.4 0 .7-.3.7-.7v-.6h8.1v1.4h-8.1v.2c0 .4-.3.7-.7.7h-1.8c-.4 0-.7-.3-.7-.7V14H2.3z"/></svg>work<span class="work-count">5</span></h3>
+				<div class="work-items">
+					<article class="item item-proj">
+						<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
+							<span class="item-title"><span class="status status-live" aria-label="active"></span>turkhukuk.ai</span>
+							<span class="item-byline">technical co-founder &middot; 2026 —</span>
+							<span class="item-plus" aria-hidden="true"></span>
+						</button>
+						<div class="item-body"><div class="item-body-inner"><p>a legaltech platform for turkish lawyers — case research and litigation strategy. trained and fine-tuned domain-specific language models on turkish legal corpora, and experimented with neuro-symbolic representations to bridge statistical learning with structured legal reasoning. <a href="https://www.turkhukuk.ai" target="_blank" rel="noopener" class="chip">turkhukuk.ai ↗</a></p></div></div>
+					</article>
+					<article class="item item-proj">
+						<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
+							<span class="item-title"><span class="status status-live" aria-label="active"></span>labgpt</span>
+							<span class="item-byline">r&amp;d, neurosymbolic ai &middot; 2025 —</span>
+							<span class="item-plus" aria-hidden="true"></span>
+						</button>
+						<div class="item-body"><div class="item-body-inner"><p>test result analysis for doctors with trend analysis, clinical finding extraction and a corpus with years of medical research. tübitak-backed.</p></div></div>
+					</article>
+					<article class="item item-proj">
+						<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
+							<span class="item-title"><span class="status status-shelved" aria-label="shelved"></span>clade ai</span>
+							<span class="item-byline">co-founder, ai dev &middot; 2023–24</span>
+							<span class="item-plus" aria-hidden="true"></span>
+						</button>
+						<div class="item-body"><div class="item-body-inner"><p>a personal ai assistant with task execution, extensive integrations, and personalized interaction. held a $21m round. built a self-deciding multi-agent framework in the early days of ai agents, fine-tuned an llm for natural interaction, and shipped custom systems for smart memory, decision-making, and seamless integrations. left in july 2024; shelved shortly after.</p></div></div>
+					</article>
+					<article class="item item-proj">
+						<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
+							<span class="item-title"><span class="status status-live" aria-label="active"></span>mentoring @ bilsem</span>
+							<span class="item-byline">senior student &amp; instructor &middot; 2024 —</span>
+							<span class="item-plus" aria-hidden="true"></span>
+						</button>
+						<div class="item-body"><div class="item-body-inner"><p>senior student &amp; instructor at bilsem, a government-led supplementary education program for gifted students (top 2% iq). voluntarily mentoring and instructing primary schoolers there in project management, robotics, artificial intelligence, and software development. <a href="https://turkmaarifansiklopedisi.org.tr/bilim-ve-sanat-merkezleri-bilsem" target="_blank" rel="noopener" class="chip">about bilsem ↗</a></p></div></div>
+					</article>
+					<article class="item item-proj">
+						<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
+							<span class="item-title"><span class="status status-shelved" aria-label="shelved"></span>sorubot</span>
+							<span class="item-byline">developer &middot; 2022–23</span>
+							<span class="item-plus" aria-hidden="true"></span>
+						</button>
+						<div class="item-body"><div class="item-body-inner"><p>an ai platform that generates exam questions and manages students&rsquo; study sessions. very unsuccessfully fine-tuned an llm. amateur work — but not bad for a 14-year-old.</p></div></div>
+					</article>
+				</div>
+				<button class="work-see" aria-expanded="false" aria-controls="workPanel" onclick="toggleWork(true)">+ 9 more &middot; open-source &amp; unpublished</button>
+			</div>
+			<div class="work-col work-col-un">
+				<h3 class="work-cat"><svg class="work-cat-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M12 2.2c-4.1 0-7.3 3.3-7.3 7.4v11.6c0 .5.6.8 1 .5l1.9-1.4 2.1 1.6c.3.2.6.2.9 0L12 20.3l1.4 1.6c.3.2.6.2.9 0l2.1-1.6 1.9 1.4c.4.3 1 0 1-.5V9.6c0-4.1-3.2-7.4-7.3-7.4zM9.4 8.2a1.35 1.6 0 1 0 0 3.2 1.35 1.6 0 0 0 0-3.2zm5.2 0a1.35 1.6 0 1 0 0 3.2 1.35 1.6 0 0 0 0-3.2zM10.6 13.6c0 .8.6 1.5 1.4 1.5s1.4-.7 1.4-1.5z"/></svg>unpublished<span class="work-count">3</span></h3>
+				<div class="work-items">
+					<article class="item item-proj">
+						<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
+							<span class="item-title"><span class="status status-shelved" aria-label="shelved"></span>a.d.a</span>
+							<span class="item-byline">creator &middot; 2020</span>
+							<span class="item-plus" aria-hidden="true"></span>
+						</button>
+						<div class="item-body"><div class="item-body-inner"><p>ada&rsquo;s damn awesome &mdash; a recursive name, with respect to lady lovelace. a parser-based, deterministic personal assistant.</p></div></div>
+					</article>
+					<article class="item item-proj">
+						<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
+							<span class="item-title"><span class="status status-shelved" aria-label="shelved"></span>founder @ ananas studios</span>
+							<span class="item-byline">2019–22</span>
+							<span class="item-plus" aria-hidden="true"></span>
+						</button>
+						<div class="item-body"><div class="item-body-inner"><p>an indie game development studio.</p></div></div>
+					</article>
+					<article class="item item-proj">
+						<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
+							<span class="item-title"><span class="status status-shelved" aria-label="shelved"></span>shoelace</span>
+							<span class="item-byline">creator &middot; 2020</span>
+							<span class="item-plus" aria-hidden="true"></span>
+						</button>
+						<div class="item-body"><div class="item-body-inner"><p>a peer-based encryption algorithm.</p></div></div>
+					</article>
+				</div>
 			</div>
 		</div>
-		<div class="work-panel" id="workPanel">
-			<div class="work-panel-inner">
-			<div class="work-cols">
-				<div class="work-col">
-					<h3 class="work-cat"><svg class="work-cat-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M12 1.8c-3.1 0-5.2 2.4-5.2 5.6v2.9c-1.9 1.9-3.4 4.6-3.4 7.3 0 2.9 2.4 4.6 5.6 4.6h6c3.2 0 5.6-1.7 5.6-4.6 0-2.7-1.5-5.4-3.4-7.3V7.4c0-3.2-2.1-5.6-5.2-5.6zM12 11.3c-2.2 0-3.9 2.4-3.9 5.2 0 2.5 1.7 4.1 3.9 4.1s3.9-1.6 3.9-4.1c0-2.8-1.7-5.2-3.9-5.2zM10.3 6.1a.95.95 0 1 0 0 1.9.95.95 0 0 0 0-1.9zm3.4 0a.95.95 0 1 0 0 1.9.95.95 0 0 0 0-1.9zM12 8.6l-1.5 1.1 1.5 1 1.5-1z"/><path d="M7.6 21.2h3.3l-.4 1.3H7.2zM13.1 21.2h3.3l.4 1.3h-3.3z"/></svg>open-source<span class="work-count">6</span></h3>
-					<div class="work-items">
-						<article class="item item-proj">
-							<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
-								<span class="item-title"><span class="status status-live" aria-label="active"></span>flydoom</span>
-								<span class="item-byline">creator &middot; 2026</span>
-								<span class="item-plus" aria-hidden="true"></span>
-							</button>
-							<div class="item-body"><div class="item-body-inner"><p>a real fruit fly connectome playing doom. feeds the game through the visual pathway of 139,255 reconstructed neurons and roughly 2.7 million synapses, then maps biological motor output back to game controls. nothing is trained; the wiring is the fly&rsquo;s. <a href="https://github.com/mutkuoz/flydoom" target="_blank" rel="noopener" class="chip">github ↗</a> <a href="/articles/flydoom/" class="chip">story ↗</a></p></div></div>
-						</article>
-						<article class="item item-proj">
-							<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
-								<span class="item-title"><span class="status status-shelved" aria-label="shelved"></span>007captcha</span>
-								<span class="item-byline">creator &middot; 2026</span>
-								<span class="item-plus" aria-hidden="true"></span>
-							</button>
-							<div class="item-body"><div class="item-body-inner"><p>a robophobic verification framework that defends websites against ai agents. an open-source take on captcha built for the post-llm web, where classical challenges no longer hold. typescript. mit licensed. <a href="https://github.com/mutkuoz/007captcha" target="_blank" rel="noopener" class="chip">github ↗</a></p></div></div>
-						</article>
-						<article class="item item-proj">
-							<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
-								<span class="item-title"><span class="status status-paused" aria-label="paused"></span>octapar</span>
-								<span class="item-byline">founder &amp; core dev &middot; 2025</span>
-								<span class="item-plus" aria-hidden="true"></span>
-							</button>
-							<div class="item-body"><div class="item-body-inner"><p>an ai platform that clusters people into 8-person &ldquo;tribes&rdquo; — balanced, semantically coherent groups for authentic connection and mutual growth. designed a multi-stage clustering algorithm around weighted attentional embeddings and the hungarian method. paper published via 23rd.</p></div></div>
-						</article>
-						<article class="item item-proj">
-							<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
-								<span class="item-title"><span class="status status-live" aria-label="active"></span>topazius</span>
-								<span class="item-byline">creator &middot; 2026</span>
-								<span class="item-plus" aria-hidden="true"></span>
-							</button>
-							<div class="item-body"><div class="item-body-inner"><p>a browser-based markdown notes app whose database is a private github repository you own. works offline, commits edits in the background, supports wikilinks and backlinks, and can encrypt individual notes entirely on the client. no server, account, analytics, or third-party storage. <a href="https://github.com/mutkuoz/topazius" target="_blank" rel="noopener" class="chip">github ↗</a></p></div></div>
-						</article>
-						<article class="item item-proj">
-							<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
-								<span class="item-title"><span class="status status-shelved" aria-label="shelved"></span>trstemmer</span>
-								<span class="item-byline">creator &middot; 2023</span>
-								<span class="item-plus" aria-hidden="true"></span>
-							</button>
-							<div class="item-body"><div class="item-body-inner"><p>a simple turkish word stemmer for python. it strips the suffixes off verbs: &ldquo;seviyorum, yapmışım, koşarlar&rdquo; comes out as &ldquo;sev yap koş&rdquo;. early and verb-only, but on pypi. <a href="https://github.com/mutkuoz/trstemmer" target="_blank" rel="noopener" class="chip">github ↗</a> <a href="https://pypi.org/project/trstemmer/" target="_blank" rel="noopener" class="chip">pypi ↗</a></p></div></div>
-						</article>
-						<article class="item item-proj">
-							<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
-								<span class="item-title"><span class="status status-live" aria-label="active"></span>turkic-relevance-laya</span>
-								<span class="item-byline">creator &middot; 2026</span>
-								<span class="item-plus" aria-hidden="true"></span>
-							</button>
-							<div class="item-body"><div class="item-body-inner"><p>a classifier that reads a turkish wikipedia article and says how it relates to the turkic world: core, modern, or unrelated. laya-multilingual fine-tuned for project: turkic blue, where it sifted ~59,000 articles down to 14,244 core ones. <a href="https://huggingface.co/mutkuoz/turkic-relevance-laya-multilingual" target="_blank" rel="noopener" class="chip">hugging face ↗</a></p></div></div>
-						</article>
-					</div>
-				</div>
-				<div class="work-col">
-					<h3 class="work-cat"><svg class="work-cat-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M9.4 3.5h5.2c.9 0 1.6.7 1.6 1.6V7h3.3c1.2 0 2.2 1 2.2 2.2v9.6c0 1.2-1 2.2-2.2 2.2H4.5c-1.2 0-2.2-1-2.2-2.2V9.2C2.3 8 3.3 7 4.5 7h3.3V5.1c0-.9.7-1.6 1.6-1.6zm.2 1.8V7h4.8V5.3zM2.3 12.6h8.1v.6c0 .4.3.7.7.7h1.8c.4 0 .7-.3.7-.7v-.6h8.1v1.4h-8.1v.2c0 .4-.3.7-.7.7h-1.8c-.4 0-.7-.3-.7-.7V14H2.3z"/></svg>work<span class="work-count">5</span></h3>
-					<div class="work-items">
-						<article class="item item-proj">
-							<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
-								<span class="item-title"><span class="status status-live" aria-label="active"></span>turkhukuk.ai</span>
-								<span class="item-byline">technical co-founder &middot; 2026 —</span>
-								<span class="item-plus" aria-hidden="true"></span>
-							</button>
-							<div class="item-body"><div class="item-body-inner"><p>a legaltech platform for turkish lawyers — case research and litigation strategy. trained and fine-tuned domain-specific language models on turkish legal corpora, and experimented with neuro-symbolic representations to bridge statistical learning with structured legal reasoning. <a href="https://www.turkhukuk.ai" target="_blank" rel="noopener" class="chip">turkhukuk.ai ↗</a></p></div></div>
-						</article>
-						<article class="item item-proj">
-							<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
-								<span class="item-title"><span class="status status-live" aria-label="active"></span>labgpt</span>
-								<span class="item-byline">r&amp;d, neurosymbolic ai &middot; 2025 —</span>
-								<span class="item-plus" aria-hidden="true"></span>
-							</button>
-							<div class="item-body"><div class="item-body-inner"><p>test result analysis for doctors with trend analysis, clinical finding extraction and a corpus with years of medical research. tübitak-backed.</p></div></div>
-						</article>
-						<article class="item item-proj">
-							<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
-								<span class="item-title"><span class="status status-shelved" aria-label="shelved"></span>clade ai</span>
-								<span class="item-byline">co-founder, ai dev &middot; 2023–24</span>
-								<span class="item-plus" aria-hidden="true"></span>
-							</button>
-							<div class="item-body"><div class="item-body-inner"><p>a personal ai assistant with task execution, extensive integrations, and personalized interaction. held a $21m round. built a self-deciding multi-agent framework in the early days of ai agents, fine-tuned an llm for natural interaction, and shipped custom systems for smart memory, decision-making, and seamless integrations. left in july 2024; shelved shortly after.</p></div></div>
-						</article>
-						<article class="item item-proj">
-							<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
-								<span class="item-title"><span class="status status-live" aria-label="active"></span>mentoring @ bilsem</span>
-								<span class="item-byline">senior student &amp; instructor &middot; 2024 —</span>
-								<span class="item-plus" aria-hidden="true"></span>
-							</button>
-							<div class="item-body"><div class="item-body-inner"><p>senior student &amp; instructor at bilsem, a government-led supplementary education program for gifted students (top 2% iq). voluntarily mentoring and instructing primary schoolers there in project management, robotics, artificial intelligence, and software development. <a href="https://turkmaarifansiklopedisi.org.tr/bilim-ve-sanat-merkezleri-bilsem" target="_blank" rel="noopener" class="chip">about bilsem ↗</a></p></div></div>
-						</article>
-						<article class="item item-proj">
-							<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
-								<span class="item-title"><span class="status status-shelved" aria-label="shelved"></span>sorubot</span>
-								<span class="item-byline">developer &middot; 2022–23</span>
-								<span class="item-plus" aria-hidden="true"></span>
-							</button>
-							<div class="item-body"><div class="item-body-inner"><p>an ai platform that generates exam questions and manages students&rsquo; study sessions. very unsuccessfully fine-tuned an llm. amateur work — but not bad for a 14-year-old.</p></div></div>
-						</article>
-					</div>
-				</div>
-				<div class="work-col">
-					<h3 class="work-cat"><svg class="work-cat-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M12 2.2c-4.1 0-7.3 3.3-7.3 7.4v11.6c0 .5.6.8 1 .5l1.9-1.4 2.1 1.6c.3.2.6.2.9 0L12 20.3l1.4 1.6c.3.2.6.2.9 0l2.1-1.6 1.9 1.4c.4.3 1 0 1-.5V9.6c0-4.1-3.2-7.4-7.3-7.4zM9.4 8.2a1.35 1.6 0 1 0 0 3.2 1.35 1.6 0 0 0 0-3.2zm5.2 0a1.35 1.6 0 1 0 0 3.2 1.35 1.6 0 0 0 0-3.2zM10.6 13.6c0 .8.6 1.5 1.4 1.5s1.4-.7 1.4-1.5z"/></svg>unpublished<span class="work-count">3</span></h3>
-					<div class="work-items">
-						<article class="item item-proj">
-							<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
-								<span class="item-title"><span class="status status-shelved" aria-label="shelved"></span>a.d.a</span>
-								<span class="item-byline">creator &middot; 2020</span>
-								<span class="item-plus" aria-hidden="true"></span>
-							</button>
-							<div class="item-body"><div class="item-body-inner"><p>ada&rsquo;s damn awesome &mdash; a recursive name, with respect to lady lovelace. a parser-based, deterministic personal assistant.</p></div></div>
-						</article>
-						<article class="item item-proj">
-							<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
-								<span class="item-title"><span class="status status-shelved" aria-label="shelved"></span>founder @ ananas studios</span>
-								<span class="item-byline">2019–22</span>
-								<span class="item-plus" aria-hidden="true"></span>
-							</button>
-							<div class="item-body"><div class="item-body-inner"><p>an indie game development studio.</p></div></div>
-						</article>
-						<article class="item item-proj">
-							<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
-								<span class="item-title"><span class="status status-shelved" aria-label="shelved"></span>shoelace</span>
-								<span class="item-byline">creator &middot; 2020</span>
-								<span class="item-plus" aria-hidden="true"></span>
-							</button>
-							<div class="item-body"><div class="item-body-inner"><p>a peer-based encryption algorithm.</p></div></div>
-						</article>
-					</div>
-				</div>
-			</div>
-			<p class="legend"><span class="status status-live"></span> active &nbsp;·&nbsp; <span class="status status-paused"></span> paused &nbsp;·&nbsp; <span class="status status-shelved"></span> shelved</p>
-			</div>
-		</div>
+		<p class="legend"><span class="status status-live"></span> active &nbsp;·&nbsp; <span class="status status-paused"></span> paused &nbsp;·&nbsp; <span class="status status-shelved"></span> shelved</p>
 	</section>
 
 	<!-- ── ASSOCIATIONS ───────────────────────────────────────────────── -->
@@ -1050,19 +1074,20 @@ body {
 .work-hide:hover { color: var(--fg); }
 .work-hide:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
 #work.open .work-hide { opacity: 1; pointer-events: auto; }
-/* both halves fold with the grid-rows trick; whichever is closed also leaves the tab order */
-.work-cover, .work-panel { display: grid; transition: grid-template-rows 0.6s cubic-bezier(0.4,0,0.2,1), opacity 0.45s ease, visibility 0s linear 0.6s; }
-.work-cover-inner, .work-panel-inner { overflow: hidden; min-height: 0; }
-.work-cover { grid-template-rows: 1fr; }
-.work-panel { grid-template-rows: 0fr; opacity: 0; visibility: hidden; }
-#work.open .work-cover { grid-template-rows: 0fr; opacity: 0; visibility: hidden; }
-#work.open .work-panel { grid-template-rows: 1fr; opacity: 1; visibility: visible; transition-delay: 0s, 0.1s, 0s; }
+/* collapsed: [engraving | work]. open: [open-source | work | unpublished] */
+.work-board { display: grid; grid-template-columns: 1fr; gap: 1.6rem; align-items: start; }
+.work-col-os, .work-col-un, #work.open .work-cover-img, #work.open .work-see { display: none; }
+#work.open .work-col-os, #work.open .work-col-un { display: block; }
+#work.open .work-col { animation: work-in 0.5s cubic-bezier(0.2,0.7,0.3,1) both; }
+#work.open .work-col-work { animation-delay: 0.06s; }
+#work.open .work-col-un { animation-delay: 0.12s; }
+@keyframes work-in { from { opacity: 0; transform: translateY(10px); } }
 .work-cover-img {
 	display: block; width: 100%; padding: 0; border: 1px solid var(--hair); background: none; cursor: pointer;
 	overflow: hidden;
 }
 .work-cover-img img {
-	display: block; width: 100%; height: min(34rem, 62vw); object-fit: cover; object-position: 50% 62%;
+	display: block; width: 100%; height: auto; object-fit: cover; object-position: 50% 62%;
 	transition: transform 0.6s cubic-bezier(0.4,0,0.2,1);
 }
 .work-cover-img:hover img { transform: scale(1.015); }
@@ -1070,16 +1095,21 @@ body {
 [data-theme="dark"] .work-cover-img { border-color: transparent; }
 [data-theme="dark"] .work-cover-img img { filter: brightness(0.86) contrast(1.05); }
 [data-konami][data-theme="dark"] .work-cover-img img { filter: brightness(0.86) contrast(1.05) url(#redInk); }
+@media (min-width: 900px) {
+	.work-board { grid-template-columns: 1.15fr 1fr; column-gap: 3rem; align-items: stretch; }
+	#work.open .work-board { grid-template-columns: repeat(3, 1fr); column-gap: 2.6rem; align-items: start; }
+	/* side by side, the engraving takes exactly the work column's height */
+	.work-cover-img { position: relative; min-height: 100%; }
+	.work-cover-img img { position: absolute; inset: 0; height: 100%; }
+}
 .work-see {
-	display: block; margin: 0.9rem auto 0; padding: 0.3rem 0.2rem; border: none; background: none; cursor: pointer;
-	font-family: var(--serif); font-style: italic; font-size: 0.95rem; letter-spacing: 0.01em; color: var(--muted);
+	display: block; width: 100%; margin-top: 0.2rem; padding: 0.75rem 0 0; text-align: left;
+	border: none; border-top: 1px solid var(--hair); background: none; cursor: pointer;
+	font-family: var(--serif); font-style: italic; font-size: 0.85rem; color: var(--muted);
 	transition: color 0.18s ease;
 }
-.work-see span { font-family: var(--display); font-style: normal; margin-left: 0.15rem; }
 .work-see:hover { color: var(--fg); }
 .work-see:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
-.work-cols { display: grid; grid-template-columns: 1fr; gap: 2rem; padding-top: 0.2rem; }
-@media (min-width: 900px) { .work-cols { grid-template-columns: repeat(3, 1fr); column-gap: 2.6rem; } }
 .work-cat {
 	display: flex; align-items: baseline; gap: 0.45rem; margin-bottom: 0.2rem; padding-bottom: 0.4rem;
 	font-family: var(--serif); font-style: italic; font-weight: 500; font-size: 0.95rem; color: var(--muted);
@@ -1419,20 +1449,23 @@ function toggleWork(open) {
 	// closing from further down the page: bring the section back into view
 	if (!open && sec.getBoundingClientRect().top < 0) sec.scrollIntoView({ behavior: 'smooth' });
 }
-// hovering the engraving with a mouse opens it too, after a short dwell so a cursor
-// that just passes over it while scrolling doesn't. it stays open until "− hide".
+// hovering the engraving or the work column with a mouse expands it too, after a short
+// dwell so a cursor that just passes over while scrolling doesn't. it stays open until "− hide".
 (function () {
-	const cover = document.getElementById('workCover');
-	if (!cover) return;
+	const sec = document.getElementById('work');
+	if (!sec) return;
 	let t = 0;
-	cover.addEventListener('pointerenter', e => {
-		if (e.pointerType !== 'mouse') return;
-		// just hidden, and the scroll-back slid the engraving under the cursor: don't reopen
-		if (Date.now() - (+document.getElementById('work').dataset.closedAt || 0) < 1500) return;
+	const arm = e => {
+		if (e.pointerType !== 'mouse' || sec.classList.contains('open')) return;
+		// just hidden, and the scroll-back slid it under the cursor: don't reopen
+		if (Date.now() - (+sec.dataset.closedAt || 0) < 1500) return;
 		clearTimeout(t);
-		t = setTimeout(() => toggleWork(true), 280);
-	});
-	cover.addEventListener('pointerleave', () => clearTimeout(t));
+		t = setTimeout(() => toggleWork(true), 320);
+	};
+	for (const el of sec.querySelectorAll('.work-cover-img, .work-col-work')) {
+		el.addEventListener('pointerenter', arm);
+		el.addEventListener('pointerleave', () => clearTimeout(t));
+	}
 })();
 
 /* ── music player — youtube iframe api, loaded on first hover / play ─ */

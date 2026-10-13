@@ -28,7 +28,9 @@ public/                    # static assets, robots.txt, indexnow key, and CNAME
 news-site/                 # separate static newsletter
 ```
 
-The homepage contains the biography, selected work, research, articles, and contact sections. Article index entries and individual `/articles/<id>/` pages are generated from the Markdown files in `src/content/articles/` during the Astro build.
+The homepage opens with a short intro animation (once per visit, skippable), then the biography, (some) work, associations, research, articles, and contact sections. (some) work shows the desk engraving beside the "work" projects and expands, on hover or click, to all projects in three columns: open-source, work, and unpublished.
+
+Projects are written by hand in three places, so a new or changed project needs all three: the (some) work section and the `projects` JSON-LD list in `src/pages/index.astro`, and the Work section of `src/lib/llms.ts`. Article index entries and individual `/articles/<id>/` pages are generated from the Markdown files in `src/content/articles/` during the Astro build.
 
 ## Publishing an article
 
