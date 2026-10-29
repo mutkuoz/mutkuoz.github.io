@@ -30,7 +30,21 @@ news-site/                 # separate static newsletter
 
 The homepage opens with a short intro animation (once per visit, skippable), then the biography, (some) work, associations, research, articles, and contact sections. (some) work shows the desk engraving beside the "work" projects and expands, on hover or click, to all projects in three columns: open-source, work, and unpublished.
 
-Projects are written by hand in three places, so a new or changed project needs all three: the (some) work section and the `projects` JSON-LD list in `src/pages/index.astro`, and the Work section of `src/lib/llms.ts`. Article index entries and individual `/articles/<id>/` pages are generated from the Markdown files in `src/content/articles/` during the Astro build.
+Projects live in `src/data/projects.ts`, which the (some) work section and the cv page both render. Two more places describe them in prose and need updating by hand: the `projects` JSON-LD list in `src/pages/index.astro` and the Work section of `src/lib/llms.ts`. Associations live in `src/data/associations.ts`. Article index entries and individual `/articles/<id>/` pages are generated from the Markdown files in `src/content/articles/` during the Astro build.
+
+## The cv page
+
+`src/pages/cv.astro` builds the application-file version of the site: utku.space plus honours, SAT scores, a timeline, minigames, and eight easter eggs. It is built to `/cv/index.html` and kept self-contained: CSS, JS, and data are inline, and fonts and images load from `https://utku.space` by absolute URL (GitHub Pages serves them with `access-control-allow-origin: *`). It reads projects from `src/data/projects.ts`, associations from `src/data/associations.ts`, papers from `src/data/research.ts`, and the article collection, so it stays in step with the homepage. It is `noindex` and left out of the sitemap.
+
+It is served at `utku.space/cv/` and, through the `cv` job in `.github/workflows/astro.yml`, at `cv.utku.space`: after each build the job copies the page into the `mutkuoz/cv` repository with a `CNAME`. One-time setup:
+
+1. Create an empty public repository `mutkuoz/cv`.
+2. Create a fine-grained personal access token with access to `mutkuoz/cv` only and the permission Contents: read and write. Save it in this repository as the Actions secret `CV_DEPLOY_TOKEN`.
+3. Re-run the deploy workflow (or push to `main`). The `cv` job pushes `index.html`, `CNAME`, and `.nojekyll` to `mutkuoz/cv`.
+4. In `mutkuoz/cv`, Settings → Pages: deploy from the `main` branch, root folder. The custom domain comes from the `CNAME`.
+5. At the DNS provider, add a `CNAME` record for `cv` pointing to `mutkuoz.github.io`, then tick Enforce HTTPS once the certificate is issued.
+
+Until the secret exists the job skips itself, and it never blocks the main deploy.
 
 ## Publishing an article
 
