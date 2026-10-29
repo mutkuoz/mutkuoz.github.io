@@ -48,6 +48,39 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
+  # mirror the cv page (utku.space/cv/) to the repo that serves cv.utku.space. the page is
+  # self-contained, so its one html file plus a CNAME is the whole site. skips quietly until
+  # the CV_DEPLOY_TOKEN secret exists: a fine-grained token with contents read & write on
+  # mutkuoz/cv only. never blocks a deploy.
+  cv:
+    needs: build
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    env:
+      CV_TOKEN: ${{ secrets.CV_DEPLOY_TOKEN }}
+    steps:
+      - name: download built site
+        if: env.CV_TOKEN != ''
+        uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+
+      - name: push the cv to mutkuoz/cv
+        if: env.CV_TOKEN != ''
+        run: |
+          mkdir site && tar -xf artifact.tar -C site ./cv/index.html
+          git clone --depth 1 "https://x-access-token:${CV_TOKEN}@github.com/mutkuoz/cv.git" out
+          cp site/cv/index.html out/index.html
+          echo "cv.utku.space" > out/CNAME
+          touch out/.nojekyll
+          cd out
+          git config user.name "utku.space deploy"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then echo "cv unchanged"; exit 0; fi
+          git commit -m "cv from mutkuoz.github.io@${GITHUB_SHA::7}"
+          git push origin HEAD:main
+
   # tell bing, yandex, seznam, and naver that pages changed instead of waiting for
   # the next crawl. bing's index feeds chatgpt search and copilot. never blocks a deploy.
   indexnow:

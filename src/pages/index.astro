@@ -2,6 +2,8 @@
 // src/pages/index.astro — a quiet newspaper-style personal record, pure black on pure white, full lowercase, serif.
 import '../styles/global.css';
 import { papers } from '../data/research';
+import { projects as workProjects, statusLabel, categoryIcon } from '../data/projects';
+import { associations } from '../data/associations';
 import { AUTHOR_NAME, PERSON_ID, SITE, articleUrl, formatDate, getArticles, lastModified } from '../lib/site';
 
 const articles = await getArticles();
@@ -488,131 +490,49 @@ const schema = {
 				<img src="/desk.webp" width="1024" height="682" loading="lazy" decoding="async" alt="stipple engraving of mehmet utku öztürk asleep on the floor beneath a cluttered desk of laptops, mugs, cables, and circuit boards" />
 			</button>
 			<div class="work-col work-col-os">
-				<h3 class="work-cat"><svg class="work-cat-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M12 1.8c-3.1 0-5.2 2.4-5.2 5.6v2.9c-1.9 1.9-3.4 4.6-3.4 7.3 0 2.9 2.4 4.6 5.6 4.6h6c3.2 0 5.6-1.7 5.6-4.6 0-2.7-1.5-5.4-3.4-7.3V7.4c0-3.2-2.1-5.6-5.2-5.6zM12 11.3c-2.2 0-3.9 2.4-3.9 5.2 0 2.5 1.7 4.1 3.9 4.1s3.9-1.6 3.9-4.1c0-2.8-1.7-5.2-3.9-5.2zM10.3 6.1a.95.95 0 1 0 0 1.9.95.95 0 0 0 0-1.9zm3.4 0a.95.95 0 1 0 0 1.9.95.95 0 0 0 0-1.9zM12 8.6l-1.5 1.1 1.5 1 1.5-1z"/><path d="M7.6 21.2h3.3l-.4 1.3H7.2zM13.1 21.2h3.3l.4 1.3h-3.3z"/></svg>open-source<span class="work-count">6</span></h3>
+				<h3 class="work-cat"><Fragment set:html={categoryIcon['open-source']} />open-source<span class="work-count">{workProjects.filter((p) => p.category === 'open-source').length}</span></h3>
 				<div class="work-items">
-					<article class="item item-proj">
-						<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
-							<span class="item-title"><span class="status status-live" aria-label="active"></span>flydoom</span>
-							<span class="item-byline">creator &middot; 2026</span>
-							<span class="item-plus" aria-hidden="true"></span>
-						</button>
-						<div class="item-body"><div class="item-body-inner"><p>a real fruit fly connectome playing doom. feeds the game through the visual pathway of 139,255 reconstructed neurons and roughly 2.7 million synapses, then maps biological motor output back to game controls. nothing is trained; the wiring is the fly&rsquo;s. <a href="https://github.com/mutkuoz/flydoom" target="_blank" rel="noopener" class="chip">github ↗</a> <a href="/articles/flydoom/" class="chip">story ↗</a></p></div></div>
-					</article>
-					<article class="item item-proj">
-						<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
-							<span class="item-title"><span class="status status-shelved" aria-label="shelved"></span>007captcha</span>
-							<span class="item-byline">creator &middot; 2026</span>
-							<span class="item-plus" aria-hidden="true"></span>
-						</button>
-						<div class="item-body"><div class="item-body-inner"><p>a robophobic verification framework that defends websites against ai agents. an open-source take on captcha built for the post-llm web, where classical challenges no longer hold. typescript. mit licensed. <a href="https://github.com/mutkuoz/007captcha" target="_blank" rel="noopener" class="chip">github ↗</a></p></div></div>
-					</article>
-					<article class="item item-proj">
-						<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
-							<span class="item-title"><span class="status status-paused" aria-label="paused"></span>octapar</span>
-							<span class="item-byline">founder &amp; core dev &middot; 2025</span>
-							<span class="item-plus" aria-hidden="true"></span>
-						</button>
-						<div class="item-body"><div class="item-body-inner"><p>an ai platform that clusters people into 8-person &ldquo;tribes&rdquo; — balanced, semantically coherent groups for authentic connection and mutual growth. designed a multi-stage clustering algorithm around weighted attentional embeddings and the hungarian method. paper published via 23rd.</p></div></div>
-					</article>
-					<article class="item item-proj">
-						<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
-							<span class="item-title"><span class="status status-live" aria-label="active"></span>topazius</span>
-							<span class="item-byline">creator &middot; 2026</span>
-							<span class="item-plus" aria-hidden="true"></span>
-						</button>
-						<div class="item-body"><div class="item-body-inner"><p>a browser-based markdown notes app whose database is a private github repository you own. works offline, commits edits in the background, supports wikilinks and backlinks, and can encrypt individual notes entirely on the client. no server, account, analytics, or third-party storage. <a href="https://github.com/mutkuoz/topazius" target="_blank" rel="noopener" class="chip">github ↗</a></p></div></div>
-					</article>
-					<article class="item item-proj">
-						<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
-							<span class="item-title"><span class="status status-shelved" aria-label="shelved"></span>trstemmer</span>
-							<span class="item-byline">creator &middot; 2023</span>
-							<span class="item-plus" aria-hidden="true"></span>
-						</button>
-						<div class="item-body"><div class="item-body-inner"><p>a simple turkish word stemmer for python. it strips the suffixes off verbs: &ldquo;seviyorum, yapmışım, koşarlar&rdquo; comes out as &ldquo;sev yap koş&rdquo;. early and verb-only, but on pypi. <a href="https://github.com/mutkuoz/trstemmer" target="_blank" rel="noopener" class="chip">github ↗</a> <a href="https://pypi.org/project/trstemmer/" target="_blank" rel="noopener" class="chip">pypi ↗</a></p></div></div>
-					</article>
-					<article class="item item-proj">
-						<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
-							<span class="item-title"><span class="status status-live" aria-label="active"></span>turkic-relevance-laya</span>
-							<span class="item-byline">creator &middot; 2026</span>
-							<span class="item-plus" aria-hidden="true"></span>
-						</button>
-						<div class="item-body"><div class="item-body-inner"><p>a classifier that reads a turkish wikipedia article and says how it relates to the turkic world: core, modern, or unrelated. laya-multilingual fine-tuned for project: turkic blue, where it sifted ~59,000 articles down to 14,244 core ones. <a href="https://huggingface.co/mutkuoz/turkic-relevance-laya-multilingual" target="_blank" rel="noopener" class="chip">hugging face ↗</a></p></div></div>
-					</article>
+					{workProjects.filter((p) => p.category === 'open-source').map((p) => (
+						<article class="item item-proj">
+							<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
+								<span class="item-title"><span class={`status status-${p.status}`} aria-label={statusLabel[p.status]}></span>{p.name}</span>
+								<span class="item-byline">{p.role}</span>
+								<span class="item-plus" aria-hidden="true"></span>
+							</button>
+							<div class="item-body"><div class="item-body-inner" set:html={p.body} /></div>
+						</article>
+					))}
 				</div>
 			</div>
 			<div class="work-col work-col-work">
-				<h3 class="work-cat"><svg class="work-cat-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M9.4 3.5h5.2c.9 0 1.6.7 1.6 1.6V7h3.3c1.2 0 2.2 1 2.2 2.2v9.6c0 1.2-1 2.2-2.2 2.2H4.5c-1.2 0-2.2-1-2.2-2.2V9.2C2.3 8 3.3 7 4.5 7h3.3V5.1c0-.9.7-1.6 1.6-1.6zm.2 1.8V7h4.8V5.3zM2.3 12.6h8.1v.6c0 .4.3.7.7.7h1.8c.4 0 .7-.3.7-.7v-.6h8.1v1.4h-8.1v.2c0 .4-.3.7-.7.7h-1.8c-.4 0-.7-.3-.7-.7V14H2.3z"/></svg>work<span class="work-count">5</span></h3>
+				<h3 class="work-cat"><Fragment set:html={categoryIcon['work']} />work<span class="work-count">{workProjects.filter((p) => p.category === 'work').length}</span></h3>
 				<div class="work-items">
-					<article class="item item-proj">
-						<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
-							<span class="item-title"><span class="status status-live" aria-label="active"></span>turkhukuk.ai</span>
-							<span class="item-byline">technical co-founder &middot; 2026 —</span>
-							<span class="item-plus" aria-hidden="true"></span>
-						</button>
-						<div class="item-body"><div class="item-body-inner"><p>a legaltech platform for turkish lawyers — case research and litigation strategy. trained and fine-tuned domain-specific language models on turkish legal corpora, and experimented with neuro-symbolic representations to bridge statistical learning with structured legal reasoning. <a href="https://www.turkhukuk.ai" target="_blank" rel="noopener" class="chip">turkhukuk.ai ↗</a></p></div></div>
-					</article>
-					<article class="item item-proj">
-						<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
-							<span class="item-title"><span class="status status-live" aria-label="active"></span>labgpt</span>
-							<span class="item-byline">r&amp;d, neurosymbolic ai &middot; 2025 —</span>
-							<span class="item-plus" aria-hidden="true"></span>
-						</button>
-						<div class="item-body"><div class="item-body-inner"><p>test result analysis for doctors with trend analysis, clinical finding extraction and a corpus with years of medical research. tübitak-backed.</p></div></div>
-					</article>
-					<article class="item item-proj">
-						<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
-							<span class="item-title"><span class="status status-shelved" aria-label="shelved"></span>clade ai</span>
-							<span class="item-byline">co-founder, ai dev &middot; 2023–24</span>
-							<span class="item-plus" aria-hidden="true"></span>
-						</button>
-						<div class="item-body"><div class="item-body-inner"><p>a personal ai assistant with task execution, extensive integrations, and personalized interaction. held a $21m round. built a self-deciding multi-agent framework in the early days of ai agents, fine-tuned an llm for natural interaction, and shipped custom systems for smart memory, decision-making, and seamless integrations. left in july 2024; shelved shortly after.</p></div></div>
-					</article>
-					<article class="item item-proj">
-						<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
-							<span class="item-title"><span class="status status-live" aria-label="active"></span>mentoring @ bilsem</span>
-							<span class="item-byline">senior student &amp; instructor &middot; 2024 —</span>
-							<span class="item-plus" aria-hidden="true"></span>
-						</button>
-						<div class="item-body"><div class="item-body-inner"><p>senior student &amp; instructor at bilsem, a government-led supplementary education program for gifted students (top 2% iq). voluntarily mentoring and instructing primary schoolers there in project management, robotics, artificial intelligence, and software development. <a href="https://turkmaarifansiklopedisi.org.tr/bilim-ve-sanat-merkezleri-bilsem" target="_blank" rel="noopener" class="chip">about bilsem ↗</a></p></div></div>
-					</article>
-					<article class="item item-proj">
-						<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
-							<span class="item-title"><span class="status status-shelved" aria-label="shelved"></span>sorubot</span>
-							<span class="item-byline">developer &middot; 2022–23</span>
-							<span class="item-plus" aria-hidden="true"></span>
-						</button>
-						<div class="item-body"><div class="item-body-inner"><p>an ai platform that generates exam questions and manages students&rsquo; study sessions. very unsuccessfully fine-tuned an llm. amateur work — but not bad for a 14-year-old.</p></div></div>
-					</article>
+					{workProjects.filter((p) => p.category === 'work').map((p) => (
+						<article class="item item-proj">
+							<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
+								<span class="item-title"><span class={`status status-${p.status}`} aria-label={statusLabel[p.status]}></span>{p.name}</span>
+								<span class="item-byline">{p.role}</span>
+								<span class="item-plus" aria-hidden="true"></span>
+							</button>
+							<div class="item-body"><div class="item-body-inner" set:html={p.body} /></div>
+						</article>
+					))}
 				</div>
-				<button class="work-see" aria-expanded="false" aria-controls="workPanel" onclick="toggleWork(true)">+ 9 more &middot; open-source &amp; unpublished</button>
+				<button class="work-see" aria-expanded="false" aria-controls="workPanel" onclick="toggleWork(true)">+ {workProjects.filter((p) => p.category !== 'work').length} more &middot; open-source &amp; unpublished</button>
 			</div>
 			<div class="work-col work-col-un">
-				<h3 class="work-cat"><svg class="work-cat-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M12 2.2c-4.1 0-7.3 3.3-7.3 7.4v11.6c0 .5.6.8 1 .5l1.9-1.4 2.1 1.6c.3.2.6.2.9 0L12 20.3l1.4 1.6c.3.2.6.2.9 0l2.1-1.6 1.9 1.4c.4.3 1 0 1-.5V9.6c0-4.1-3.2-7.4-7.3-7.4zM9.4 8.2a1.35 1.6 0 1 0 0 3.2 1.35 1.6 0 0 0 0-3.2zm5.2 0a1.35 1.6 0 1 0 0 3.2 1.35 1.6 0 0 0 0-3.2zM10.6 13.6c0 .8.6 1.5 1.4 1.5s1.4-.7 1.4-1.5z"/></svg>unpublished<span class="work-count">3</span></h3>
+				<h3 class="work-cat"><Fragment set:html={categoryIcon['unpublished']} />unpublished<span class="work-count">{workProjects.filter((p) => p.category === 'unpublished').length}</span></h3>
 				<div class="work-items">
-					<article class="item item-proj">
-						<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
-							<span class="item-title"><span class="status status-shelved" aria-label="shelved"></span>a.d.a</span>
-							<span class="item-byline">creator &middot; 2020</span>
-							<span class="item-plus" aria-hidden="true"></span>
-						</button>
-						<div class="item-body"><div class="item-body-inner"><p>ada&rsquo;s damn awesome &mdash; a recursive name, with respect to lady lovelace. a parser-based, deterministic personal assistant.</p></div></div>
-					</article>
-					<article class="item item-proj">
-						<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
-							<span class="item-title"><span class="status status-shelved" aria-label="shelved"></span>founder @ ananas studios</span>
-							<span class="item-byline">2019–22</span>
-							<span class="item-plus" aria-hidden="true"></span>
-						</button>
-						<div class="item-body"><div class="item-body-inner"><p>an indie game development studio.</p></div></div>
-					</article>
-					<article class="item item-proj">
-						<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
-							<span class="item-title"><span class="status status-shelved" aria-label="shelved"></span>shoelace</span>
-							<span class="item-byline">creator &middot; 2020</span>
-							<span class="item-plus" aria-hidden="true"></span>
-						</button>
-						<div class="item-body"><div class="item-body-inner"><p>a peer-based encryption algorithm.</p></div></div>
-					</article>
+					{workProjects.filter((p) => p.category === 'unpublished').map((p) => (
+						<article class="item item-proj">
+							<button class="item-head" aria-expanded="false" onclick="toggleCard(this)">
+								<span class="item-title"><span class={`status status-${p.status}`} aria-label={statusLabel[p.status]}></span>{p.name}</span>
+								<span class="item-byline">{p.role}</span>
+								<span class="item-plus" aria-hidden="true"></span>
+							</button>
+							<div class="item-body"><div class="item-body-inner" set:html={p.body} /></div>
+						</article>
+					))}
 				</div>
 			</div>
 		</div>
@@ -624,26 +544,13 @@ const schema = {
 		<div class="rule-head"><h2 class="rule-head-label">associations</h2></div>
 		<div class="assoc-grid">
 			<div class="assoc-list">
-				<a class="assoc-row" href="https://turkmaarifansiklopedisi.org.tr/bilim-ve-sanat-merkezleri-bilsem" target="_blank" rel="noopener">
-					<span class="assoc-logo assoc-logo-bilsem"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="currentColor"><circle cx="50" cy="50" r="47.5" fill="none" stroke="currentColor" stroke-width="2.6"/><circle cx="50" cy="50" r="32.5" fill="none" stroke="currentColor" stroke-width="1.8"/><polygon points="50.00,6.60 50.84,8.84 53.23,8.95 51.36,10.44 52.00,12.75 50.00,11.43 48.00,12.75 48.64,10.44 46.77,8.95 49.16,8.84"/><polygon points="65.31,9.64 66.15,11.89 68.54,11.99 66.67,13.49 67.31,15.80 65.31,14.47 63.31,15.80 63.95,13.49 62.07,11.99 64.47,11.89"/><polygon points="78.28,18.32 79.12,20.56 81.52,20.67 79.64,22.16 80.28,24.47 78.28,23.14 76.29,24.47 76.93,22.16 75.05,20.67 77.44,20.56"/><polygon points="86.96,31.29 87.79,33.54 90.19,33.64 88.31,35.13 88.95,37.44 86.96,36.12 84.96,37.44 85.60,35.13 83.72,33.64 86.12,33.54"/><polygon points="90.00,46.60 90.84,48.84 93.23,48.95 91.36,50.44 92.00,52.75 90.00,51.43 88.00,52.75 88.64,50.44 86.77,48.95 89.16,48.84"/><polygon points="86.96,61.91 87.79,64.15 90.19,64.26 88.31,65.75 88.95,68.06 86.96,66.74 84.96,68.06 85.60,65.75 83.72,64.26 86.12,64.15"/><polygon points="78.28,74.88 79.12,77.13 81.52,77.23 79.64,78.73 80.28,81.03 78.28,79.71 76.29,81.03 76.93,78.73 75.05,77.23 77.44,77.13"/><polygon points="65.31,83.56 66.15,85.80 68.54,85.90 66.67,87.40 67.31,89.71 65.31,88.38 63.31,89.71 63.95,87.40 62.07,85.90 64.47,85.80"/><polygon points="50.00,86.60 50.84,88.84 53.23,88.95 51.36,90.44 52.00,92.75 50.00,91.43 48.00,92.75 48.64,90.44 46.77,88.95 49.16,88.84"/><polygon points="34.69,83.56 35.53,85.80 37.93,85.90 36.05,87.40 36.69,89.71 34.69,88.38 32.69,89.71 33.33,87.40 31.46,85.90 33.85,85.80"/><polygon points="21.72,74.88 22.56,77.13 24.95,77.23 23.07,78.73 23.71,81.03 21.72,79.71 19.72,81.03 20.36,78.73 18.48,77.23 20.88,77.13"/><polygon points="13.04,61.91 13.88,64.15 16.28,64.26 14.40,65.75 15.04,68.06 13.04,66.74 11.05,68.06 11.69,65.75 9.81,64.26 12.21,64.15"/><polygon points="10.00,46.60 10.84,48.84 13.23,48.95 11.36,50.44 12.00,52.75 10.00,51.43 8.00,52.75 8.64,50.44 6.77,48.95 9.16,48.84"/><polygon points="13.04,31.29 13.88,33.54 16.28,33.64 14.40,35.13 15.04,37.44 13.04,36.12 11.05,37.44 11.69,35.13 9.81,33.64 12.21,33.54"/><polygon points="21.72,18.32 22.56,20.56 24.95,20.67 23.07,22.16 23.71,24.47 21.72,23.14 19.72,24.47 20.36,22.16 18.48,20.67 20.88,20.56"/><polygon points="34.69,9.64 35.53,11.89 37.93,11.99 36.05,13.49 36.69,15.80 34.69,14.47 32.69,15.80 33.33,13.49 31.46,11.99 33.85,11.89"/><path d="M50 20c-4 5-6 8-6 11a6 6 0 0 0 12 0c0-3-2-6-6-11z"/><path d="M45.5 38h9l-2 4h-5z"/><rect x="48.4" y="42" width="3.2" height="9"/><path d="M28 50c8-2 15-1 21 3v17c-6-4-13-5-21-3z M72 50c-8-2-15-1-21 3v17c6-4 13-5 21-3z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><path d="M26 67c9-2 17-1 24 4 7-5 15-6 24-4" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M44.3 57.5a5.2 5.2 0 1 0 5 6.8a4.1 4.1 0 1 1 0-5.6a5.2 5.2 0 0 0-5-1.2z" transform="translate(4 -1)"/></svg></span>
-					<span class="assoc-text"><span class="assoc-name">bilsem</span><span class="assoc-desc">government-led special education program for gifted children in türkiye.</span><span class="item-byline">senior student &amp; mentor</span></span>
-					<span class="assoc-arrow" aria-hidden="true">↗</span>
-				</a>
-				<a class="assoc-row" href="https://www.mensa.org/" target="_blank" rel="noopener">
-					<span class="assoc-logo assoc-logo-mensa"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="currentColor"><mask id="mm"><rect width="100" height="100" fill="#fff"/><circle cx="50" cy="25" r="14" fill="#000"/><path d="M16 38h68v48l-18-6V58h-8v20l-8 8-8-8V58h-8v22l-18 6z" fill="#000"/></mask><rect width="100" height="100" rx="24" mask="url(#mm)"/><g fill="none" stroke="currentColor" stroke-width="2.2"><ellipse cx="50" cy="25" rx="6" ry="14"/><path d="M50 11v28M36 25h28M38.5 18h23M38.5 32h23"/></g></svg></span>
-					<span class="assoc-text"><span class="assoc-name">mensa international</span><span class="assoc-desc">the largest and oldest high-iq society in the world.</span><span class="item-byline">member</span></span>
-					<span class="assoc-arrow" aria-hidden="true">↗</span>
-				</a>
-				<a class="assoc-row" href="https://iaail.org/" target="_blank" rel="noopener">
-					<span class="assoc-logo assoc-logo-iaail"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 71 65"><g><path d="M38.0978 0H33.0313L5.22144 16.7932H15.0403L20.4868 13.423H50.7033L56.2789 16.7932H65.781L38.0978 0ZM27.6387 9.07735L34.8069 4.67852H36.1486L43.3638 9.07735H27.641H27.6387Z" fill="currentColor"/><path d="M68.007 17.4867H2.99072V22.4195H68.007V17.4867Z" fill="currentColor" fill-opacity="0.4"/><path d="M18.9762 23.1129H14.1207V56.1839H18.9762V23.1129Z" fill="currentColor" fill-opacity="0.4"/><path d="M28.3446 23.1129H23.4891V56.1839H28.3446V23.1129Z" fill="currentColor" fill-opacity="0.4"/><path d="M47.5109 23.1129H42.6554V56.1839H47.5109V23.1129Z" fill="currentColor" fill-opacity="0.4"/><path d="M56.7948 23.1129H51.9393V56.1839H56.7948V23.1129Z" fill="currentColor" fill-opacity="0.4"/><path d="M38.9679 34.407H32.0295V56.1815H38.9679V34.407Z" fill="currentColor"/><path d="M35.4988 33.4038C37.9407 33.4038 39.9203 31.453 39.9203 29.0466C39.9203 26.6402 37.9407 24.6894 35.4988 24.6894C33.0569 24.6894 31.0773 26.6402 31.0773 29.0466C31.0773 31.453 33.0569 33.4038 35.4988 33.4038Z" fill="currentColor"/><path d="M66.2102 56.8773H4.78748V58.8444H66.2102V56.8773Z" fill="currentColor" fill-opacity="0.4"/><path d="M68.0093 59.5379H2.98828V61.5697H68.0093V59.5379Z" fill="currentColor" fill-opacity="0.4"/><path d="M71 62.2747H0V65H71V62.2747Z" fill="currentColor" fill-opacity="0.4"/></g></svg></span>
-					<span class="assoc-text"><span class="assoc-name">iaail</span><span class="assoc-desc">international association for artificial intelligence and law.</span><span class="item-byline">member</span></span>
-					<span class="assoc-arrow" aria-hidden="true">↗</span>
-				</a>
-				<a class="assoc-row" href="https://www.savethechildren.net/" target="_blank" rel="noopener">
-					<span class="assoc-logo assoc-logo-stc"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="19.8 20.4 122 118.6" fill="currentColor"><path d="m174.4 67.5c-.2.4-.5.7-.8 1-.3.2-.7.3-1.1.3-.5 0-.9-.1-1.3-.4-.5-.3-1-.5-1.6-.9-.7-.3-1.3-.6-2-.9-.8-.3-1.7-.4-2.6-.4-1.4-.1-2.7.3-3.8 1.1-.8.7-1.3 1.8-1.2 2.9 0 .7.2 1.4.8 2s1.2 1 2 1.3c.9.4 1.8.8 2.8 1 1 .3 2.1.7 3.2 1 1.1.4 2.2.8 3.2 1.4 1 .5 2 1.2 2.8 2s1.5 1.8 2 2.9c.5 1.3.8 2.7.8 4.2 0 1.7-.3 3.4-.9 5.1-.6 1.5-1.5 2.9-2.7 4.1-1.3 1.2-2.8 2.2-4.4 2.8-1.9.7-3.9 1-5.9 1-1.2 0-2.5-.1-3.7-.4-1.2-.2-2.5-.6-3.7-1.1-1.2-.4-2.3-1-3.3-1.6s-1.9-1.3-2.7-2.1l2.7-4.2c.2-.3.5-.6.8-.8.4-.2.7-.3 1.2-.3.6 0 1.1.2 1.6.5s1.2.7 1.8 1.1c.8.4 1.5.8 2.4 1.1 1 .4 2.1.5 3.2.5 1.4.1 2.7-.3 3.8-1.1 1-.9 1.5-2.1 1.4-3.4 0-.8-.2-1.6-.8-2.2-.5-.6-1.2-1.1-2-1.4-.9-.4-1.8-.7-2.8-1s-2.1-.6-3.2-.9c-1.1-.4-2.2-.8-3.2-1.3s-2-1.2-2.8-2c-.9-.9-1.5-2-2-3.1-.5-1.5-.8-3-.8-4.6 0-1.5.3-2.9.9-4.3s1.5-2.7 2.6-3.7c1.2-1.1 2.6-2 4.2-2.6 1.8-.7 3.8-1 5.7-1 1.2 0 2.3.1 3.5.3 1.1.2 2.2.5 3.2.8 1 .4 1.9.8 2.9 1.3.9.5 1.6 1.1 2.4 1.7zm26.1 31.1c-.6 0-1.2-.1-1.7-.3-.5-.3-.8-.8-1-1.3l-.6-1.5c-.7.6-1.3 1.1-1.9 1.5s-1.3.8-1.9 1.1c-.7.3-1.4.5-2.1.7-.8.2-1.7.2-2.5.2-1.1 0-2.3-.1-3.4-.5-.9-.3-1.8-.8-2.6-1.4-.7-.6-1.3-1.4-1.6-2.3-.4-1-.6-2.1-.6-3.2 0-1 .3-2 .7-2.9.6-1.1 1.5-2.1 2.5-2.8 1.5-1 3.1-1.7 4.8-2.1 2.5-.6 5.1-.9 7.7-.8v-1.2c.1-1.2-.2-2.5-1-3.5-.7-.7-1.7-1.1-2.8-1.1-.8 0-1.6.1-2.3.3-.6.2-1.1.4-1.6.7s-.9.5-1.4.7-1.1.3-1.6.3-1-.1-1.4-.4-.7-.6-.9-1l-1.5-2.5c1.6-1.4 3.4-2.5 5.4-3.2 2.1-.7 4.2-1.1 6.4-1.1 1.5 0 3 .2 4.4.8 1.3.5 2.4 1.2 3.3 2.2s1.6 2.1 2.1 3.4c.5 1.4.7 2.8.7 4.3v16.8h-3.6zm-9.3-4.9c.9 0 1.9-.2 2.7-.5.9-.4 1.7-1 2.4-1.8v-3.7c-1.3 0-2.7.1-4 .3-.9.1-1.7.4-2.5.8-.5.2-1 .6-1.3 1.1-.2.4-.4.8-.4 1.3-.1.7.2 1.5.8 2 .7.4 1.5.6 2.3.5zm32.9 4.9h-7.3l-10.5-27h6.7c.5 0 1 .1 1.4.4.4.2.6.6.8 1l3.7 12.1c.3 1 .6 1.9.8 2.9s.5 1.9.7 2.8c.2-.9.4-1.9.7-2.8s.6-1.9.9-2.9l3.9-12.1c.1-.4.4-.8.8-1 .4-.3.9-.4 1.4-.4h6.4zm24.7-27.4c1.7 0 3.3.3 4.9.8 1.4.5 2.7 1.3 3.8 2.4s2 2.4 2.5 3.9c.6 1.7.9 3.4.9 5.2 0 .5 0 1-.1 1.5 0 .3-.1.6-.3.9-.1.2-.3.4-.6.5s-.6.1-.9.1h-15.6c.1 1.8.8 3.6 2.1 4.9 1.2 1 2.7 1.6 4.3 1.5.8 0 1.6-.1 2.4-.3.6-.2 1.2-.5 1.8-.8.5-.3 1-.5 1.5-.8.4-.2.9-.3 1.4-.3.6 0 1.1.2 1.5.7l2.3 2.9c-.8.9-1.7 1.7-2.7 2.3-.9.6-1.9 1.1-3 1.4-1 .3-2 .6-3 .7s-1.9.2-2.9.2c-1.8 0-3.6-.3-5.3-.9-1.6-.6-3.1-1.5-4.3-2.7-1.3-1.3-2.3-2.8-2.9-4.5-.8-2-1.1-4.1-1.1-6.3 0-1.7.3-3.5.9-5.1 1.2-3.2 3.7-5.8 6.8-7.1 1.8-.7 3.7-1.1 5.6-1.1zm.2 5.6c-1.3-.1-2.6.4-3.6 1.3-1 1.1-1.6 2.4-1.7 3.8h10.1c0-.6-.1-1.3-.2-1.9-.2-.6-.4-1.1-.8-1.6s-.9-.9-1.5-1.2c-.8-.3-1.6-.4-2.3-.4zm36.8 22.2c-1.2 0-2.3-.2-3.4-.6-1.9-.7-3.4-2.2-4-4.1-.4-1-.5-2.1-.5-3.2v-13.9h-2.3c-.8 0-1.5-.6-1.5-1.4v-3.3l4.3-.8 1.6-6.6c.2-.8.9-1.4 1.8-1.2h4.2v7.9h6.6v5.5h-6.6v13.4c0 .6.1 1.1.5 1.5.3.4.8.6 1.3.6.3 0 .5 0 .7-.1s.4-.1.5-.2.3-.1.4-.2.3-.1.5-.1.4 0 .6.2l.5.5 2.4 3.8c-1.1.8-2.2 1.4-3.5 1.8-1.3.3-2.7.5-4.1.5zm11.3-.4v-38.9h8.1v14.3c1-.8 2-1.5 3.2-2 1.3-.5 2.7-.8 4.1-.8 1.3 0 2.7.2 3.9.8 1.1.5 2.1 1.2 2.9 2.1.8 1 1.4 2.1 1.8 3.2.4 1.3.6 2.7.6 4.1v17.1h-8.1v-17c.1-1.1-.3-2.2-.9-3.1-.7-.8-1.7-1.2-2.7-1.1-.9 0-1.7.2-2.5.6s-1.6.9-2.2 1.5v19.2zm41.9-27.4c1.7 0 3.3.3 4.9.8 1.4.5 2.7 1.3 3.8 2.4s2 2.4 2.5 3.9c.6 1.7.9 3.4.9 5.2 0 .5 0 1-.1 1.5 0 .3-.1.6-.3.9-.1.2-.3.4-.6.5s-.6.1-.9.1h-15.5c.1 1.8.8 3.6 2.1 4.9 1.2 1 2.7 1.6 4.3 1.5.8 0 1.6-.1 2.4-.3.6-.2 1.2-.5 1.8-.8.5-.3 1-.5 1.5-.8.4-.2.9-.3 1.4-.3.6 0 1.1.2 1.5.7l2.3 2.9c-.8.9-1.7 1.7-2.7 2.3-.9.6-1.9 1.1-3 1.4-1 .3-2 .6-3 .7s-1.9.2-2.9.2c-1.8 0-3.6-.3-5.3-.9-1.6-.6-3.1-1.5-4.3-2.7-1.3-1.3-2.3-2.8-2.9-4.5-.8-2-1.1-4.1-1.1-6.3 0-1.7.3-3.5.9-5.1 1.2-3.2 3.7-5.8 6.8-7.1 1.7-.7 3.6-1.1 5.5-1.1zm.2 5.6c-1.3-.1-2.6.4-3.6 1.3-1 1.1-1.6 2.4-1.7 3.8h10.1c0-.6-.1-1.3-.2-1.9-.2-.6-.4-1.1-.8-1.6s-.9-.9-1.5-1.2c-.8-.3-1.5-.4-2.3-.4zm54 11.7c.2 0 .4 0 .6.1s.4.2.6.4l3.6 3.8c-1.5 2-3.6 3.6-5.9 4.6-2.7 1.1-5.5 1.6-8.4 1.6-2.7 0-5.4-.5-8-1.5-2.3-1-4.3-2.4-6-4.2s-2.9-4-3.8-6.3c-.9-2.6-1.3-5.2-1.3-7.9s.5-5.5 1.5-8c1-2.4 2.4-4.5 4.2-6.3s4-3.2 6.4-4.1c2.6-1 5.4-1.5 8.3-1.5 1.4 0 2.8.1 4.1.4 1.2.2 2.5.6 3.6 1.1 1.1.4 2.1 1 3.1 1.6.9.6 1.8 1.3 2.5 2.1l-3.1 4.1c-.2.3-.4.5-.7.7s-.7.3-1.1.3c-.3 0-.6-.1-.9-.2-.3-.2-.6-.3-.9-.5s-.7-.4-1.1-.7-.9-.5-1.4-.7c-.6-.2-1.2-.4-1.8-.5-.8-.2-1.6-.2-2.5-.2-1.5 0-3.1.3-4.5.9-1.3.6-2.5 1.4-3.5 2.5s-1.8 2.5-2.3 3.9c-.6 1.7-.8 3.4-.8 5.2s.2 3.6.8 5.3c.5 1.4 1.2 2.8 2.2 3.9.9 1 2 1.9 3.3 2.4 1.3.6 2.6.8 4 .8.8 0 1.5 0 2.2-.1.6-.1 1.3-.2 1.9-.4s1.1-.5 1.7-.8 1.1-.7 1.6-1.2c.2-.2.4-.3.7-.4.5-.1.8-.2 1.1-.2zm8.9 10.1v-38.9h8.1v14.3c1-.8 2-1.5 3.2-2 1.3-.5 2.7-.8 4.1-.8 1.3 0 2.7.2 3.9.8 1.1.5 2.1 1.2 2.9 2.1.8 1 1.4 2.1 1.8 3.2.4 1.3.6 2.7.6 4.1v17.1h-8.1v-17c.1-1.1-.3-2.2-.9-3.1-.7-.8-1.7-1.2-2.7-1.1-.9 0-1.7.2-2.5.6s-1.6.9-2.2 1.5v19.2zm39.9-34.3c0 .6-.1 1.2-.4 1.8s-.6 1.1-1.1 1.5-1 .8-1.6 1c-.6.3-1.3.4-1.9.4s-1.3-.1-1.8-.4c-.6-.2-1.1-.6-1.5-1s-.8-.9-1-1.5c-.3-.6-.4-1.2-.4-1.8s.1-1.3.4-1.8c.2-.6.6-1.1 1-1.5s1-.8 1.5-1c.6-.2 1.2-.4 1.8-.4.7 0 1.3.1 1.9.4 1.2.5 2.1 1.4 2.6 2.5.4.5.5 1.1.5 1.8zm-.9 7.4v27h-8.1v-27zm15.4-12v38.9h-8.1v-38.9zm25.7 38.9c-.4 0-.9-.1-1.3-.3s-.6-.6-.7-1l-.6-2.1c-.5.6-1.1 1.1-1.7 1.6s-1.2.9-1.9 1.2-1.4.6-2.2.8-1.7.3-2.6.3c-1.4 0-2.7-.3-3.9-.9s-2.3-1.6-3.1-2.7c-.9-1.3-1.6-2.8-2-4.3-.5-1.9-.8-3.9-.7-5.8 0-1.9.3-3.8.8-5.6.5-1.6 1.3-3.1 2.4-4.5 1-1.2 2.2-2.2 3.7-3 1.5-.7 3.1-1.1 4.7-1.1 1.2 0 2.4.2 3.5.6.9.4 1.8.9 2.6 1.6v-13.7h8.1v38.9zm-8.2-5.7c.5 0 1.1-.1 1.6-.2s.9-.3 1.3-.5.8-.5 1.1-.8c.4-.3.7-.7 1.1-1.1v-11.4c-.5-.6-1.2-1.1-2-1.4-.7-.3-1.5-.4-2.2-.4s-1.4.1-2.1.4-1.2.8-1.6 1.4c-.5.8-.9 1.6-1.1 2.5-.3 1.2-.4 2.5-.4 3.8 0 1.2.1 2.4.3 3.6.2.8.4 1.6.9 2.4.3.5.8 1 1.3 1.3.6.2 1.2.4 1.8.4zm19.6 5.7v-27h4.8c.3 0 .7 0 1 .1.2.1.5.2.7.3.2.2.3.4.4.6.1.3.2.6.2.9l.4 2.5c.9-1.4 2-2.6 3.3-3.6 1.2-.9 2.6-1.3 4-1.3 1.1-.1 2.1.3 3 .9l-1 5.9c0 .3-.2.6-.4.8s-.5.2-.8.2-.7 0-1-.1c-.5-.1-1-.1-1.5-.1-2.1 0-3.8 1.1-5 3.4v16.5zm32.5-27.4c1.7 0 3.3.3 4.9.8 1.4.5 2.7 1.3 3.8 2.4s2 2.4 2.5 3.9c.6 1.7.9 3.4.9 5.2 0 .5 0 1-.1 1.5 0 .3-.1.6-.3.9-.1.2-.3.4-.6.5s-.6.1-.9.1h-15.5c.1 1.8.8 3.6 2.1 4.9 1.2 1 2.7 1.6 4.3 1.5.8 0 1.6-.1 2.4-.3.6-.2 1.2-.5 1.8-.8.5-.3 1-.5 1.5-.8.4-.2.9-.3 1.4-.3.6 0 1.1.2 1.5.7l2.3 2.9c-.8.9-1.7 1.7-2.7 2.3-.9.6-1.9 1.1-3 1.4-1 .3-2 .6-3 .7s-1.9.2-2.9.2c-1.8 0-3.6-.3-5.3-.9-1.6-.6-3.1-1.5-4.3-2.7-1.3-1.3-2.3-2.8-2.9-4.5-.8-2-1.1-4.1-1.1-6.3 0-1.7.3-3.5.9-5.1 1.2-3.2 3.7-5.8 6.8-7.1 1.7-.7 3.6-1.1 5.5-1.1zm.2 5.6c-1.3-.1-2.6.4-3.6 1.3-1 1.1-1.6 2.4-1.7 3.8h10c0-.6-.1-1.3-.2-1.9-.2-.6-.4-1.1-.8-1.6s-.9-.9-1.5-1.2c-.7-.3-1.5-.4-2.2-.4zm17.1 21.8v-27h5c.4 0 .9.1 1.3.3s.6.6.7 1l.5 1.6c.5-.5 1.1-.9 1.6-1.4.6-.4 1.2-.8 1.8-1.1.7-.3 1.3-.5 2.1-.7s1.6-.3 2.4-.2c1.3 0 2.7.2 3.9.8 1.1.5 2.1 1.2 2.9 2.1.8 1 1.4 2.1 1.8 3.2.4 1.3.6 2.7.6 4.1v17.1h-8.1v-16.9c.1-1.1-.3-2.2-.9-3.1-.7-.8-1.7-1.2-2.7-1.1-.9 0-1.7.2-2.5.6s-1.6.9-2.2 1.5v19.2zm-422-49.3c4.8-5.6 6.9-8.2 6.4-9.7-.6-1.3-1.8-2.3-3.1-2.6-1.8-.7-4.3-1-5.5-.3-1 .8-1.9 1.8-2.7 2.8l-1.5 1.7c-1-1-2-2-3-2.8-7.3-6.4-16.3-10.5-25.9-12-3.9-4.1-8.9-6-13.9-5.3-4.3.7-8.1 3.3-10.4 7-9.9 3-18.7 8.6-25.7 16.3-1.6-.5-5 .1-7.2 1.3-1 .4-1.8 1.3-2.1 2.3-.1.7.2 1.7 2.8 4.8-6.9 10.9-9.8 23.8-8.4 36.6 1.5 12.8 7.6 24.6 17.3 33.1 3.4 3 7.2 5.5 11.2 7.4 18.8 9.1 40.8 8.3 58.9-2.1 1.5-.9 2-2.7 1.3-4.2l-.2-.5c-3-6.6-12-26.9-7-45.3 2.1-7.7 8.2-15.9 13.4-22.4 5.6 8.6 8.4 18.8 8 29.1-.3 9.4-3.5 18.5-9.2 26-.3.3-.3.7-.2 1.1l.6 1.3c.3.5.9.8 1.4.5.2-.1.3-.2.4-.3 14.9-18.6 16.7-44.5 4.3-63.8zm-65.5 43.6c-2 10.1-2.4 20.5-1.3 30.8-3.8-1.9-7.4-4.4-10.7-7.2-8.8-7.6-14.7-18-16.8-29.5-2-10.7-.2-21.8 5.1-31.3 2 2.1 4.4 4.5 6.9 6.9 6.1 6.1 13.1 13 16.5 17.9 2 2.8 1.4 6.4.3 12.4m53.5-45.7c-11.3 11.4-22 17.6-31.7 18.3-7.5.6-15.4-1.7-23.5-6.6-5.4-3.4-10.5-7.4-15-11.9l-.3-.3c5.6-6 12.6-10.3 20.5-12.7-.8 3.2-1 6.4-.5 9.7.8 5.7 3.8 10.8 8.3 14.3 6.4 5 15.6 3.8 20.6-2.5.2-.3.4-.5.6-.8 3.3-4.7 4.5-10.5 3.6-16.2-.2-1.1-.4-2.2-.7-3.2 5.7 2.2 11 5.3 15.5 9.4.8.7 1.7 1.5 2.6 2.5z"/></svg></span>
-					<span class="assoc-text"><span class="assoc-name">save the children</span><span class="assoc-desc">global charity working for children&rsquo;s rights, health, and education.</span><span class="item-byline">volunteer</span></span>
-					<span class="assoc-arrow" aria-hidden="true">↗</span>
-				</a>
+				{associations.map((a) => (
+					<a class="assoc-row" href={a.url} target="_blank" rel="noopener">
+						<span class={`assoc-logo assoc-logo-${a.key}`} set:html={a.logo} />
+						<span class="assoc-text"><span class="assoc-name">{a.name}</span><span class="assoc-desc">{a.desc}</span><span class="item-byline">{a.role}</span></span>
+						<span class="assoc-arrow" aria-hidden="true">↗</span>
+					</a>
+				))}
 			</div>
 			<figure class="work-fig assoc-fig">
 				<img src="/gym.webp" width="760" height="760" loading="lazy" decoding="async" alt="halftone illustration of a gym seen past a loaded barbell plate, mehmet utku öztürk in a white t-shirt in the mirror" />
@@ -1116,7 +1023,7 @@ body {
 	border-bottom: 1px solid var(--hair);
 }
 .work-count { font-style: normal; font-size: 0.72rem; color: var(--muted2); }
-.work-cat-icon { flex: none; width: 1.05rem; height: 1.05rem; align-self: center; color: var(--fg); }
+:global(.work-cat-icon) { flex: none; width: 1.05rem; height: 1.05rem; align-self: center; color: var(--fg); }
 .work-items > .item:first-child { border-top: none; }
 
 /* ── associations: logo rows beside an engraving ───────────────────── */
@@ -1136,8 +1043,8 @@ body {
 .assoc-row:hover { padding-left: 0.4rem; }
 .assoc-row:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
 .assoc-logo { display: flex; align-items: center; justify-content: center; width: 2.6rem; height: 2.6rem; color: var(--fg); }
-.assoc-logo svg { display: block; width: 100%; height: 100%; }
-.assoc-logo-iaail svg { height: auto; }
+.assoc-logo :global(svg) { display: block; width: 100%; height: 100%; }
+.assoc-logo-iaail :global(svg) { height: auto; }
 .assoc-text { display: flex; flex-direction: column; min-width: 0; }
 .assoc-text .item-byline { margin-top: 0.3rem; }
 .assoc-desc { margin-top: 0.2rem; font-size: 0.9rem; line-height: 1.5; color: var(--fg2); }
@@ -1185,26 +1092,26 @@ body {
 .item-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.32s cubic-bezier(0.4,0,0.2,1); }
 .item-head[aria-expanded="true"] + .item-body { grid-template-rows: 1fr; }
 .item-body-inner { overflow: hidden; min-height: 0; }
-.item-body p {
+.item-body :global(p) {
 	font-size: 0.95rem; line-height: 1.8; color: var(--fg2); max-width: 48rem;
 	padding: 0.1rem 0 1rem;
 }
-.item-body p.abstract { text-align: justify; hyphens: auto; max-width: 64rem; }
+.item-body :global(p.abstract) { text-align: justify; hyphens: auto; max-width: 64rem; }
 
-/* link chip */
-.chip {
+/* link chip (global: project descriptions are injected from src/data/projects.ts) */
+:global(.chip) {
 	display: inline-block; margin-bottom: 1rem;
 	font-size: 0.78rem; letter-spacing: 0.02em; color: var(--fg);
 	text-decoration: none; border-bottom: 1px solid var(--fg); padding-bottom: 1px;
 	transition: opacity 0.18s ease;
 }
-.item-body p + .chip { margin-top: -0.4rem; }
-.chip:hover { opacity: 0.55; }
+.item-body :global(p + .chip) { margin-top: -0.4rem; }
+:global(.chip:hover) { opacity: 0.55; }
 
 .legend { margin-top: 1.4rem; font-size: 0.8rem; color: var(--muted); display: flex; align-items: center; gap: 0.3rem; flex-wrap: wrap; }
 .legend .status { margin-right: 0.1rem; }
 .more-note { margin-top: 1.4rem; font-style: italic; font-size: 0.9rem; color: var(--muted2); }
-.papers .item-body p.abstract { padding-bottom: 0.7rem; }
+.papers .item-body :global(p.abstract) { padding-bottom: 0.7rem; }
 
 /* ── articles ─────────────────────────────────────────────────────── */
 .article-list { border-bottom: 1px solid var(--hair); }
