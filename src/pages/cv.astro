@@ -51,10 +51,34 @@ const record: Record<number, string[]> = {
 };
 const years = Array.from({ length: LAST - FIRST + 1 }, (_, i) => FIRST + i);
 
+// numbers, set as a bubble-in answer sheet. age and years-coding are recomputed live on the page
+const bday = (y: number) => Date.UTC(y, 10, 29) - (y <= 2015 ? 2 : 3) * 3600e3; // nov 29, 00:00 istanbul
+const ageAt = (now: number) => {
+	let y = new Date(now).getUTCFullYear(), last = bday(y);
+	if (now < last) last = bday(--y);
+	return (y - 2008) + (now - last) / (bday(y + 1) - last);
+};
+const CODING_SINCE = 2016;
+type Field = { id: string; label: string; note?: string; value: string; kind: 'dec' | 'int' | 'ap'; subs?: string[] };
+const fields: Field[] = [
+	{ id: 'age', label: 'age', note: 'live', value: ageAt(Date.now()).toFixed(8), kind: 'dec' },
+	{ id: 'dev', label: `developer since ${CODING_SINCE}`, note: 'years', value: String(new Date().getFullYear() - CODING_SINCE), kind: 'int' },
+	{ id: 'gpa', label: 'gpa', note: 'unweighted', value: '4.00', kind: 'dec' },
+	{ id: 'math', label: 'sat math', value: String(sat.math), kind: 'int' },
+	{ id: 'rw', label: 'sat r&w', value: String(sat.rw), kind: 'int' },
+	{ id: 'ap', label: 'ap exams', value: '5555', kind: 'ap', subs: ['calc ab', 'calc bc', 'csp', 'csa'] },
+	{ id: 'papers', label: 'papers', value: '4', kind: 'int' }
+];
+const choices = { dec: ['.', ...'0123456789'], int: [...'0123456789'], ap: [...'12345'] };
+
 // what the scripts know
 const cvData = {
 	email: 'm@utku.space',
 	sat,
+	gpa: '4.00 unweighted',
+	ap: { 'calculus ab': 5, 'calculus bc': 5, 'computer science principles': 5, 'computer science a': 5 },
+	papers: 4,
+	codingSince: CODING_SINCE,
 	first: FIRST,
 	last: LAST,
 	record,
@@ -126,6 +150,7 @@ body {
 	font-family: var(--serif); font-optical-sizing: auto; text-transform: lowercase;
 	color: var(--fg); background: transparent; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
 	transition: color 0.35s ease; min-height: 100vh; line-height: 1.5;
+	overflow-x: clip; /* the portrait's glow reaches past the edge on mid-size screens */
 }
 ::selection { background: var(--fg); color: var(--bg); }
 button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; text-transform: inherit; text-align: inherit; }
@@ -204,20 +229,9 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px s
 	opacity: 0; transition: opacity 0.35s ease;
 }
 [data-theme="dark"] .fig-slot::before { opacity: 1; }
-/* the dateline strip under the cover */
-.strip { display: grid; grid-template-columns: 1.35fr 1fr 1fr 1fr; border-top: 1.5px solid var(--fg); border-bottom: 1px solid var(--hair); background: color-mix(in srgb, var(--bg) 55%, transparent); }
-.strip > div { padding: 0.7rem 1rem 0.8rem; border-left: 1px solid var(--hair); min-width: 0; }
-.strip > div:first-child { border-left: 0; padding-left: 0; }
-.strip dt { font-size: 0.72rem; letter-spacing: 0.03em; color: var(--muted); }
-.strip dd { font-size: 1.08rem; font-weight: 500; line-height: 1.35; }
-.strip dd.name { font-family: var(--display); font-weight: 700; letter-spacing: -0.01em; }
-.strip small { display: block; font-size: 0.78rem; font-weight: 400; font-style: italic; color: var(--muted); }
-.age-n { font-variant-numeric: lining-nums tabular-nums; }
-@media (max-width: 760px) {
-	.strip { grid-template-columns: 1fr 1fr; }
-	.strip > div:nth-child(3) { border-left: 0; padding-left: 0; }
-	.strip > div:nth-child(n+3) { border-top: 1px solid var(--hair); }
-}
+/* the byline under the cover */
+.byline { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.3rem 1.4rem; padding-top: 0.75rem; border-top: 1.5px solid var(--fg); font-style: italic; font-size: 0.95rem; color: var(--muted); }
+.byline b { font-family: var(--display); font-style: normal; font-weight: 700; font-size: 1.15rem; letter-spacing: -0.01em; color: var(--fg); }
 
 /* ── sections: a margin label, then the body ── */
 .sec { display: grid; grid-template-columns: 11.5rem minmax(0, 1fr); gap: 0.8rem 3rem; margin-top: 4.4rem; padding-top: 1rem; border-top: 1px solid var(--hair); scroll-margin-top: 4.4rem; }
@@ -238,9 +252,68 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .standfirst { font-size: clamp(1.15rem, 1.7vw, 1.45rem); line-height: 1.8; text-align: justify; hyphens: auto; max-width: 52rem; }
 .standfirst::first-letter { float: left; font-family: var(--display); font-weight: 700; font-size: 4.4em; line-height: 0.78; margin: -0.1em 0.08em 0 -0.02em; }
 
-/* ── numbers, set as copy ── */
-.numbers { font-size: clamp(1.25rem, 2.1vw, 1.85rem); line-height: 1.6; max-width: 54rem; color: var(--fg2); }
-.n { font-family: var(--display); font-weight: 700; font-size: 1.55em; line-height: 1; letter-spacing: -0.02em; color: var(--fg); font-variant-numeric: lining-nums tabular-nums; }
+/* ── numbers: a bubble-in answer sheet, read by a scanner ── */
+#numbers { margin-top: 4.4rem; scroll-margin-top: 4.4rem; }
+.sheet { --cw: 1.45rem; --bs: 1.08rem; position: relative; overflow: hidden; padding: 1.1rem 1.3rem 1.1rem 2.7rem; background: var(--bg); border: 1.5px solid var(--fg); transition: background-color 0.35s ease; }
+/* the timing marks down the edge of every scantron */
+.sheet::before { content: ''; position: absolute; left: 0.9rem; top: 1.1rem; bottom: 1.1rem; width: 0.75rem; background: repeating-linear-gradient(to bottom, var(--fg) 0 0.3rem, transparent 0.3rem 1.2rem); }
+.sheet-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.4rem 1.6rem; padding-bottom: 0.8rem; border-bottom: 1px solid var(--fg); }
+.sheet-head h2 { font-family: var(--display); font-weight: 700; font-size: clamp(1.6rem, 2.6vw, 2.2rem); line-height: 1; letter-spacing: -0.02em; }
+.sheet-kind { font-size: 0.74rem; letter-spacing: 0.04em; color: var(--muted); }
+.sheet-name { display: flex; align-items: baseline; gap: 0.6rem; margin-left: auto; font-size: 0.74rem; letter-spacing: 0.03em; color: var(--muted); }
+.sheet-name i { display: inline-block; min-width: 13rem; padding: 0 0.4rem 0.1rem; border-bottom: 1px solid var(--fg); font-family: var(--display); font-weight: 600; font-size: 1.15rem; letter-spacing: 0; color: var(--fg); transform: rotate(-1.2deg); }
+/* one row on wide screens, two below, pairs on phones */
+.fields { display: grid; grid-template-columns: repeat(7, auto); gap: 0.6rem; margin-top: 1rem; }
+.field { display: flex; flex-direction: column; min-width: 0; border: 1px solid var(--fg); }
+@media (max-width: 1259px) {
+	.fields { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+	.field { grid-column: span 3; }
+	[data-field="age"] { grid-column: span 6; }
+	[data-field="ap"] { grid-column: span 4; }
+	[data-field="papers"] { grid-column: span 2; }
+}
+@media (max-width: 899px) {
+	.fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+	.field, [data-field="ap"], [data-field="papers"] { grid-column: span 1; }
+	[data-field="age"] { grid-column: 1 / -1; }
+}
+.f-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 0.45rem; padding: 0.3rem 0.55rem; background: var(--fg); color: var(--bg); font-size: 0.72rem; letter-spacing: 0.03em; line-height: 1.4; }
+.f-head b { font-family: var(--display); font-weight: 700; font-size: 0.9rem; }
+.f-head em { margin-left: auto; padding-left: 0.6rem; font-size: 0.68rem; opacity: 0.7; }
+.f-cols { display: flex; justify-content: center; gap: 0.22rem; padding: 0.6rem 0.55rem 0.7rem; }
+.col { display: flex; flex-direction: column; align-items: center; gap: 0.2rem; width: var(--cw); }
+.f-ap .col { width: 2.3rem; }
+.box { display: grid; place-items: center; width: 100%; height: 2rem; margin-bottom: 0.3rem; border: 1px solid var(--fg); font-family: var(--display); font-style: italic; font-weight: 600; font-size: 1.35rem; line-height: 1; }
+.box span { display: inline-block; transform: rotate(var(--r, 0deg)); transition: opacity 0.3s ease var(--d, 0s); }
+.col:nth-child(odd) .box span { --r: -4deg; }
+.col:nth-child(3n) .box span { --r: 3deg; }
+.b { position: relative; display: grid; place-items: center; width: var(--bs); height: var(--bs); border: 1px solid var(--muted2); border-radius: 50%; font-size: 0.56rem; line-height: 1; color: var(--muted); font-variant-numeric: lining-nums; cursor: pointer; user-select: none; -webkit-user-select: none; }
+/* the pencil: a slightly rough, slightly overfilled blot */
+.b::after { content: ''; position: absolute; inset: -1px; border-radius: 50%; background: var(--fg); opacity: 0.93; filter: url(#pencil); transform: scale(0); transition: transform 0.22s var(--out) var(--d, 0s); }
+.b.on::after { transform: scale(var(--s, 1.06)) rotate(var(--r, 0deg)); }
+.b:nth-child(3n) { --s: 1.1; --r: 25deg; }
+.b:nth-child(4n+1) { --s: 1.03; --r: -40deg; }
+.col:nth-child(even) .b { --r: 70deg; }
+.sheet.pre .b.on::after { transform: scale(0); }
+.sheet.pre .box span { opacity: 0; }
+.sheet.live .b::after, .sheet.live .box span { transition-delay: 0s; }
+.sub { margin-top: 0.35rem; font-size: 0.64rem; line-height: 1.15; letter-spacing: 0.02em; text-align: center; color: var(--muted); }
+.scanline { position: absolute; top: 0; bottom: 0; left: 0; width: 2px; background: var(--fg); opacity: 0; pointer-events: none; }
+.scanline::before { content: ''; position: absolute; top: 0; bottom: 0; right: 2px; width: 5rem; background: linear-gradient(to right, transparent, color-mix(in srgb, var(--fg) 9%, transparent)); }
+.sheet.scan .scanline { animation: sweep 1.8s linear forwards; }
+@keyframes sweep { 0% { left: 0; opacity: 0; } 5% { opacity: 0.5; } 95% { opacity: 0.5; } 100% { left: 100%; opacity: 0; } }
+.sheet-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.3rem 1rem; margin-top: 0.9rem; font-size: 0.68rem; letter-spacing: 0.04em; color: var(--muted); }
+@media (max-width: 620px) {
+	.sheet { --cw: 1.3rem; --bs: 0.98rem; padding: 0.9rem 0.8rem 0.9rem 1.9rem; }
+	.sheet::before { left: 0.6rem; width: 0.55rem; }
+	.sheet-name { margin-left: 0; }
+	.sheet-name i { min-width: 0; }
+	.f-cols { padding: 0.5rem 0.4rem 0.6rem; gap: 0.15rem; }
+	.f-ap .col { width: 1.75rem; }
+	.f-head { display: block; }
+	.f-head b { margin-right: 0.4rem; }
+	.f-head em { margin-left: 0; padding-left: 0.3rem; }
+}
 
 /* ── hairline rows: honours ── */
 .rows { border-bottom: 1px solid var(--hair); }
@@ -381,8 +454,7 @@ a.row:hover .row-a { color: var(--fg); transform: translate(0.15rem, -0.1rem); }
 @media (max-width: 760px) { .clock-wrap { grid-template-columns: 1fr; } .clock-fig { max-width: 24rem; } }
 
 /* ── contact & sign-off ── */
-.thanks { font-family: var(--display); font-style: italic; font-weight: 600; font-size: clamp(1.8rem, 3.4vw, 2.8rem); line-height: 1.1; letter-spacing: -0.02em; }
-.contact-intro { margin-top: 0.7rem; margin-bottom: 1.6rem; font-size: 1.12rem; line-height: 1.6; max-width: 38rem; color: var(--fg2); }
+.contact-intro { margin-bottom: 1.6rem; font-size: 1.12rem; line-height: 1.6; max-width: 38rem; color: var(--fg2); }
 .c-link { display: grid; grid-template-columns: 6.5rem 1fr; align-items: baseline; gap: 1rem; padding: 0.8rem 0; border-top: 1px solid var(--hair); text-decoration: none; color: var(--fg); width: 100%; transition: padding-left 0.25s var(--ease); }
 .c-link:last-child { border-bottom: 1px solid var(--hair); }
 .c-link:hover { padding-left: 0.5rem; }
@@ -455,6 +527,9 @@ a.row:hover .row-a { color: var(--fg); transform: translate(0.15rem, -0.1rem); }
 	.paper { padding: 0; max-width: none; }
 	.front { min-height: 0; }
 	.headline { font-size: 30pt; }
+	.sheet.pre .b.on::after { transform: scale(1); }
+	.sheet.pre .box span { opacity: 1; }
+	.scanline { display: none; }
 	.reveal, .hl-in { opacity: 1 !important; transform: none !important; }
 	.sec { margin-top: 1.4rem; grid-template-columns: 8rem 1fr; }
 	.sec-label { position: static; }
@@ -467,6 +542,7 @@ a.row:hover .row-a { color: var(--fg); transform: translate(0.15rem, -0.1rem); }
 <body data-theme="light">
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
 	<filter id="redInk" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0.0368 0.1237 0.0125 0 0.827  0.1992 0.6701 0.0677 0 0.063  0.1892 0.6365 0.0643 0 0.110  0 0 0 1 0" /></filter>
+	<filter id="pencil" x="-20%" y="-20%" width="140%" height="140%"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="n" /><feDisplacementMap in="SourceGraphic" in2="n" scale="2.2" xChannelSelector="R" yChannelSelector="G" /></filter>
 </svg>
 <div class="page-bg" aria-hidden="true"></div>
 <div id="scrollProgress" aria-hidden="true"></div>
@@ -498,32 +574,44 @@ a.row:hover .row-a { color: var(--fg); transform: translate(0.15rem, -0.1rem); }
 			</h1>
 			<figure class="front-fig"><div class="fig-slot"><img src={`${A}/portrait.png`} width="440" height="345" alt="engraved portrait of mehmet utku öztürk" fetchpriority="high" /></div></figure>
 		</div>
-		<dl class="strip">
-			<div><dt>name</dt><dd class="name">mehmet utku öztürk</dd><small>machine learning developer &amp; ai researcher</small></div>
-			<div><dt>based</dt><dd>ankara, türkiye</dd><small><span id="clock">--:--</span></small></div>
-			<div><dt>age</dt><dd><span class="age-n" id="age">17.000000000</span></dd><small>live, since 29 november 2008</small></div>
-			<div><dt>sat</dt><dd>{sat.math + sat.rw}</dd><small>math {sat.math} · reading &amp; writing {sat.rw}</small></div>
-		</dl>
+		<p class="byline"><b>mehmet utku öztürk</b><span>machine learning developer &amp; ai researcher</span><span>ankara, türkiye · <span id="clock">--:--</span></span></p>
 	</header>
 
 	<section id="about" class="sec reveal">
-		<div class="sec-label"><h2>about</h2><p>the short version</p></div>
+		<div class="sec-label"><h2>about</h2></div>
 		<p class="standfirst">started programming when i was 8 with small apps and scripts. got familiar with c++ and c# by i was 11. started working on machine learning at 13, extremely unsuccessfully finetuned my first llm at 14. since then, i&rsquo;m working on software with a primary focus on artificial consciousness and &ldquo;thinking&rdquo; systems. other than software, i am interested in powerlifting, strongman, martial arts, cognitive science, kinesiology, chess, sudoku, and good coffee.</p>
 	</section>
 
-	<section id="numbers" class="sec reveal">
-		<div class="sec-label"><h2>numbers</h2><p>the parts that can be counted</p></div>
-		<p class="numbers">
-			<span class="n" data-count={sat.math + sat.rw} data-plain>{sat.math + sat.rw}</span> on the sat: <span class="n" data-count={sat.math} data-plain>{sat.math}</span> in math, <span class="n" data-count={sat.rw} data-plain>{sat.rw}</span> in reading and writing.
-			<span class="n" data-count={projects.length}>{projects.length}</span> projects so far and <span class="n" data-count={papers.length}>{papers.length}</span> papers, one of them peer-reviewed.
-			<span class="n" data-count="139255">139,255</span> fruit fly neurons wired into doom.
-			<span class="n" data-count="14244">14,244</span> wikipedia articles sorted by a model of mine.
-			and a first program, at <span class="n" data-count="8">8</span>.
-		</p>
+	<section id="numbers" class="reveal">
+		<div class="sheet" id="sheet">
+			<div class="sheet-head">
+				<h2>numbers</h2>
+				<span class="sheet-kind">answer sheet · grid-in · use a no. 2 pencil</span>
+				<p class="sheet-name">name<i>mehmet utku öztürk</i></p>
+			</div>
+			<div class="fields">
+				{fields.map((f, q) => (
+					<div class={`field f-${f.kind}`} data-field={f.id}>
+						<p class="f-head"><b>{q + 1}</b><span>{f.label}</span>{f.note && <em>{f.note}</em>}</p>
+						<div class="f-cols">
+							{[...f.value].map((ch, i) => (
+								<div class="col">
+									<span class="box"><span>{ch}</span></span>
+									{choices[f.kind].map((v) => <span class={v === ch ? 'b on' : 'b'} data-v={v}>{v}</span>)}
+									{f.subs && <span class="sub">{f.subs[i]}</span>}
+								</div>
+							))}
+						</div>
+					</div>
+				))}
+			</div>
+			<p class="sheet-foot"><span>form cv-2911-08</span><span>fill each bubble completely. no erasing.</span></p>
+			<span class="scanline" aria-hidden="true"></span>
+		</div>
 	</section>
 
 	<section id="honours" class="sec reveal">
-		<div class="sec-label"><h2>honours</h2><p>labels, papers, memberships</p></div>
+		<div class="sec-label"><h2>honours</h2></div>
 		<div class="rows">
 			{honours.map((h) => {
 				const inner = (
@@ -553,7 +641,7 @@ a.row:hover .row-a { color: var(--fg); transform: translate(0.15rem, -0.1rem); }
 	</section>
 
 	<section id="work" class="sec reveal">
-		<div class="sec-label"><h2>work</h2><p>{projects.length} projects, numbered</p></div>
+		<div class="sec-label"><h2>work</h2></div>
 		<div>
 			<div class="filters" role="group" aria-label="filter projects">
 				<button class="filter" type="button" data-f="all" aria-pressed="true">all<sup>{projects.length}</sup></button>
@@ -578,7 +666,7 @@ a.row:hover .row-a { color: var(--fg); transform: translate(0.15rem, -0.1rem); }
 	</section>
 
 	<section id="research" class="sec reveal">
-		<div class="sec-label"><h2>research</h2><p>{papers.length} papers</p></div>
+		<div class="sec-label"><h2>research</h2></div>
 		<div class="rows">
 			{papers.map((p, i) => (
 				<article class="paper-row">
@@ -596,7 +684,7 @@ a.row:hover .row-a { color: var(--fg); transform: translate(0.15rem, -0.1rem); }
 	</section>
 
 	<section id="articles" class="sec reveal">
-		<div class="sec-label"><h2>articles</h2><p>written on utku.space</p></div>
+		<div class="sec-label"><h2>articles</h2></div>
 		<div>
 			{articles.map((a) => (
 				<a class="article-row" href={articleUrl(a)}>
@@ -610,7 +698,7 @@ a.row:hover .row-a { color: var(--fg); transform: translate(0.15rem, -0.1rem); }
 	</section>
 
 	<section id="associations" class="sec reveal">
-		<div class="sec-label"><h2>associations</h2><p>where i belong</p></div>
+		<div class="sec-label"><h2>associations</h2></div>
 		<div class="orgs">
 			{associations.map((a) => (
 				<a class="org" href={a.url} target="_blank" rel="noopener">
@@ -624,7 +712,7 @@ a.row:hover .row-a { color: var(--fg); transform: translate(0.15rem, -0.1rem); }
 	</section>
 
 	<section id="beyond" class="sec reveal">
-		<div class="sec-label"><h2>off the clock</h2><p>some of these do something</p></div>
+		<div class="sec-label"><h2>off the clock</h2></div>
 		<div class="clock-wrap">
 			<figure class="clock-fig"><img src={`${A}/gym.webp`} width="760" height="760" loading="lazy" alt="halftone illustration of a gym, mehmet utku öztürk in the mirror" /><figcaption>competitive class ii powerlifter.</figcaption></figure>
 			<div>
@@ -640,9 +728,8 @@ a.row:hover .row-a { color: var(--fg); transform: translate(0.15rem, -0.1rem); }
 	</section>
 
 	<section id="contact" class="sec reveal">
-		<div class="sec-label"><h2>contact</h2><p>email is fastest</p></div>
+		<div class="sec-label"><h2>contact</h2></div>
 		<div>
-			<p class="thanks">thanks for reading this far.</p>
 			<p class="contact-intro">if this link came with an application, i&rsquo;d be glad to talk it through. otherwise: open to collaboration, research, and good conversation.</p>
 			<div class="contact-list">
 				<button class="c-link" id="mail" type="button"><span class="dt">email</span><span class="dd"><span class="dd-v">m@utku.space</span><span class="c-hint" id="mailHint">click to copy</span></span></button>
@@ -659,7 +746,7 @@ a.row:hover .row-a { color: var(--fg); transform: translate(0.15rem, -0.1rem); }
 	</section>
 
 	<footer class="colophon" id="foot">
-		<p class="colophon-line" id="eggs">easter eggs found: 0 / 8</p>
+		<p class="colophon-line" id="eggs">easter eggs found: 0 / 9</p>
 		<p class="colophon-links"><button class="ghost-link" id="termBtn" type="button" title="or press /">terminal</button><button class="ghost-link" id="printBtn" type="button">save as pdf</button></p>
 	</footer>
 </main>
@@ -695,14 +782,15 @@ a.row:hover .row-a { color: var(--fg); transform: translate(0.15rem, -0.1rem); }
 	const toastEl = $('#toast'); let toastT = 0;
 	function toast(msg, ms) { toastEl.textContent = msg; toastEl.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => toastEl.classList.remove('show'), ms || 2600); }
 
-	/* ── eight easter eggs, remembered per browser ── */
-	const EGGS = { terminal: 'opened the terminal', fly: 'caught the fly', konami: 'konami code', sudoku: 'solved the sudoku', lift: 'hit a pr', un: 'took the “un” off', hire: 'tried to hire me', end: 'read to the end' };
+	/* ── easter eggs, remembered per browser ── */
+	const EGGS = { terminal: 'opened the terminal', fly: 'caught the fly', konami: 'konami code', sudoku: 'solved the sudoku', lift: 'hit a pr', un: 'took the “un” off', hire: 'tried to hire me', cheat: 'tried to change a score', end: 'read to the end' };
+	const TOTAL = Object.keys(EGGS).length;
 	const found = new Set((store.get('cvEggs') || '').split(',').filter((k) => k in EGGS));
-	const paintEggs = () => { $('#eggs').textContent = 'easter eggs found: ' + found.size + ' / 8' + (found.size === 8 ? '. all of them.' : ''); };
+	const paintEggs = () => { $('#eggs').textContent = 'easter eggs found: ' + found.size + ' / ' + TOTAL + (found.size === TOTAL ? '. all of them.' : ''); };
 	function egg(k) {
 		if (found.has(k)) return false;
 		found.add(k); store.set('cvEggs', [...found].join(',')); paintEggs();
-		setTimeout(() => toast('easter egg ' + found.size + ' / 8: ' + EGGS[k] + (found.size === 8 ? '. all of them.' : '')), 350);
+		setTimeout(() => toast('easter egg ' + found.size + ' / ' + TOTAL + ': ' + EGGS[k] + (found.size === TOTAL ? '. all of them.' : '')), 350);
 		return true;
 	}
 	paintEggs();
@@ -727,12 +815,10 @@ a.row:hover .row-a { color: var(--fg); transform: translate(0.15rem, -0.1rem); }
 		if (now < last) last = bday(--y);
 		return (y - 2008) + (now - last) / (bday(y + 1) - last);
 	}
-	const ageEl = $('#age');
-	(function tick() { ageEl.textContent = age(Date.now()).toFixed(9); requestAnimationFrame(tick); })();
 	const ist = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Istanbul', day: '2-digit', month: '2-digit' }).format(new Date());
 	if (ist === '29/11') setTimeout(() => toast('it’s my birthday today. impeccable timing.', 5000), 3000);
 	const clock = $('#clock'), fmt = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Istanbul', hour: '2-digit', minute: '2-digit', hour12: false });
-	const tickClock = () => { clock.textContent = 'gmt+3, ' + fmt.format(new Date()) + ' there now'; };
+	const tickClock = () => { clock.textContent = fmt.format(new Date()) + ' there now'; };
 	tickClock(); setInterval(tickClock, 15000);
 
 	/* ── the opening line types itself ── */
@@ -767,6 +853,37 @@ a.row:hover .row-a { color: var(--fg); transform: translate(0.15rem, -0.1rem); }
 	$$('.reveal').forEach((el) => io.observe(el));
 	new IntersectionObserver((es, o) => es.forEach((e) => { if (e.isIntersecting) { o.disconnect(); e.target.classList.add('drawn'); } }), { threshold: 1 }).observe($('#signoff'));
 	new IntersectionObserver((es, o) => es.forEach((e) => { if (e.isIntersecting) { o.disconnect(); setTimeout(() => egg('end'), 600); } }), { threshold: 1 }).observe($('#foot'));
+
+	/* ── the answer sheet: a scanner reads it once, then the age keeps re-bubbling ── */
+	const sheet = $('#sheet'), sheetCols = $$('.col', sheet);
+	function setField(name, str) {
+		const cols = $$('.col', $('[data-field="' + name + '"]', sheet));
+		[...str].forEach((ch, i) => {
+			const c = cols[i]; if (!c) return;
+			const box = $('.box span', c); if (box.textContent !== ch) box.textContent = ch;
+			$$('.b', c).forEach((b) => b.classList.toggle('on', b.dataset.v === ch));
+		});
+	}
+	setField('dev', String(new Date().getFullYear() - data.codingSince));
+	setInterval(() => setField('age', age(Date.now()).toFixed(8)), 120);
+	if (!reduce) {
+		sheet.classList.add('pre');
+		new IntersectionObserver((es, o) => es.forEach((e) => {
+			if (!e.isIntersecting) return;
+			o.disconnect();
+			const sr = sheet.getBoundingClientRect();
+			sheetCols.forEach((c) => { const r = c.getBoundingClientRect(); c.style.setProperty('--d', ((r.left + r.width / 2 - sr.left) / sr.width * 1.8).toFixed(3) + 's'); });
+			sheet.classList.remove('pre'); sheet.classList.add('scan');
+			setTimeout(() => sheet.classList.add('live'), 2300);
+		}), { threshold: 0.4 }).observe(sheet);
+	} else sheet.classList.add('live');
+	sheet.addEventListener('click', (e) => {
+		const b = e.target.closest('.b'); if (!b) return;
+		const field = b.closest('.field').dataset.field;
+		if (b.classList.contains('on')) return toast(field === 'age' ? 'that one changes on its own.' : 'that answer’s final.');
+		if (field === 'age') return toast('you can’t change my age. time does that.');
+		if (!egg('cheat')) toast('no erasing. it’s in pen.');
+	});
 
 	/* ── scroll progress, and the nav link for the section in view ── */
 	const prog = $('#scrollProgress'), links = $$('.nav-link');
@@ -929,14 +1046,14 @@ a.row:hover .row-a { color: var(--fg); transform: translate(0.15rem, -0.1rem); }
 	$('#termX').addEventListener('click', closeTerm);
 	const bar = (v, max) => '█'.repeat(Math.round(v / max * 20)).padEnd(20, '░');
 	const CMDS = {
-		help: () => 'whoami · about · age · sat · projects · open &lt;name&gt; · papers · honours · year &lt;yyyy&gt; · contact · coffee · lift · fly · sudoku · eggs · hire · date · echo · clear · exit',
+		help: () => 'whoami · about · age · numbers · sat · gpa · ap · projects · open &lt;name&gt; · papers · honours · year &lt;yyyy&gt; · contact · coffee · lift · fly · sudoku · eggs · hire · date · echo · clear · exit',
 		whoami: () => 'mehmet utku öztürk. machine learning developer and ai researcher, ankara.\nunpredictable, unsatisfied, unconventional.',
 		about: () => 'programming since 8. machine learning since 13. working on artificial consciousness and “thinking” systems.',
 		age: () => age(Date.now()).toFixed(12) + ' years. still compiling.',
 		sat: () => 'math                ' + bar(data.sat.math, 800) + ' ' + data.sat.math + '\nreading &amp; writing ' + bar(data.sat.rw, 800) + ' ' + data.sat.rw + '\ntotal               ' + (data.sat.math + data.sat.rw) + ' / 1600',
 		projects: () => data.projects.map((p) => (p.status === 'active' ? '■' : p.status === 'paused' ? '□' : '<span class="m">■</span>') + ' ' + esc(p.name).padEnd(26) + '<span class="m">' + esc(p.category) + ' · ' + esc(p.role) + '</span>').join('\n') + '\n<span class="m">try: open flydoom</span>',
 		ls: () => 'about  sat.txt  projects/  papers/  honours  contact  <span class="m">.secrets</span>',
-		cat: (a) => a === '.secrets' ? 'eight easter eggs on this page. one of them lives in your browser console.' : a === 'sat.txt' ? CMDS.sat() : 'cat: ' + esc(a || '') + ': try ls, or just the command name.',
+		cat: (a) => a === '.secrets' ? TOTAL + ' easter eggs on this page. one of them lives in your browser console.' : a === 'sat.txt' ? CMDS.sat() : 'cat: ' + esc(a || '') + ': try ls, or just the command name.',
 		open: (a) => {
 			const p = data.projects.find((p) => p.name.toLowerCase().startsWith((a || '').toLowerCase()));
 			if (!a || !p) return 'open what? try: open flydoom';
@@ -945,6 +1062,9 @@ a.row:hover .row-a { color: var(--fg); transform: translate(0.15rem, -0.1rem); }
 		},
 		papers: () => data.papers.map((p) => p.year + '  ' + esc(p.name) + '\n      <span class="m">' + esc(p.venue) + '</span>' + (p.link ? '  <a href="' + esc(p.link) + '" target="_blank" rel="noopener">link ↗</a>' : '')).join('\n'),
 		honours: () => data.honours.map(esc).join('\n'),
+		gpa: () => data.gpa + '.',
+		ap: () => Object.entries(data.ap).map(([k, v]) => k.padEnd(30) + v).join('\n'),
+		numbers: () => ['age              ' + age(Date.now()).toFixed(8), 'developer since  ' + data.codingSince + ' (' + (new Date().getFullYear() - data.codingSince) + ' years)', 'gpa              ' + data.gpa, 'sat math         ' + data.sat.math, 'sat r&amp;w          ' + data.sat.rw, 'ap               5 · 5 · 5 · 5', 'papers           ' + data.papers].join('\n'),
 		year: (a) => {
 			const y = parseInt(a, 10);
 			if (!(y >= data.first && y <= data.last)) return 'year: pick one between ' + data.first + ' and ' + data.last + '.';
@@ -956,7 +1076,7 @@ a.row:hover .row-a { color: var(--fg); transform: translate(0.15rem, -0.1rem); }
 		lift: () => { if (plates >= 3) $('#lift').click(); while (plates < 3) $('#lift').click(); return 'three plates a side. locked out.'; },
 		fly: () => { if (flyEl) return 'it’s already out. look around.'; spawnFly(); return 'released one drosophila melanogaster.'; },
 		sudoku: () => { closeTerm(); openSudoku(); return null; },
-		eggs: () => Object.keys(EGGS).map((k) => (found.has(k) ? '✓ ' + EGGS[k] : '<span class="m">· ???</span>')).join('\n') + '\n' + found.size + ' / 8',
+		eggs: () => Object.keys(EGGS).map((k) => (found.has(k) ? '✓ ' + EGGS[k] : '<span class="m">· ???</span>')).join('\n') + '\n' + found.size + ' / ' + TOTAL,
 		hire: () => { egg('hire'); return 'noted. the official channel: <a href="mailto:' + data.email + '?subject=hello%20from%20your%20cv">' + data.email + '</a>'; },
 		sudo: (a) => /hire/.test(a || '') ? CMDS.hire() : 'sudo: nice try.',
 		konami: () => '↑ ↑ ↓ ↓ ← → ← → b a. not in here, on the page.',
