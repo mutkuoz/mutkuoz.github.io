@@ -1,7 +1,7 @@
 ---
-// cv.utku.space — utku.space as an application file: the same page language (fresco
-// background, black on white, lowercase serif, quiet rule-heads and hairline lists),
-// plus honours, numbers, a timeline, and a few easter eggs.
+// cv.utku.space — the application edition of utku.space. same paper (the fresco, black on
+// white, newsreader and playfair, hairlines), set as a cv: a cover, a margin column of
+// section labels, a timeline you can scrub, a numbered catalogue of work, and a sign-off.
 // everything (css, js, data) is inline and every asset loads from utku.space by absolute
 // url, so the built html runs unchanged at utku.space/cv/ and, copied, at cv.utku.space.
 import { papers } from '../data/research';
@@ -18,8 +18,8 @@ const articles = await getArticles();
 
 // project bodies link relative to utku.space; on cv.utku.space they need the full origin
 const absolute = (html: string) => html.replace(/href="\//g, `href="${SITE}/`);
-const cats = categories.map((key) => ({ key, icon: categoryIcon[key], items: projects.filter((p) => p.category === key) }));
 const firstLink = (html: string) => (html.match(/href="([^"]+)"/) ?? [])[1];
+const catCount = (key: string) => projects.filter((p) => p.category === key).length;
 
 const sat = { math: 800, rw: 710 };
 
@@ -35,31 +35,29 @@ const honours = [
 	{ year: 'member', title: 'iaail', note: 'international association for artificial intelligence and law.' }
 ];
 
-const timeline = [
-	{ y: '2026', items: ['co-founded turkhukuk.ai, legaltech for turkish lawyers', 'hukukbert published, first author', 'flydoom, a fruit fly connectome playing doom', '007captcha, topazius, turkic-relevance-laya'] },
-	{ y: '2025', items: ['labgpt, tübitak-backed medical r&d', 'octapar, the platform and the paper'] },
-	{ y: '2024', items: ['started mentoring at bilsem', '“streaming intelligence” paper, plawlabs'] },
-	{ y: '2023', items: ['etwinning national quality label: “particle physics and cern”', 'co-founded clade ai', 'trstemmer on pypi'] },
-	{ y: '2022', items: ['sorubot, and a first llm fine-tune'] },
-	{ y: '2020', items: ['a.d.a, a deterministic personal assistant', 'shoelace, a peer-based encryption algorithm'] },
-	{ y: '2019', items: ['founded ananas studios, an indie game studio'] },
-	{ y: '2018', items: ['etwinning pupil quality label'] },
-	{ y: '2008', items: ['born, 29 november'] }
-];
+// the scrubbable timeline: one entry per year, empty years get a line of their own
+const FIRST = 2008, LAST = 2026;
+const record: Record<number, string[]> = {
+	2026: ['co-founded turkhukuk.ai, legaltech for turkish lawyers', 'hukukbert published, first author', 'flydoom: a fruit fly connectome playing doom', '007captcha, topazius, turkic-relevance-laya'],
+	2025: ['labgpt, tübitak-backed medical r&d', 'octapar, the platform and the paper'],
+	2024: ['started mentoring at bilsem', '“streaming intelligence” paper, with plawlabs'],
+	2023: ['etwinning national quality label: “particle physics and cern”', 'co-founded clade ai', 'trstemmer, on pypi'],
+	2022: ['started on machine learning, at 13', 'sorubot, and a first llm fine-tune'],
+	2020: ['c++ and c#, by 11', 'a.d.a, a deterministic personal assistant', 'shoelace, a peer-based encryption algorithm'],
+	2019: ['founded ananas studios, an indie game studio'],
+	2018: ['etwinning pupil quality label'],
+	2017: ['first small apps and scripts, at 8'],
+	2008: ['born, 29 november']
+};
+const years = Array.from({ length: LAST - FIRST + 1 }, (_, i) => FIRST + i);
 
-const figures = [
-	{ to: sat.math + sat.rw, plain: true, label: `sat. math ${sat.math}, reading & writing ${sat.rw}` },
-	{ to: projects.length, label: 'projects: open source, work, and unpublished' },
-	{ to: papers.length, label: 'papers, one in a peer-reviewed journal' },
-	{ to: 139255, label: 'fruit fly neurons wired into doom' },
-	{ to: 14244, label: 'wikipedia articles a model of mine sorted as core turkic heritage' },
-	{ to: 8, label: 'my age when i wrote my first program' }
-];
-
-// what the terminal knows
+// what the scripts know
 const cvData = {
 	email: 'm@utku.space',
 	sat,
+	first: FIRST,
+	last: LAST,
+	record,
 	projects: projects.map((p) => ({ name: p.name, category: p.category, status: statusLabel[p.status], role: p.role, link: firstLink(absolute(p.body)) })),
 	papers: papers.map((p) => ({ name: p.name, year: p.year, venue: p.journal ?? p.venue, link: p.links[0]?.url })),
 	honours: honours.map((h) => `${h.year} · ${h.title}`)
@@ -87,6 +85,7 @@ const head = `
 	<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
 	<link rel="icon" type="image/svg+xml" href={`${A}/favicon.svg`} />
 	<link rel="preload" as="image" href={`${A}/utku-bg.webp`} type="image/webp" fetchpriority="high" />
+	<link rel="preload" as="font" type="font/woff2" crossorigin href={`${A}/fonts/playfair-display-normal-latin.woff2`} />
 	<link rel="preload" as="font" type="font/woff2" crossorigin href={`${A}/fonts/newsreader-normal-latin.woff2`} />
 	<meta property="og:type" content="profile" />
 	<meta property="og:url" content={CANONICAL} />
@@ -101,8 +100,9 @@ const head = `
 	--display: 'Playfair Display', Georgia, 'Times New Roman', serif;
 	--mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
 	--ease: cubic-bezier(0.4, 0, 0.2, 1);
+	--out: cubic-bezier(0.2, 0.7, 0.1, 1);
 }
-/* ── pure black / white, exactly as on utku.space ── */
+/* ── the same black / white as utku.space ── */
 [data-theme="light"] {
 	--bg:#ffffff; --fg:#000000;
 	--fg2:rgba(0,0,0,0.74); --muted:rgba(0,0,0,0.52); --muted2:rgba(0,0,0,0.36);
@@ -119,7 +119,7 @@ const head = `
 [data-konami][data-theme="light"] { --fg:#d3101c; --fg2:rgba(211,16,28,0.82); --muted:rgba(211,16,28,0.62); --muted2:rgba(211,16,28,0.42); --hair:rgba(211,16,28,0.24); --bg-art-filter: url(#redInk); }
 [data-konami][data-theme="dark"] { --bg:#d3101c; --fg2:rgba(255,255,255,0.86); --muted:rgba(255,255,255,0.66); --muted2:rgba(255,255,255,0.46); --hair:rgba(255,255,255,0.3); --bg-art-opacity: 0.9; --bg-art-filter: grayscale(1) brightness(0.13) contrast(1.2) url(#redInk); }
 [data-konami] img { filter: url(#redInk); }
-[data-konami][data-theme="dark"] .assoc-fig img { filter: brightness(0.86) contrast(1.05) url(#redInk); }
+[data-konami][data-theme="dark"] .clock-fig img { filter: brightness(0.86) contrast(1.05) url(#redInk); }
 
 html { scroll-behavior: smooth; background: var(--bg); transition: background-color 0.35s ease; }
 body {
@@ -129,6 +129,7 @@ body {
 }
 ::selection { background: var(--fg); color: var(--bg); }
 button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; text-transform: inherit; text-align: inherit; }
+button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
 
 /* ── fixed background artwork ── */
 .page-bg {
@@ -137,7 +138,6 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 	opacity: var(--bg-art-opacity); filter: var(--bg-art-filter); transition: opacity 0.35s ease, filter 0.35s ease;
 }
 @supports (-webkit-touch-callout: none) { .page-bg { background-attachment: scroll; } }
-
 #scrollProgress { position: fixed; top: 0; left: 0; height: 2px; width: 100%; transform-origin: 0 50%; transform: scaleX(0); background: var(--fg); z-index: 200; opacity: 0.6; }
 
 /* ── navbar ── */
@@ -156,57 +156,45 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 @media (max-width: 1039px) { .mode-toggle { margin-left: auto; } }
 .nav-link { font-size: 0.86rem; letter-spacing: 0.02em; color: var(--muted); text-decoration: none; position: relative; padding-bottom: 2px; transition: color 0.18s ease; }
 .nav-link::after { content: ''; position: absolute; left: 0; right: 100%; bottom: 0; height: 1px; background: var(--fg); transition: right 0.25s var(--ease); }
-.nav-link:hover { color: var(--fg); }
-.nav-link:hover::after { right: 0; }
+.nav-link:hover, .nav-link.on { color: var(--fg); }
+.nav-link:hover::after, .nav-link.on::after { right: 0; }
 .mode-toggle {
 	display: flex; align-items: center; justify-content: center; flex: none;
 	width: 2rem; height: 2rem; border-radius: 50%; border: 1px solid var(--hair); color: var(--fg);
 	transition: border-color 0.2s ease, transform 0.4s cubic-bezier(0.34,1.4,0.64,1);
 }
 .mode-toggle:hover { border-color: var(--fg); transform: rotate(-22deg); }
-button:focus-visible, a:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
 .mode-toggle svg { width: 0.95rem; height: 0.95rem; }
 [data-theme="light"] .icon-moon { display: none; }
 [data-theme="dark"] .icon-sun { display: none; }
 
 /* ── page column ── */
-.paper { position: relative; z-index: 1; max-width: 80rem; margin: 0 auto; padding: 6rem 1.3rem 4rem; }
-@media (min-width: 720px) { .paper { padding: 7rem 2.4rem 5rem; } }
-.section { scroll-margin-top: 4.5rem; margin-top: 3.4rem; }
+.paper { position: relative; z-index: 1; max-width: 80rem; margin: 0 auto; padding: 5.4rem 1.3rem 4rem; }
+@media (min-width: 720px) { .paper { padding: 6.2rem 2.4rem 5rem; } }
 
-/* ── masthead ── */
-.masthead { border-bottom: 1px solid var(--hair); padding-bottom: 1.2rem; text-align: center; }
-.cover { min-height: 1.5em; margin-bottom: 0.9rem; font-style: italic; font-size: 0.9rem; color: var(--muted); }
+/* ── the cover ── */
+.front { display: flex; flex-direction: column; min-height: calc(86svh - 5.4rem); }
+@media (min-width: 720px) { .front { min-height: calc(100svh - 8.4rem); } }
+.cover { min-height: 1.5em; font-style: italic; font-size: 0.95rem; color: var(--muted); }
 .caret { display: inline-block; width: 1px; height: 1em; margin-left: 2px; vertical-align: -0.12em; background: var(--fg); animation: blink 1s steps(1) infinite; }
 .cover.done .caret { animation: blink 1s steps(1) 4 forwards; }
 @keyframes blink { 0% { opacity: 1; } 50%, 100% { opacity: 0; } }
-.nameplate { font-family: var(--display); font-weight: 700; font-size: clamp(1.8rem, 4.2vw, 2.8rem); line-height: 1.05; letter-spacing: -0.02em; }
-.motto { margin-top: 0.55rem; font-family: var(--display); font-style: italic; font-weight: 500; font-size: clamp(1rem, 1.9vw, 1.3rem); color: var(--fg2); }
-.word { display: inline-block; }
-/* the “un” is set upright: the only hint that it comes off */
-.un { font-style: normal; display: inline-block; transition: transform 0.25s var(--ease); }
-.un:hover { transform: translateY(-2px); }
-.word.off .un { animation: unfall 1.4s var(--ease) forwards; }
-.word.off .rest { text-decoration: line-through; text-decoration-thickness: 1px; }
-@keyframes unfall { 30% { transform: translate(-0.1em, 0.4em) rotate(-25deg); opacity: 0.8; } 60% { transform: translate(-0.2em, 1.4em) rotate(-70deg); opacity: 0; } 61% { transform: translateY(-0.6em); opacity: 0; } 100% { transform: none; opacity: 1; } }
-
-/* ── lead: standfirst, particulars, portrait ── */
-.lead { display: grid; grid-template-columns: 1fr; gap: 2rem; margin-top: 2.2rem; }
-@media (min-width: 840px) {
-	.lead { grid-template-columns: 1.5fr 1fr; gap: 1.5rem; align-items: start; }
-	.lead-aside .fig { margin-left: -2rem; margin-right: -1rem; max-width: 30rem; }
-}
-.standfirst { font-size: clamp(1.15rem, 1.7vw, 1.5rem); line-height: 1.8; text-align: justify; hyphens: auto; }
-.particulars { margin-top: 1.8rem; }
-.particulars div { display: grid; grid-template-columns: 6rem 1fr; align-items: baseline; gap: 1rem; padding: 0.7rem 0; border-top: 1px solid var(--hair); }
-.particulars div:last-child { border-bottom: 1px solid var(--hair); }
-.particulars dt { font-size: 0.74rem; letter-spacing: 0.03em; color: var(--muted); }
-.particulars dd { font-size: 1rem; font-weight: 500; }
-.particulars dd small { font-size: 0.8rem; font-weight: 400; font-style: italic; color: var(--muted); margin-left: 0.5rem; }
-.age-n { font-variant-numeric: lining-nums tabular-nums; }
-@media (max-width: 839px) { .lead-aside { display: none; } }
-@media (max-width: 520px) { .particulars dd small { display: block; margin: 0.1rem 0 0; } }
-.fig { margin: 0 auto; max-width: 22rem; }
+.front-grid { flex: 1; display: grid; grid-template-columns: minmax(0, 1fr); align-items: end; gap: 1.5rem; margin-top: 2rem; }
+@media (min-width: 840px) { .front-grid { grid-template-columns: minmax(0, 1fr) min(26rem, 34%); } }
+.headline { font-family: var(--display); font-weight: 700; font-size: clamp(2.8rem, 7.6vw, 6.9rem); line-height: 0.98; letter-spacing: -0.035em; padding-bottom: 0.5rem; }
+.hl { display: block; overflow: hidden; padding: 0 0.08em 0.12em 0; margin-bottom: -0.12em; }
+.hl-in { display: inline-block; transform: translateY(112%); transition: transform 1s var(--out); }
+.front.in .hl-in { transform: none; }
+.front.in .hl:nth-child(2) .hl-in { transition-delay: 0.12s; }
+.front.in .hl:nth-child(3) .hl-in { transition-delay: 0.24s; }
+/* the “un” is the only italic: it comes off */
+.un { font-style: italic; font-weight: 600; letter-spacing: -0.02em; display: inline-block; transition: opacity 0.2s ease; }
+.un:hover { opacity: 0.55; }
+.hl.off .un { animation: unfall 1.4s var(--ease) forwards; }
+.hl.off .rest { text-decoration: line-through; text-decoration-thickness: 0.06em; }
+@keyframes unfall { 35% { transform: translate(-0.05em, 0.5em) rotate(-18deg); opacity: 0.7; } 60% { transform: translate(-0.1em, 1.3em) rotate(-40deg); opacity: 0; } 61% { transform: translateY(-1em); opacity: 0; } 100% { transform: none; opacity: 1; } }
+.front-fig { display: none; }
+@media (min-width: 840px) { .front-fig { display: block; margin-right: -1rem; opacity: 0; transform: translateY(14px); transition: opacity 1.1s ease 0.35s, transform 1.1s var(--out) 0.35s; } .front.in .front-fig { opacity: 1; transform: none; } }
 .fig-slot { position: relative; isolation: isolate; }
 .fig-slot img { display: block; width: 100%; height: auto; }
 .fig-slot::before {
@@ -216,135 +204,202 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--fg); outline-of
 	opacity: 0; transition: opacity 0.35s ease;
 }
 [data-theme="dark"] .fig-slot::before { opacity: 1; }
-
-/* ── quiet rule-heads ── */
-.rule-head { margin-bottom: 1.4rem; padding-bottom: 0.45rem; border-bottom: 1px solid var(--hair); display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
-.rule-head-label { font-size: 1rem; font-weight: 600; letter-spacing: 0.01em; }
-.rule-head-note { font-style: italic; font-size: 0.85rem; font-weight: 400; color: var(--muted); }
-
-/* ── numbers ── */
-.figures { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.figure { padding: 1.1rem 1.2rem 1.2rem; border-top: 1px solid var(--hair); border-left: 1px solid var(--hair); }
-.figure:nth-child(3n+1) { padding-left: 0; border-left: 0; }
-.figure:nth-child(-n+3) { border-top: 0; padding-top: 0.3rem; }
-.fig-n { font-family: var(--display); font-weight: 700; font-size: clamp(2rem, 3.6vw, 3rem); line-height: 1.05; letter-spacing: -0.02em; font-variant-numeric: lining-nums tabular-nums; }
-.fig-l { margin-top: 0.35rem; font-size: 0.9rem; color: var(--fg2); max-width: 20rem; }
+/* the dateline strip under the cover */
+.strip { display: grid; grid-template-columns: 1.35fr 1fr 1fr 1fr; border-top: 1.5px solid var(--fg); border-bottom: 1px solid var(--hair); background: color-mix(in srgb, var(--bg) 55%, transparent); }
+.strip > div { padding: 0.7rem 1rem 0.8rem; border-left: 1px solid var(--hair); min-width: 0; }
+.strip > div:first-child { border-left: 0; padding-left: 0; }
+.strip dt { font-size: 0.72rem; letter-spacing: 0.03em; color: var(--muted); }
+.strip dd { font-size: 1.08rem; font-weight: 500; line-height: 1.35; }
+.strip dd.name { font-family: var(--display); font-weight: 700; letter-spacing: -0.01em; }
+.strip small { display: block; font-size: 0.78rem; font-weight: 400; font-style: italic; color: var(--muted); }
+.age-n { font-variant-numeric: lining-nums tabular-nums; }
 @media (max-width: 760px) {
-	.figures { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-	.figure, .figure:nth-child(3n+1), .figure:nth-child(-n+3) { padding: 1rem 0.8rem 1rem 0; border-left: 0; border-top: 1px solid var(--hair); }
-	.figure:nth-child(even) { padding-left: 1rem; border-left: 1px solid var(--hair); }
-	.figure:nth-child(-n+2) { border-top: 0; padding-top: 0.3rem; }
+	.strip { grid-template-columns: 1fr 1fr; }
+	.strip > div:nth-child(3) { border-left: 0; padding-left: 0; }
+	.strip > div:nth-child(n+3) { border-top: 1px solid var(--hair); }
 }
 
-/* ── hairline rows: honours, timeline, research ── */
+/* ── sections: a margin label, then the body ── */
+.sec { display: grid; grid-template-columns: 11.5rem minmax(0, 1fr); gap: 0.8rem 3rem; margin-top: 4.4rem; padding-top: 1rem; border-top: 1px solid var(--hair); scroll-margin-top: 4.4rem; }
+.sec-label { position: sticky; top: 4.8rem; align-self: start; }
+.sec-label h2 { font-family: var(--display); font-style: italic; font-weight: 600; font-size: 1.5rem; line-height: 1.15; letter-spacing: -0.01em; }
+.sec-label p { margin-top: 0.3rem; font-style: italic; font-size: 0.85rem; color: var(--muted); }
+@media (max-width: 899px) {
+	.sec { grid-template-columns: minmax(0, 1fr); margin-top: 3.4rem; }
+	.sec-label { position: static; display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; margin-bottom: 0.6rem; }
+	.sec-label p { margin-top: 0; text-align: right; }
+}
+
+/* ── reveal on scroll ── */
+.reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.6s var(--ease), transform 0.6s var(--ease); }
+.reveal.visible { opacity: 1; transform: none; }
+
+/* ── about ── */
+.standfirst { font-size: clamp(1.15rem, 1.7vw, 1.45rem); line-height: 1.8; text-align: justify; hyphens: auto; max-width: 52rem; }
+.standfirst::first-letter { float: left; font-family: var(--display); font-weight: 700; font-size: 4.4em; line-height: 0.78; margin: -0.1em 0.08em 0 -0.02em; }
+
+/* ── numbers, set as copy ── */
+.numbers { font-size: clamp(1.25rem, 2.1vw, 1.85rem); line-height: 1.6; max-width: 54rem; color: var(--fg2); }
+.n { font-family: var(--display); font-weight: 700; font-size: 1.55em; line-height: 1; letter-spacing: -0.02em; color: var(--fg); font-variant-numeric: lining-nums tabular-nums; }
+
+/* ── hairline rows: honours ── */
 .rows { border-bottom: 1px solid var(--hair); }
-.row { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr) 1.4rem; gap: 0.3rem 1.5rem; align-items: baseline; padding: 0.95rem 0; border-top: 1px solid var(--hair); color: var(--fg); text-decoration: none; transition: padding-left 0.25s var(--ease); }
-.row:first-child { border-top: 0; }
+.row { display: grid; grid-template-columns: 5.5rem minmax(0, 1fr) 1.4rem; gap: 0.2rem 1.5rem; align-items: baseline; padding: 0.95rem 0; border-top: 1px solid var(--hair); color: var(--fg); text-decoration: none; transition: padding-left 0.25s var(--ease); }
+.row:first-child { border-top: 0; padding-top: 0.3rem; }
 a.row:hover { padding-left: 0.4rem; }
 .row-y { font-size: 0.74rem; letter-spacing: 0.03em; color: var(--muted); }
-.row-t { font-family: var(--display); font-weight: 700; font-size: 1.12rem; letter-spacing: -0.01em; line-height: 1.34; }
-.row-n { display: block; font-family: var(--serif); font-weight: 400; font-size: 0.92rem; letter-spacing: 0; color: var(--fg2); margin-top: 0.15rem; }
+.row-t { font-family: var(--display); font-weight: 700; font-size: 1.15rem; letter-spacing: -0.01em; line-height: 1.34; }
+.row-n { display: block; font-family: var(--serif); font-weight: 400; font-size: 0.93rem; letter-spacing: 0; color: var(--fg2); margin-top: 0.15rem; }
 .row-a { color: var(--muted); text-align: right; transition: transform 0.18s ease, color 0.18s ease; }
 a.row:hover .row-a { color: var(--fg); transform: translate(0.15rem, -0.1rem); }
-.tl .row { grid-template-columns: 6.5rem minmax(0, 1fr); }
-.tl .row-y { font-family: var(--display); font-style: italic; font-weight: 600; font-size: 1.25rem; letter-spacing: 0; color: var(--fg); }
-.tl ul { list-style: none; display: grid; gap: 0.2rem; }
-.tl li { font-size: 1rem; color: var(--fg2); }
+@media (max-width: 620px) { .row { grid-template-columns: minmax(0, 1fr) 1.2rem; } .row-y { grid-column: 1 / -1; } }
+
+/* ── the timeline scrubber ── */
+.tl-axis { position: relative; display: grid; height: 4rem; border-bottom: 1.5px solid var(--fg); cursor: ew-resize; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+.tl-tick { position: relative; height: 100%; }
+.tl-tick::before { content: ''; position: absolute; left: 50%; bottom: 0; width: 1px; height: 0.6rem; background: var(--muted2); transition: height 0.3s var(--out), background 0.3s ease; }
+.tl-tick.has::before { height: 1.4rem; background: var(--fg); }
+.tl-tick.on::before { height: 2.5rem; width: 2px; margin-left: -0.5px; background: var(--fg); }
+.tl-tick span { position: absolute; left: 50%; top: 0.1rem; transform: translateX(-50%); font-size: 0.7rem; letter-spacing: 0.02em; color: var(--muted); white-space: nowrap; opacity: 0; transition: opacity 0.2s ease, color 0.2s ease; }
+.tl-tick.has span { opacity: 1; }
+.tl-tick.on span { opacity: 1; color: var(--fg); font-weight: 600; }
+.tl-ends { display: flex; justify-content: space-between; margin-top: 0.35rem; font-size: 0.72rem; font-style: italic; color: var(--muted); }
+.tl-panel { display: grid; grid-template-columns: 11rem minmax(0, 1fr); gap: 0.5rem 2rem; align-items: start; margin-top: 1.4rem; min-height: 9.5rem; }
+.tl-year { font-family: var(--display); font-style: italic; font-weight: 600; font-size: clamp(3rem, 6vw, 4.6rem); line-height: 0.95; letter-spacing: -0.03em; font-variant-numeric: lining-nums; }
+.tl-age { font-style: italic; font-size: 0.85rem; color: var(--muted); margin-bottom: 0.45rem; }
+.tl-list { list-style: none; display: grid; gap: 0.3rem; }
+.tl-list li { font-size: 1.05rem; color: var(--fg2); padding-left: 1rem; position: relative; animation: rise 0.45s var(--out) both; animation-delay: calc(var(--k) * 55ms); }
+.tl-list li::before { content: '—'; position: absolute; left: 0; color: var(--muted2); }
+.tl-list li.quiet { font-style: italic; color: var(--muted); padding-left: 0; }
+.tl-list li.quiet::before { content: none; }
+.tl-year.flip { animation: rise 0.4s var(--out); }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 @media (max-width: 620px) {
-	.row { grid-template-columns: minmax(0, 1fr) 1.2rem; }
-	.row-y { grid-column: 1 / -1; }
-	.tl .row { grid-template-columns: 1fr; gap: 0.2rem; }
+	.tl-tick span { font-size: 0.62rem; }
+	.tl-tick.has span { opacity: 0; }
+	.tl-tick.on span { opacity: 1; }
+	.tl-panel { grid-template-columns: 1fr; }
 }
 
-/* ── projects: three columns, descriptions shown ── */
-.work-cols { display: grid; grid-template-columns: 1fr; gap: 2.2rem; }
-@media (min-width: 900px) { .work-cols { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 2.6rem; } }
-.work-cat { display: flex; align-items: baseline; gap: 0.45rem; padding-bottom: 0.4rem; font-style: italic; font-weight: 500; font-size: 0.95rem; color: var(--muted); border-bottom: 1px solid var(--hair); }
-.work-cat svg { flex: none; width: 1.05rem; height: 1.05rem; align-self: center; color: var(--fg); }
-.work-count { font-style: normal; font-size: 0.72rem; color: var(--muted2); }
-.proj { padding: 0.95rem 0 0.4rem; border-top: 1px solid var(--hair); }
-.work-cat + .proj { border-top: 0; }
-.proj-t { display: flex; align-items: baseline; gap: 0.5rem; font-family: var(--display); font-weight: 700; font-size: 1.2rem; letter-spacing: -0.01em; line-height: 1.34; }
-.proj-b { font-size: 0.74rem; letter-spacing: 0.02em; color: var(--muted); margin-top: 0.25rem; }
-.proj-d p { margin-top: 0.5rem; font-size: 0.93rem; line-height: 1.75; color: var(--fg2); }
+/* ── work: a numbered catalogue ── */
+.filters { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.5rem 1.4rem; margin-bottom: 0.9rem; }
+.filter { display: inline-flex; align-items: center; gap: 0.4rem; padding-bottom: 2px; font-style: italic; font-size: 0.98rem; color: var(--muted); border-bottom: 1px solid transparent; transition: color 0.18s ease, border-color 0.18s ease; }
+.filter svg { width: 1rem; height: 1rem; flex: none; }
+.filter:hover { color: var(--fg); }
+.filter[aria-pressed="true"] { color: var(--fg); border-bottom-color: var(--fg); }
+.filter sup { font-style: normal; font-size: 0.65rem; color: var(--muted2); }
+.filters .ghost-link { margin-left: auto; }
+.cat { list-style: none; border-top: 1.5px solid var(--fg); border-bottom: 1px solid var(--hair); }
+.cat-row { border-top: 1px solid var(--hair); }
+.cat-row:first-child { border-top: 0; }
+.cat-row[hidden] { display: none; }
+.cat-row.pop { animation: rise 0.4s var(--out) both; animation-delay: calc(var(--k) * 35ms); }
+.cat-head { width: 100%; display: grid; grid-template-columns: 2.8rem minmax(0, 1fr) auto 1.4rem; align-items: baseline; gap: 1rem; padding: 0.95rem 0; transition: padding-left 0.25s var(--ease); }
+.cat-head:hover { padding-left: 0.4rem; }
+.cat-n { font-family: var(--display); font-style: italic; font-size: 0.95rem; color: var(--muted); font-variant-numeric: lining-nums tabular-nums; }
+.cat-name { display: flex; align-items: baseline; gap: 0.55rem; min-width: 0; font-family: var(--display); font-weight: 700; font-size: clamp(1.15rem, 1.7vw, 1.42rem); letter-spacing: -0.01em; line-height: 1.3; }
+.cat-role { font-size: 0.78rem; letter-spacing: 0.02em; color: var(--muted); text-align: right; white-space: nowrap; }
+.cat-plus { text-align: right; }
+.cat-plus::after { content: '+'; font-family: var(--display); font-size: 1.3rem; line-height: 1; }
+.cat-row.open .cat-plus::after { content: '\2212'; }
+.cat-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.34s var(--ease); }
+.cat-body > div { overflow: hidden; min-height: 0; padding-left: 3.8rem; }
+.cat-row.open .cat-body { grid-template-rows: 1fr; }
+.cat-body p { padding-bottom: 1.1rem; max-width: 48rem; font-size: 0.97rem; line-height: 1.8; color: var(--fg2); }
 .status { display: inline-block; width: 0.6rem; height: 0.6rem; flex-shrink: 0; transform: translateY(-0.04em); }
 .status-live { background: var(--fg); }
 .status-paused { box-shadow: inset 0 0 0 1.5px var(--fg); }
 .status-shelved { background: var(--muted2); }
 .chip { display: inline-block; margin-right: 0.6rem; font-size: 0.78rem; letter-spacing: 0.02em; color: var(--fg); text-decoration: none; border-bottom: 1px solid var(--fg); padding-bottom: 1px; transition: opacity 0.18s ease; }
 .chip:hover { opacity: 0.55; }
-.legend { margin-top: 1.4rem; font-size: 0.8rem; color: var(--muted); display: flex; align-items: center; gap: 0.3rem; flex-wrap: wrap; }
+.legend { margin-top: 1rem; font-size: 0.8rem; color: var(--muted); display: flex; align-items: center; gap: 0.3rem; flex-wrap: wrap; }
+@media (max-width: 620px) {
+	.cat-head { grid-template-columns: 2rem minmax(0, 1fr) 1.2rem; row-gap: 0.15rem; }
+	.cat-plus { grid-column: 3; grid-row: 1; }
+	.cat-role { grid-column: 2; grid-row: 2; text-align: left; white-space: normal; }
+	.cat-body > div { padding-left: 3rem; }
+	.filters .ghost-link { margin-left: 0; }
+}
 
 /* ── research ── */
-.paper-row { padding: 1rem 0; border-top: 1px solid var(--hair); }
-.paper-row:first-child { border-top: 0; }
-.paper-t { font-style: italic; font-weight: 500; font-size: 1.08rem; line-height: 1.4; }
-.paper-b { font-size: 0.74rem; letter-spacing: 0.02em; color: var(--muted); margin-top: 0.25rem; }
+.paper-row { padding: 1.1rem 0; border-top: 1px solid var(--hair); }
+.paper-row:first-child { border-top: 0; padding-top: 0.3rem; }
+.paper-t { font-family: var(--display); font-style: italic; font-weight: 600; font-size: clamp(1.12rem, 1.5vw, 1.3rem); line-height: 1.35; letter-spacing: -0.01em; }
+.paper-b { font-size: 0.74rem; letter-spacing: 0.02em; color: var(--muted); margin-top: 0.3rem; }
+.paper-s { margin-top: 0.5rem; font-size: 0.97rem; line-height: 1.75; color: var(--fg2); max-width: 52rem; }
 .paper-row .chip, .paper-row .ghost-link { margin-top: 0.6rem; }
-.paper-s { margin-top: 0.5rem; font-size: 0.95rem; line-height: 1.75; color: var(--fg2); max-width: 60rem; }
 .ghost-link { font-size: 0.78rem; letter-spacing: 0.02em; color: var(--fg); border-bottom: 1px solid var(--hair); padding-bottom: 1px; transition: border-color 0.18s ease; }
 .ghost-link:hover { border-color: var(--fg); }
 .abs { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.32s var(--ease); }
 .abs > div { overflow: hidden; min-height: 0; }
 .abs.open { grid-template-rows: 1fr; }
-.abs p { padding: 0.4rem 0; font-size: 0.95rem; line-height: 1.8; color: var(--fg2); text-align: justify; hyphens: auto; max-width: 64rem; }
+.abs p { padding: 0.6rem 0 0.2rem; font-size: 0.95rem; line-height: 1.8; color: var(--fg2); text-align: justify; hyphens: auto; max-width: 56rem; }
 
 /* ── articles ── */
-.article-list { border-bottom: 1px solid var(--hair); }
-.article-row { position: relative; display: grid; grid-template-columns: 1fr auto; gap: 0.8rem 1.5rem; padding: 1.25rem 2.4rem 1.25rem 0; border-top: 1px solid var(--hair); color: var(--fg); text-decoration: none; transition: padding-left 0.25s var(--ease); }
-.article-row:first-child { border-top: 0; }
+.article-row { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.4rem 1.5rem; align-items: baseline; padding: 1rem 2rem 1rem 0; border-top: 1px solid var(--hair); color: var(--fg); text-decoration: none; transition: padding-left 0.25s var(--ease); }
+.article-row:first-child { border-top: 0; padding-top: 0.3rem; }
+.article-row:last-child { border-bottom: 1px solid var(--hair); }
 .article-row:hover { padding-left: 0.45rem; }
-.article-copy h3 { font-family: var(--display); font-size: clamp(1.25rem, 2vw, 1.65rem); font-style: italic; font-weight: 600; line-height: 1.25; letter-spacing: -0.01em; }
-.article-copy p { max-width: 47rem; margin-top: 0.4rem; color: var(--fg2); font-size: 0.94rem; line-height: 1.6; }
-.article-details { display: flex; flex-direction: column; align-items: flex-end; gap: 0.2rem; padding-top: 0.15rem; color: var(--muted); font-size: 0.74rem; letter-spacing: 0.025em; white-space: nowrap; }
+.article-row h3 { font-family: var(--display); font-style: italic; font-weight: 600; font-size: clamp(1.15rem, 1.7vw, 1.4rem); line-height: 1.25; letter-spacing: -0.01em; }
+.article-row p { grid-column: 1; color: var(--fg2); font-size: 0.93rem; }
+.article-row time { color: var(--muted); font-size: 0.74rem; letter-spacing: 0.025em; white-space: nowrap; }
 .article-arrow { position: absolute; top: 50%; right: 0; color: var(--muted); transform: translateY(-50%); transition: color 0.18s ease, transform 0.18s ease; }
 .article-row:hover .article-arrow { color: var(--fg); transform: translate(0.15rem, -50%); }
-@media (max-width: 620px) { .article-row { grid-template-columns: 1fr; } .article-details { flex-direction: row; gap: 0.6rem; } }
+@media (max-width: 620px) { .article-row { grid-template-columns: 1fr; } .article-row time { grid-row: 3; } }
 
-/* ── associations ── */
-.assoc-list { border-bottom: 1px solid var(--hair); }
-.assoc-row { display: grid; grid-template-columns: 2.6rem minmax(0, 1fr) auto; align-items: center; gap: 1rem; padding: 1rem 0; border-top: 1px solid var(--hair); color: var(--fg); text-decoration: none; transition: padding-left 0.25s var(--ease); }
-.assoc-row:first-child { border-top: 0; }
-.assoc-row:hover { padding-left: 0.4rem; }
-.assoc-logo { display: flex; align-items: center; justify-content: center; width: 2.6rem; height: 2.6rem; }
-.assoc-logo svg, .assoc-logo img { display: block; width: 100%; height: 100%; object-fit: contain; }
-.assoc-name { display: block; font-family: var(--display); font-weight: 700; font-size: 1.2rem; letter-spacing: -0.01em; line-height: 1.34; }
-.assoc-desc { display: block; font-size: 0.9rem; color: var(--fg2); }
-.assoc-role { display: block; font-size: 0.74rem; letter-spacing: 0.02em; color: var(--muted); margin-top: 0.2rem; }
-.assoc-arrow { color: var(--muted); }
-.assoc-wrap { display: grid; grid-template-columns: 1fr; gap: 1.6rem; }
-.assoc-fig img { display: block; width: 100%; height: auto; border: 1px solid var(--hair); }
-@media (min-width: 840px) { .assoc-wrap { grid-template-columns: 1fr 1fr; gap: 3rem; align-items: stretch; } .assoc-fig { position: relative; min-height: 18rem; } .assoc-fig img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; } }
-[data-theme="dark"] .assoc-fig img { filter: brightness(0.86) contrast(1.05); border-color: transparent; }
+/* ── associations, boxed like a front page ── */
+.orgs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.org { display: flex; flex-direction: column; padding: 0.3rem 1.2rem 0.6rem; border-left: 1px solid var(--hair); color: var(--fg); text-decoration: none; }
+.org:first-child { border-left: 0; padding-left: 0; }
+.org-logo { display: block; width: 2.8rem; height: 2.8rem; margin-bottom: 0.8rem; transition: transform 0.35s cubic-bezier(0.34,1.4,0.64,1); }
+.org-logo svg { display: block; width: 100%; height: 100%; }
+.org:hover .org-logo { transform: translateY(-3px) rotate(-5deg); }
+.org-name { font-family: var(--display); font-weight: 700; font-size: 1.15rem; letter-spacing: -0.01em; line-height: 1.3; }
+.org-name i { font-style: normal; font-family: var(--serif); font-weight: 400; color: var(--muted); font-size: 0.85em; margin-left: 0.2rem; transition: transform 0.18s ease; display: inline-block; }
+.org:hover .org-name i { transform: translate(0.12rem, -0.1rem); color: var(--fg); }
+.org-desc { margin-top: 0.25rem; font-size: 0.88rem; line-height: 1.5; color: var(--fg2); }
+.org-role { margin-top: 0.4rem; font-size: 0.74rem; letter-spacing: 0.02em; color: var(--muted); }
+@media (max-width: 760px) {
+	.orgs { grid-template-columns: 1fr 1fr; }
+	.org:nth-child(odd) { border-left: 0; padding-left: 0; }
+	.org:nth-child(n+3) { border-top: 1px solid var(--hair); padding-top: 1rem; }
+}
 
 /* ── off the clock ── */
-.clock-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 1rem; align-items: baseline; padding: 0.9rem 0; border-top: 1px solid var(--hair); }
-.clock-row:first-child { border-top: 0; }
+.clock-wrap { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: 2.4rem; align-items: start; }
+.clock-fig img { display: block; width: 100%; height: auto; border: 1px solid var(--hair); }
+[data-theme="dark"] .clock-fig img { filter: brightness(0.86) contrast(1.05); border-color: transparent; }
+.clock-fig figcaption { margin-top: 0.4rem; font-style: italic; font-size: 0.78rem; color: var(--muted); }
+.clock-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 1rem; align-items: baseline; padding: 0.85rem 0; border-top: 1px solid var(--hair); }
+.clock-row:first-child { border-top: 0; padding-top: 0.2rem; }
+.clock-row:last-child { border-bottom: 1px solid var(--hair); }
 .clock-t { display: block; font-family: var(--display); font-weight: 700; font-size: 1.12rem; letter-spacing: -0.01em; }
 .clock-n { display: block; font-size: 0.9rem; color: var(--fg2); }
 .clock-out { display: block; font-size: 0.85rem; font-style: italic; color: var(--muted); font-variant-numeric: tabular-nums; white-space: pre; overflow: hidden; text-overflow: ellipsis; }
 .clock-out:empty { display: none; }
 .clock-a { white-space: nowrap; }
+@media (max-width: 760px) { .clock-wrap { grid-template-columns: 1fr; } .clock-fig { max-width: 24rem; } }
 
-/* ── contact ── */
-.contact-intro { font-size: 1.15rem; line-height: 1.6; max-width: 36rem; }
-.contact-loc { margin-top: 0.5rem; margin-bottom: 1.6rem; font-size: 0.74rem; letter-spacing: 0.04em; color: var(--muted); }
-.c-link { display: grid; grid-template-columns: 6rem 1fr; align-items: baseline; gap: 1rem; padding: 0.85rem 0; border-top: 1px solid var(--hair); text-decoration: none; color: var(--fg); width: 100%; transition: padding-left 0.25s var(--ease); }
+/* ── contact & sign-off ── */
+.thanks { font-family: var(--display); font-style: italic; font-weight: 600; font-size: clamp(1.8rem, 3.4vw, 2.8rem); line-height: 1.1; letter-spacing: -0.02em; }
+.contact-intro { margin-top: 0.7rem; margin-bottom: 1.6rem; font-size: 1.12rem; line-height: 1.6; max-width: 38rem; color: var(--fg2); }
+.c-link { display: grid; grid-template-columns: 6.5rem 1fr; align-items: baseline; gap: 1rem; padding: 0.8rem 0; border-top: 1px solid var(--hair); text-decoration: none; color: var(--fg); width: 100%; transition: padding-left 0.25s var(--ease); }
 .c-link:last-child { border-bottom: 1px solid var(--hair); }
 .c-link:hover { padding-left: 0.5rem; }
-.c-link dt, .c-link .dt { font-size: 0.74rem; letter-spacing: 0.03em; color: var(--muted); }
-.c-link dd, .c-link .dd { font-size: 1rem; font-weight: 500; overflow-wrap: anywhere; }
-.c-link:hover dd, .c-link:hover .dd-v { text-decoration: underline; text-underline-offset: 3px; }
-.c-hint { font-style: italic; font-weight: 400; font-size: 0.8rem; color: var(--muted); margin-left: 0.4rem; }
+.c-link .dt { font-size: 0.74rem; letter-spacing: 0.03em; color: var(--muted); }
+.c-link .dd { font-size: 1rem; font-weight: 500; overflow-wrap: anywhere; }
+.c-link:hover .dd-v { text-decoration: underline; text-underline-offset: 3px; }
+.c-hint { font-style: italic; font-weight: 400; font-size: 0.8rem; color: var(--muted); margin-left: 0.5rem; }
+.signoff { margin-top: 2.6rem; display: inline-block; }
+.signoff span { font-family: var(--display); font-style: italic; font-weight: 600; font-size: clamp(1.5rem, 2.6vw, 2.1rem); letter-spacing: -0.01em; }
+.sig-line { display: block; width: 100%; height: 1.1rem; margin-top: 0.1rem; overflow: visible; }
+.sig-line path { fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-dasharray: 340; stroke-dashoffset: 340; transition: stroke-dashoffset 1.8s var(--ease) 0.3s; }
+.signoff.drawn .sig-line path { stroke-dashoffset: 0; }
 
 /* ── colophon ── */
 .colophon { margin-top: 4rem; padding-top: 1.1rem; border-top: 1px solid var(--hair); display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 0.6rem 1.4rem; }
 .colophon-line { font-style: italic; font-size: 0.82rem; color: var(--muted); }
 .colophon-links { display: flex; gap: 1.2rem; }
-
-/* ── reveal on scroll ── */
-.reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.6s var(--ease), transform 0.6s var(--ease); }
-.reveal.visible { opacity: 1; transform: none; }
 
 /* ── toast ── */
 .toast { position: fixed; left: 50%; bottom: 2rem; transform: translateX(-50%) translateY(1.5rem); z-index: 450; padding: 0.55rem 1.1rem; max-width: min(92vw, 34rem);
@@ -388,20 +443,24 @@ a.row:hover .row-a { color: var(--fg); transform: translate(0.15rem, -0.1rem); }
 @keyframes squash { 30% { transform: scale(1.4, 0.5); } 100% { transform: scale(0); opacity: 0; } }
 
 @media (prefers-reduced-motion: reduce) {
-	*, *::before, *::after { animation-duration: 0.001s !important; animation-iteration-count: 1 !important; transition-duration: 0.001s !important; }
+	*, *::before, *::after { animation-duration: 0.001s !important; animation-iteration-count: 1 !important; transition-duration: 0.001s !important; transition-delay: 0s !important; }
 	html { scroll-behavior: auto; }
-	.reveal { opacity: 1; transform: none; }
+	.reveal, .hl-in, .front-fig { opacity: 1 !important; transform: none !important; }
 }
 @media print {
 	@page { margin: 14mm; }
 	html { background: #fff; }
-	.page-bg, #navbar, #scrollProgress, .toast, .term, .modal, .fly, #beyond, .colophon, .ghost-link { display: none !important; }
+	.page-bg, #navbar, #scrollProgress, .toast, .term, .modal, .fly, #beyond, #timeline, .colophon, .filters, .ghost-link, .cat-plus, .signoff, .front-fig { display: none !important; }
 	body { color: #000; font-size: 10.5pt; }
 	.paper { padding: 0; max-width: none; }
-	.reveal { opacity: 1 !important; transform: none !important; }
-	.section { margin-top: 1.6rem; }
-	.proj, .row, .paper-row, .assoc-row, .figure { break-inside: avoid; }
-	.assoc-fig { display: none; }
+	.front { min-height: 0; }
+	.headline { font-size: 30pt; }
+	.reveal, .hl-in { opacity: 1 !important; transform: none !important; }
+	.sec { margin-top: 1.4rem; grid-template-columns: 8rem 1fr; }
+	.sec-label { position: static; }
+	.cat-body { grid-template-rows: 1fr; }
+	.cat-row[hidden] { display: block; }
+	.row, .cat-row, .paper-row, .org { break-inside: avoid; }
 }
 	</style>
 </head>
@@ -417,7 +476,8 @@ a.row:hover .row-a { color: var(--fg); transform: translate(0.15rem, -0.1rem); }
 	<div class="nav-links">
 		<a href="#numbers" class="nav-link">numbers</a>
 		<a href="#honours" class="nav-link">honours</a>
-		<a href="#work" class="nav-link">(some) work</a>
+		<a href="#timeline" class="nav-link">timeline</a>
+		<a href="#work" class="nav-link">work</a>
 		<a href="#research" class="nav-link">research</a>
 		<a href="#contact" class="nav-link">contact</a>
 	</div>
@@ -428,43 +488,42 @@ a.row:hover .row-a { color: var(--fg); transform: translate(0.15rem, -0.1rem); }
 </nav>
 
 <main class="paper" id="top">
-	<header class="masthead reveal">
+	<header class="front" id="front">
 		<p class="cover" id="cover" data-text="if you are here, likely i sent this link within my application."><span id="coverText"></span><span class="caret" aria-hidden="true"></span></p>
-		<h1 class="nameplate">mehmet utku öztürk</h1>
-		<p class="motto" aria-label="unpredictable, unsatisfied, unconventional.">
-			<span class="word"><button class="un" type="button" tabindex="-1" aria-hidden="true" data-w="predictable">un</button><span class="rest">predictable,</span></span>
-			<span class="word"><button class="un" type="button" tabindex="-1" aria-hidden="true" data-w="satisfied">un</button><span class="rest">satisfied,</span></span>
-			<span class="word"><button class="un" type="button" tabindex="-1" aria-hidden="true" data-w="conventional">un</button><span class="rest">conventional.</span></span>
-		</p>
+		<div class="front-grid">
+			<h1 class="headline" aria-label="unpredictable, unsatisfied, unconventional.">
+				<span class="hl"><span class="hl-in"><button class="un" type="button" tabindex="-1" aria-hidden="true" data-w="predictable">un</button><span class="rest">predictable,</span></span></span>
+				<span class="hl"><span class="hl-in"><button class="un" type="button" tabindex="-1" aria-hidden="true" data-w="satisfied">un</button><span class="rest">satisfied,</span></span></span>
+				<span class="hl"><span class="hl-in"><button class="un" type="button" tabindex="-1" aria-hidden="true" data-w="conventional">un</button><span class="rest">conventional.</span></span></span>
+			</h1>
+			<figure class="front-fig"><div class="fig-slot"><img src={`${A}/portrait.png`} width="440" height="345" alt="engraved portrait of mehmet utku öztürk" fetchpriority="high" /></div></figure>
+		</div>
+		<dl class="strip">
+			<div><dt>name</dt><dd class="name">mehmet utku öztürk</dd><small>machine learning developer &amp; ai researcher</small></div>
+			<div><dt>based</dt><dd>ankara, türkiye</dd><small><span id="clock">--:--</span></small></div>
+			<div><dt>age</dt><dd><span class="age-n" id="age">17.000000000</span></dd><small>live, since 29 november 2008</small></div>
+			<div><dt>sat</dt><dd>{sat.math + sat.rw}</dd><small>math {sat.math} · reading &amp; writing {sat.rw}</small></div>
+		</dl>
 	</header>
 
-	<section class="lead reveal" aria-label="introduction">
-		<div class="lead-body">
-			<p class="standfirst">started programming when i was 8 with small apps and scripts. got familiar with c++ and c# by i was 11. started working on machine learning at 13, extremely unsuccessfully finetuned my first llm at 14. since then, i&rsquo;m working on software with a primary focus on artificial consciousness and &ldquo;thinking&rdquo; systems. other than software, i am interested in powerlifting, strongman, martial arts, cognitive science, kinesiology, chess, sudoku, and good coffee.</p>
-			<dl class="particulars">
-				<div><dt>age</dt><dd><span class="age-n" id="age">17.000000000</span><small>born 29 november 2008</small></dd></div>
-				<div><dt>based</dt><dd>ankara, türkiye<small>gmt+3 · <span id="clock">--:--</span></small></dd></div>
-				<div><dt>sat</dt><dd>{sat.math + sat.rw}<small>math {sat.math} · reading &amp; writing {sat.rw}</small></dd></div>
-				<div><dt>focus</dt><dd>llms, neuro-symbolic ai, connectomics</dd></div>
-				<div><dt>email</dt><dd>m@utku.space</dd></div>
-			</dl>
-		</div>
-		<aside class="lead-aside">
-			<figure class="fig"><div class="fig-slot"><img src={`${A}/portrait.png`} width="440" height="345" alt="engraved portrait of mehmet utku öztürk" /></div></figure>
-		</aside>
+	<section id="about" class="sec reveal">
+		<div class="sec-label"><h2>about</h2><p>the short version</p></div>
+		<p class="standfirst">started programming when i was 8 with small apps and scripts. got familiar with c++ and c# by i was 11. started working on machine learning at 13, extremely unsuccessfully finetuned my first llm at 14. since then, i&rsquo;m working on software with a primary focus on artificial consciousness and &ldquo;thinking&rdquo; systems. other than software, i am interested in powerlifting, strongman, martial arts, cognitive science, kinesiology, chess, sudoku, and good coffee.</p>
 	</section>
 
-	<section id="numbers" class="section reveal">
-		<div class="rule-head"><h2 class="rule-head-label">numbers</h2><span class="rule-head-note">the parts that can be counted</span></div>
-		<div class="figures">
-			{figures.map((f) => (
-				<div class="figure"><p class="fig-n"><span data-count={f.to} data-plain={f.plain ? '' : undefined}>{f.plain ? f.to : f.to.toLocaleString('en-US')}</span></p><p class="fig-l">{f.label}</p></div>
-			))}
-		</div>
+	<section id="numbers" class="sec reveal">
+		<div class="sec-label"><h2>numbers</h2><p>the parts that can be counted</p></div>
+		<p class="numbers">
+			<span class="n" data-count={sat.math + sat.rw} data-plain>{sat.math + sat.rw}</span> on the sat: <span class="n" data-count={sat.math} data-plain>{sat.math}</span> in math, <span class="n" data-count={sat.rw} data-plain>{sat.rw}</span> in reading and writing.
+			<span class="n" data-count={projects.length}>{projects.length}</span> projects so far and <span class="n" data-count={papers.length}>{papers.length}</span> papers, one of them peer-reviewed.
+			<span class="n" data-count="139255">139,255</span> fruit fly neurons wired into doom.
+			<span class="n" data-count="14244">14,244</span> wikipedia articles sorted by a model of mine.
+			and a first program, at <span class="n" data-count="8">8</span>.
+		</p>
 	</section>
 
-	<section id="honours" class="section reveal">
-		<div class="rule-head"><h2 class="rule-head-label">honours</h2><span class="rule-head-note">labels, papers, memberships</span></div>
+	<section id="honours" class="sec reveal">
+		<div class="sec-label"><h2>honours</h2><p>labels, papers, memberships</p></div>
 		<div class="rows">
 			{honours.map((h) => {
 				const inner = (
@@ -479,34 +538,47 @@ a.row:hover .row-a { color: var(--fg); transform: translate(0.15rem, -0.1rem); }
 		</div>
 	</section>
 
-	<section id="timeline" class="section reveal">
-		<div class="rule-head"><h2 class="rule-head-label">timeline</h2><span class="rule-head-note">newest first</span></div>
-		<div class="rows tl">
-			{timeline.map((t) => <div class="row"><span class="row-y">{t.y}</span><ul>{t.items.map((it) => <li>{it}</li>)}</ul></div>)}
+	<section id="timeline" class="sec reveal">
+		<div class="sec-label"><h2>timeline</h2><p>hover, drag, or use ← →</p></div>
+		<div>
+			<div class="tl-axis" id="tlAxis" role="slider" tabindex="0" aria-label="timeline year" aria-valuemin={FIRST} aria-valuemax={LAST} aria-valuenow={LAST} style={`grid-template-columns: repeat(${years.length}, minmax(0, 1fr))`}>
+				{years.map((y) => <span class={`tl-tick${record[y] ? ' has' : ''}${y === LAST ? ' on' : ''}`} data-y={y}><span>{`’${String(y).slice(2)}`}</span></span>)}
+			</div>
+			<p class="tl-ends"><span>{FIRST}</span><span>{LAST}</span></p>
+			<div class="tl-panel" aria-live="polite">
+				<p class="tl-year" id="tlYear">{LAST}</p>
+				<div><p class="tl-age" id="tlAge">&nbsp;</p><ul class="tl-list" id="tlList">{record[LAST].map((it, k) => <li style={`--k:${k}`}>{it}</li>)}</ul></div>
+			</div>
 		</div>
 	</section>
 
-	<section id="work" class="section reveal">
-		<div class="rule-head"><h2 class="rule-head-label">(some) work</h2><span class="rule-head-note">{projects.length} projects</span></div>
-		<div class="work-cols">
-			{cats.map((c) => (
-				<div class="work-col">
-					<h3 class="work-cat"><Fragment set:html={c.icon} />{c.key}<span class="work-count">{c.items.length}</span></h3>
-					{c.items.map((p) => (
-						<article class="proj">
-							<p class="proj-t"><span class={`status status-${p.status}`} aria-label={statusLabel[p.status]}></span>{p.name}</p>
-							<p class="proj-b">{p.role}</p>
-							<div class="proj-d" set:html={absolute(p.body)} />
-						</article>
-					))}
-				</div>
-			))}
+	<section id="work" class="sec reveal">
+		<div class="sec-label"><h2>work</h2><p>{projects.length} projects, numbered</p></div>
+		<div>
+			<div class="filters" role="group" aria-label="filter projects">
+				<button class="filter" type="button" data-f="all" aria-pressed="true">all<sup>{projects.length}</sup></button>
+				{categories.map((c) => <button class="filter" type="button" data-f={c} aria-pressed="false"><Fragment set:html={categoryIcon[c]} />{c}<sup>{catCount(c)}</sup></button>)}
+				<button class="ghost-link" type="button" id="openAll">open all</button>
+			</div>
+			<ol class="cat" id="cat">
+				{projects.map((p, i) => (
+					<li class="cat-row" data-cat={p.category}>
+						<button class="cat-head" type="button" aria-expanded="false" aria-controls={`proj${i}`}>
+							<span class="cat-n">{`nº${String(i + 1).padStart(2, '0')}`}</span>
+							<span class="cat-name"><span class={`status status-${p.status}`} aria-label={statusLabel[p.status]}></span>{p.name}</span>
+							<span class="cat-role">{p.role}</span>
+							<span class="cat-plus" aria-hidden="true"></span>
+						</button>
+						<div class="cat-body" id={`proj${i}`}><div set:html={absolute(p.body)} /></div>
+					</li>
+				))}
+			</ol>
+			<p class="legend"><span class="status status-live"></span> active &nbsp;·&nbsp; <span class="status status-paused"></span> paused &nbsp;·&nbsp; <span class="status status-shelved"></span> shelved</p>
 		</div>
-		<p class="legend"><span class="status status-live"></span> active &nbsp;·&nbsp; <span class="status status-paused"></span> paused &nbsp;·&nbsp; <span class="status status-shelved"></span> shelved</p>
 	</section>
 
-	<section id="research" class="section reveal">
-		<div class="rule-head"><h2 class="rule-head-label">research</h2></div>
+	<section id="research" class="sec reveal">
+		<div class="sec-label"><h2>research</h2><p>{papers.length} papers</p></div>
 		<div class="rows">
 			{papers.map((p, i) => (
 				<article class="paper-row">
@@ -523,65 +595,70 @@ a.row:hover .row-a { color: var(--fg); transform: translate(0.15rem, -0.1rem); }
 		</div>
 	</section>
 
-	<section id="articles" class="section reveal">
-		<div class="rule-head"><h2 class="rule-head-label">articles</h2></div>
-		<div class="article-list">
+	<section id="articles" class="sec reveal">
+		<div class="sec-label"><h2>articles</h2><p>written on utku.space</p></div>
+		<div>
 			{articles.map((a) => (
 				<a class="article-row" href={articleUrl(a)}>
-					<div class="article-copy"><h3>{a.data.title}</h3><p>{a.data.description}</p></div>
-					<div class="article-details"><time datetime={a.data.published.toISOString()}>{formatDate(a.data.published)}</time><span>{a.data.readingTime}</span></div>
+					<h3>{a.data.title}</h3>
+					<time datetime={a.data.published.toISOString()}>{formatDate(a.data.published)}</time>
+					<p>{a.data.description}</p>
 					<span class="article-arrow" aria-hidden="true">↗</span>
 				</a>
 			))}
 		</div>
 	</section>
 
-	<section id="associations" class="section reveal">
-		<div class="rule-head"><h2 class="rule-head-label">associations</h2></div>
-		<div class="assoc-wrap">
-			<div class="assoc-list">
-				{associations.map((a) => (
-					<a class="assoc-row" href={a.url} target="_blank" rel="noopener">
-						<span class="assoc-logo" set:html={a.logo} />
-						<span><span class="assoc-name">{a.name}</span><span class="assoc-desc">{a.desc}</span><span class="assoc-role">{a.role}</span></span>
-						<span class="assoc-arrow" aria-hidden="true">↗</span>
-					</a>
-				))}
+	<section id="associations" class="sec reveal">
+		<div class="sec-label"><h2>associations</h2><p>where i belong</p></div>
+		<div class="orgs">
+			{associations.map((a) => (
+				<a class="org" href={a.url} target="_blank" rel="noopener">
+					<span class="org-logo" set:html={a.logo} />
+					<span class="org-name">{a.name}<i aria-hidden="true">↗</i></span>
+					<span class="org-desc">{a.desc}</span>
+					<span class="org-role">{a.role}</span>
+				</a>
+			))}
+		</div>
+	</section>
+
+	<section id="beyond" class="sec reveal">
+		<div class="sec-label"><h2>off the clock</h2><p>some of these do something</p></div>
+		<div class="clock-wrap">
+			<figure class="clock-fig"><img src={`${A}/gym.webp`} width="760" height="760" loading="lazy" alt="halftone illustration of a gym, mehmet utku öztürk in the mirror" /><figcaption>competitive class ii powerlifter.</figcaption></figure>
+			<div>
+				<div class="clock-row"><span><span class="clock-t">powerlifting</span><span class="clock-n">the bar doesn&rsquo;t care about your cv.</span><span class="clock-out" id="liftOut"></span></span><button class="ghost-link clock-a" id="lift" type="button">load the bar</button></div>
+				<div class="clock-row"><span><span class="clock-t">strongman &amp; martial arts</span><span class="clock-n">heavy things, picked up. discipline, applied.</span></span></div>
+				<div class="clock-row"><span><span class="clock-t">chess</span><span class="clock-n">the knight is the honest piece.</span><span class="clock-out" id="chessOut"></span></span><button class="ghost-link clock-a" id="chess" type="button">move the knight</button></div>
+				<div class="clock-row"><span><span class="clock-t">sudoku</span><span class="clock-n">a 4×4 one, for readers in a hurry.</span></span><button class="ghost-link clock-a" id="sudokuBtn" type="button">solve it</button></div>
+				<div class="clock-row"><span><span class="clock-t">cognitive science &amp; kinesiology</span><span class="clock-n">how minds and bodies move.</span></span></div>
+				<div class="clock-row"><span><span class="clock-t">connectomics</span><span class="clock-n">139,255 neurons of a fruit fly. one of them is loose on this page.</span></span><button class="ghost-link clock-a" id="flyBtn" type="button">release the fly</button></div>
+				<div class="clock-row"><span><span class="clock-t">good coffee</span><span class="clock-n">non-negotiable.</span><span class="clock-out" id="coffeeOut"></span></span><button class="ghost-link clock-a" id="coffee" type="button">pour one</button></div>
 			</div>
-			<figure class="assoc-fig"><img src={`${A}/gym.webp`} width="760" height="760" loading="lazy" alt="halftone illustration of a gym, mehmet utku öztürk in the mirror" /></figure>
 		</div>
 	</section>
 
-	<section id="beyond" class="section reveal">
-		<div class="rule-head"><h2 class="rule-head-label">off the clock</h2><span class="rule-head-note">some of these do something</span></div>
-		<div class="rows">
-			<div class="clock-row"><span><span class="clock-t">powerlifting</span><span class="clock-n">competitive, class ii.</span><span class="clock-out" id="liftOut"></span></span><button class="ghost-link clock-a" id="lift" type="button">load the bar</button></div>
-			<div class="clock-row"><span><span class="clock-t">strongman &amp; martial arts</span><span class="clock-n">heavy things, picked up. discipline, applied.</span></span></div>
-			<div class="clock-row"><span><span class="clock-t">chess</span><span class="clock-n">the knight is the honest piece.</span><span class="clock-out" id="chessOut"></span></span><button class="ghost-link clock-a" id="chess" type="button">move the knight</button></div>
-			<div class="clock-row"><span><span class="clock-t">sudoku</span><span class="clock-n">a 4×4 one, for readers in a hurry.</span></span><button class="ghost-link clock-a" id="sudokuBtn" type="button">solve it</button></div>
-			<div class="clock-row"><span><span class="clock-t">cognitive science &amp; kinesiology</span><span class="clock-n">how minds and bodies move.</span></span></div>
-			<div class="clock-row"><span><span class="clock-t">connectomics</span><span class="clock-n">139,255 neurons of a fruit fly. one of them is loose on this page.</span></span><button class="ghost-link clock-a" id="flyBtn" type="button">release the fly</button></div>
-			<div class="clock-row"><span><span class="clock-t">good coffee</span><span class="clock-n">non-negotiable.</span><span class="clock-out" id="coffeeOut"></span></span><button class="ghost-link clock-a" id="coffee" type="button">pour one</button></div>
+	<section id="contact" class="sec reveal">
+		<div class="sec-label"><h2>contact</h2><p>email is fastest</p></div>
+		<div>
+			<p class="thanks">thanks for reading this far.</p>
+			<p class="contact-intro">if this link came with an application, i&rsquo;d be glad to talk it through. otherwise: open to collaboration, research, and good conversation.</p>
+			<div class="contact-list">
+				<button class="c-link" id="mail" type="button"><span class="dt">email</span><span class="dd"><span class="dd-v">m@utku.space</span><span class="c-hint" id="mailHint">click to copy</span></span></button>
+				<a href="mailto:utku.ozturk@member.mensa.org" class="c-link"><span class="dt">mensa</span><span class="dd dd-v">utku.ozturk@member.mensa.org</span></a>
+				<a href="https://github.com/mutkuoz" target="_blank" rel="me noopener" class="c-link"><span class="dt">github</span><span class="dd dd-v">@mutkuoz</span></a>
+				<a href="https://linkedin.com/in/mutkuoz" target="_blank" rel="me noopener" class="c-link"><span class="dt">linkedin</span><span class="dd dd-v">@mutkuoz</span></a>
+				<a href="https://x.com/mutkuoz" target="_blank" rel="me noopener" class="c-link"><span class="dt">x</span><span class="dd dd-v">@mutkuoz</span></a>
+				<a href="https://huggingface.co/mutkuoz" target="_blank" rel="me noopener" class="c-link"><span class="dt">hugging face</span><span class="dd dd-v">@mutkuoz</span></a>
+				<a href="https://orcid.org/0009-0008-2400-5646" target="_blank" rel="me noopener" class="c-link"><span class="dt">orcid</span><span class="dd dd-v">0009-0008-2400-5646</span></a>
+				<a href={`${A}/`} class="c-link"><span class="dt">website</span><span class="dd dd-v">utku.space</span></a>
+			</div>
+			<p class="signoff" id="signoff"><span>— m. utku öztürk</span><svg class="sig-line" viewBox="0 0 300 18" preserveAspectRatio="none" aria-hidden="true"><path d="M3 11 C 38 3, 70 16, 110 9 S 180 2, 220 10 S 276 15, 297 5" /></svg></p>
 		</div>
 	</section>
 
-	<section id="contact" class="section reveal">
-		<div class="rule-head"><h2 class="rule-head-label">contact</h2></div>
-		<p class="contact-intro">open to collaboration, research, and good conversation.</p>
-		<p class="contact-loc">ankara, türkiye &middot; gmt+3</p>
-		<div class="contact-list">
-			<button class="c-link" id="mail" type="button"><span class="dt">email</span><span class="dd"><span class="dd-v">m@utku.space</span><span class="c-hint" id="mailHint">click to copy</span></span></button>
-			<a href="mailto:utku.ozturk@member.mensa.org" class="c-link"><span class="dt">mensa</span><span class="dd dd-v">utku.ozturk@member.mensa.org</span></a>
-			<a href="https://github.com/mutkuoz" target="_blank" rel="me noopener" class="c-link"><span class="dt">github</span><span class="dd dd-v">@mutkuoz</span></a>
-			<a href="https://linkedin.com/in/mutkuoz" target="_blank" rel="me noopener" class="c-link"><span class="dt">linkedin</span><span class="dd dd-v">@mutkuoz</span></a>
-			<a href="https://x.com/mutkuoz" target="_blank" rel="me noopener" class="c-link"><span class="dt">x</span><span class="dd dd-v">@mutkuoz</span></a>
-			<a href="https://huggingface.co/mutkuoz" target="_blank" rel="me noopener" class="c-link"><span class="dt">hugging face</span><span class="dd dd-v">@mutkuoz</span></a>
-			<a href="https://orcid.org/0009-0008-2400-5646" target="_blank" rel="me noopener" class="c-link"><span class="dt">orcid</span><span class="dd dd-v">0009-0008-2400-5646</span></a>
-			<a href={`${A}/`} class="c-link"><span class="dt">website</span><span class="dd dd-v">utku.space</span></a>
-		</div>
-	</section>
-
-	<footer class="colophon reveal" id="foot">
+	<footer class="colophon" id="foot">
 		<p class="colophon-line" id="eggs">easter eggs found: 0 / 8</p>
 		<p class="colophon-links"><button class="ghost-link" id="termBtn" type="button" title="or press /">terminal</button><button class="ghost-link" id="printBtn" type="button">save as pdf</button></p>
 	</footer>
@@ -638,6 +715,11 @@ a.row:hover .row-a { color: var(--fg); transform: translate(0.15rem, -0.1rem); }
 	const flip = () => setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
 	$('#modeToggle').addEventListener('click', flip);
 
+	/* ── the cover comes up ── */
+	const front = $('#front');
+	const raise = () => front.classList.add('in');
+	if (reduce) raise(); else (document.fonts && document.fonts.ready ? Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 900))]) : Promise.resolve()).then(() => requestAnimationFrame(raise));
+
 	/* ── live age: the integer flips at midnight, 29 november, istanbul time ── */
 	const bday = (y) => Date.UTC(y, 10, 29) - (y <= 2015 ? 2 : 3) * 3600e3;   // utc+2 in winter until 2016, utc+3 since
 	function age(now) {
@@ -650,29 +732,29 @@ a.row:hover .row-a { color: var(--fg); transform: translate(0.15rem, -0.1rem); }
 	const ist = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Istanbul', day: '2-digit', month: '2-digit' }).format(new Date());
 	if (ist === '29/11') setTimeout(() => toast('it’s my birthday today. impeccable timing.', 5000), 3000);
 	const clock = $('#clock'), fmt = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Istanbul', hour: '2-digit', minute: '2-digit', hour12: false });
-	const tickClock = () => { clock.textContent = fmt.format(new Date()) + ' there now'; };
+	const tickClock = () => { clock.textContent = 'gmt+3, ' + fmt.format(new Date()) + ' there now'; };
 	tickClock(); setInterval(tickClock, 15000);
 
 	/* ── the opening line types itself ── */
 	const cover = $('#cover'), coverText = $('#coverText'), line = cover.dataset.text;
 	if (reduce) { coverText.textContent = line; cover.classList.add('done'); }
-	else { let i = 0; setTimeout(function type() { coverText.textContent = line.slice(0, ++i); if (i < line.length) setTimeout(type, line[i - 1] === ',' ? 260 : 26 + Math.random() * 30); else cover.classList.add('done'); }, 400); }
+	else { let i = 0; setTimeout(function type() { coverText.textContent = line.slice(0, ++i); if (i < line.length) setTimeout(type, line[i - 1] === ',' ? 260 : 26 + Math.random() * 30); else cover.classList.add('done'); }, 700); }
 
 	/* ── the “un” comes off, the word is struck, then it snaps back ── */
 	$$('.un').forEach((b) => b.addEventListener('click', () => {
-		const w = b.closest('.word'); if (w.classList.contains('off')) return;
+		const w = b.closest('.hl'); if (w.classList.contains('off')) return;
 		w.classList.add('off');
 		toast({ predictable: 'predictable? no.', satisfied: 'satisfied? not yet.', conventional: 'conventional? never.' }[b.dataset.w]);
 		egg('un');
 		setTimeout(() => w.classList.remove('off'), 1500);
 	}));
 
-	/* ── reveal on scroll, counters ── */
+	/* ── reveal on scroll, counters, the sign-off ── */
 	function count(el) {
 		if (reduce) return;
 		const to = +el.dataset.count, t0 = performance.now(), plain = 'plain' in el.dataset;
 		(function step(t) {
-			const k = Math.min(1, Math.max(0, (t - t0) / 1300)), v = Math.round(to * (1 - Math.pow(1 - k, 3)));
+			const k = Math.min(1, Math.max(0, (t - t0) / 1400)), v = Math.round(to * (1 - Math.pow(1 - k, 3)));
 			el.textContent = plain ? String(v) : v.toLocaleString('en-US');
 			if (k < 1) requestAnimationFrame(step);
 		})(t0);
@@ -683,10 +765,71 @@ a.row:hover .row-a { color: var(--fg); transform: translate(0.15rem, -0.1rem); }
 		$$('[data-count]', e.target).forEach(count);
 	}), { threshold: 0.08 });
 	$$('.reveal').forEach((el) => io.observe(el));
+	new IntersectionObserver((es, o) => es.forEach((e) => { if (e.isIntersecting) { o.disconnect(); e.target.classList.add('drawn'); } }), { threshold: 1 }).observe($('#signoff'));
 	new IntersectionObserver((es, o) => es.forEach((e) => { if (e.isIntersecting) { o.disconnect(); setTimeout(() => egg('end'), 600); } }), { threshold: 1 }).observe($('#foot'));
 
-	const prog = $('#scrollProgress');
-	addEventListener('scroll', () => { const h = document.documentElement.scrollHeight - innerHeight; prog.style.transform = 'scaleX(' + (h > 0 ? scrollY / h : 0) + ')'; }, { passive: true });
+	/* ── scroll progress, and the nav link for the section in view ── */
+	const prog = $('#scrollProgress'), links = $$('.nav-link');
+	const secs = links.map((a) => document.getElementById(a.getAttribute('href').slice(1)));
+	addEventListener('scroll', () => {
+		const h = document.documentElement.scrollHeight - innerHeight; prog.style.transform = 'scaleX(' + (h > 0 ? scrollY / h : 0) + ')';
+		let cur = -1; secs.forEach((s, i) => { if (s.getBoundingClientRect().top < innerHeight * 0.35) cur = i; });
+		links.forEach((a, i) => a.classList.toggle('on', i === cur));
+	}, { passive: true });
+
+	/* ── the timeline scrubber ── */
+	const axis = $('#tlAxis'), ticks = $$('.tl-tick', axis), tlYear = $('#tlYear'), tlAge = $('#tlAge'), tlList = $('#tlList');
+	let cy = data.last;
+	const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+	function ageLine(y) {
+		if (y === 2008) return 'day one.';
+		const now = Date.now(), thisYear = new Date(now).getUTCFullYear();
+		if (y === thisYear && now < bday(y)) return 'aged ' + (y - 2009) + '. ' + (y - 2008) + ' on 29 november.';
+		return 'aged ' + (y - 2009) + '–' + (y - 2008) + '.';
+	}
+	function quiet(y) { return y < 2016 ? 'nothing on record. too young for a keyboard, allegedly.' : 'nothing on record this year. heads down.'; }
+	function showYear(y) {
+		y = Math.max(data.first, Math.min(data.last, y));
+		if (y === cy && tlList.childElementCount) return;
+		cy = y;
+		ticks.forEach((t) => t.classList.toggle('on', +t.dataset.y === y));
+		axis.setAttribute('aria-valuenow', y);
+		tlYear.textContent = y; tlYear.classList.remove('flip'); void tlYear.offsetWidth; tlYear.classList.add('flip');
+		tlAge.textContent = ageLine(y);
+		const items = data.record[y];
+		tlList.innerHTML = items ? items.map((it, k) => '<li style="--k:' + k + '">' + esc(it) + '</li>').join('') : '<li class="quiet" style="--k:0">' + quiet(y) + '</li>';
+	}
+	tlAge.textContent = ageLine(cy);
+	const yearAt = (x) => { const r = axis.getBoundingClientRect(); return data.first + Math.min(ticks.length - 1, Math.max(0, Math.floor((x - r.left) / r.width * ticks.length))); };
+	let dragging = false;
+	axis.addEventListener('pointermove', (e) => { if (e.pointerType === 'mouse' || dragging) showYear(yearAt(e.clientX)); });
+	axis.addEventListener('pointerdown', (e) => { dragging = true; axis.setPointerCapture(e.pointerId); showYear(yearAt(e.clientX)); });
+	axis.addEventListener('pointerup', () => { dragging = false; });
+	axis.addEventListener('pointercancel', () => { dragging = false; });
+	axis.addEventListener('keydown', (e) => {
+		const d = { ArrowLeft: -1, ArrowDown: -1, ArrowRight: 1, ArrowUp: 1 }[e.key];
+		if (d) { e.preventDefault(); e.stopPropagation(); showYear(cy + d); }
+		if (e.key === 'Home') { e.preventDefault(); showYear(data.first); }
+		if (e.key === 'End') { e.preventDefault(); showYear(data.last); }
+	});
+
+	/* ── work: filters, rows, open all ── */
+	const rows = $$('.cat-row'), filters = $$('.filter'), openAll = $('#openAll');
+	const setOpen = (row, open) => { row.classList.toggle('open', open); $('.cat-head', row).setAttribute('aria-expanded', String(open)); };
+	rows.forEach((row) => $('.cat-head', row).addEventListener('click', () => setOpen(row, !row.classList.contains('open'))));
+	filters.forEach((f) => f.addEventListener('click', () => {
+		filters.forEach((g) => g.setAttribute('aria-pressed', String(g === f)));
+		let k = 0;
+		rows.forEach((row) => {
+			const show = f.dataset.f === 'all' || row.dataset.cat === f.dataset.f;
+			row.hidden = !show; row.classList.remove('pop');
+			if (show) { void row.offsetWidth; row.style.setProperty('--k', k++); row.classList.add('pop'); }
+		});
+	}));
+	openAll.addEventListener('click', () => {
+		const vis = rows.filter((r) => !r.hidden), open = !vis.every((r) => r.classList.contains('open'));
+		vis.forEach((r) => setOpen(r, open)); openAll.textContent = open ? 'close all' : 'open all';
+	});
 
 	/* ── paper abstracts ── */
 	$$('[data-abs]').forEach((b) => b.addEventListener('click', () => {
@@ -779,7 +922,6 @@ a.row:hover .row-a { color: var(--fg); transform: translate(0.15rem, -0.1rem); }
 
 	/* ── the terminal ── */
 	const term = $('#term'), out = $('#termOut'), inp = $('#termIn'); const hist = []; let hi = 0;
-	const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 	const say = (h) => { const d = document.createElement('div'); d.innerHTML = h; out.appendChild(d); out.scrollTop = out.scrollHeight; };
 	function openTerm() { term.classList.add('open'); term.setAttribute('aria-hidden', 'false'); if (!out.childElementCount) say('<span class="m">type help. esc to close.</span>\n'); setTimeout(() => inp.focus(), 50); egg('terminal'); }
 	function closeTerm() { term.classList.remove('open'); term.setAttribute('aria-hidden', 'true'); inp.blur(); }
@@ -787,11 +929,11 @@ a.row:hover .row-a { color: var(--fg); transform: translate(0.15rem, -0.1rem); }
 	$('#termX').addEventListener('click', closeTerm);
 	const bar = (v, max) => '█'.repeat(Math.round(v / max * 20)).padEnd(20, '░');
 	const CMDS = {
-		help: () => 'whoami · about · age · sat · projects · open &lt;name&gt; · papers · honours · contact · coffee · lift · fly · sudoku · eggs · hire · date · echo · clear · exit',
+		help: () => 'whoami · about · age · sat · projects · open &lt;name&gt; · papers · honours · year &lt;yyyy&gt; · contact · coffee · lift · fly · sudoku · eggs · hire · date · echo · clear · exit',
 		whoami: () => 'mehmet utku öztürk. machine learning developer and ai researcher, ankara.\nunpredictable, unsatisfied, unconventional.',
 		about: () => 'programming since 8. machine learning since 13. working on artificial consciousness and “thinking” systems.',
 		age: () => age(Date.now()).toFixed(12) + ' years. still compiling.',
-		sat: () => 'math               ' + bar(data.sat.math, 800) + ' ' + data.sat.math + '\nreading &amp; writing  ' + bar(data.sat.rw, 800) + ' ' + data.sat.rw + '\ntotal              ' + (data.sat.math + data.sat.rw) + ' / 1600',
+		sat: () => 'math                ' + bar(data.sat.math, 800) + ' ' + data.sat.math + '\nreading &amp; writing ' + bar(data.sat.rw, 800) + ' ' + data.sat.rw + '\ntotal               ' + (data.sat.math + data.sat.rw) + ' / 1600',
 		projects: () => data.projects.map((p) => (p.status === 'active' ? '■' : p.status === 'paused' ? '□' : '<span class="m">■</span>') + ' ' + esc(p.name).padEnd(26) + '<span class="m">' + esc(p.category) + ' · ' + esc(p.role) + '</span>').join('\n') + '\n<span class="m">try: open flydoom</span>',
 		ls: () => 'about  sat.txt  projects/  papers/  honours  contact  <span class="m">.secrets</span>',
 		cat: (a) => a === '.secrets' ? 'eight easter eggs on this page. one of them lives in your browser console.' : a === 'sat.txt' ? CMDS.sat() : 'cat: ' + esc(a || '') + ': try ls, or just the command name.',
@@ -803,9 +945,15 @@ a.row:hover .row-a { color: var(--fg); transform: translate(0.15rem, -0.1rem); }
 		},
 		papers: () => data.papers.map((p) => p.year + '  ' + esc(p.name) + '\n      <span class="m">' + esc(p.venue) + '</span>' + (p.link ? '  <a href="' + esc(p.link) + '" target="_blank" rel="noopener">link ↗</a>' : '')).join('\n'),
 		honours: () => data.honours.map(esc).join('\n'),
+		year: (a) => {
+			const y = parseInt(a, 10);
+			if (!(y >= data.first && y <= data.last)) return 'year: pick one between ' + data.first + ' and ' + data.last + '.';
+			showYear(y); $('#timeline').scrollIntoView({ block: 'center' });
+			return (data.record[y] || [quiet(y)]).map(esc).join('\n');
+		},
 		contact: () => '<a href="mailto:' + data.email + '">' + data.email + '</a> · github.com/mutkuoz · linkedin.com/in/mutkuoz',
 		coffee: () => { $('#coffee').click(); return 'poured. cup #' + cups + '.'; },
-		lift: () => { while (plates < 3) $('#lift').click(); return 'three plates a side. locked out.'; },
+		lift: () => { if (plates >= 3) $('#lift').click(); while (plates < 3) $('#lift').click(); return 'three plates a side. locked out.'; },
 		fly: () => { if (flyEl) return 'it’s already out. look around.'; spawnFly(); return 'released one drosophila melanogaster.'; },
 		sudoku: () => { closeTerm(); openSudoku(); return null; },
 		eggs: () => Object.keys(EGGS).map((k) => (found.has(k) ? '✓ ' + EGGS[k] : '<span class="m">· ???</span>')).join('\n') + '\n' + found.size + ' / 8',
