@@ -5,17 +5,23 @@
 // the work, a3 research, leisure, puzzles and classifieds.
 // everything (css, js, data) is inline and every asset loads from utku.space by absolute
 // url, so the built html runs unchanged at utku.space/cv/ and, copied, at cv.utku.space.
+// it carries the same search-engine metadata as the homepage (src/lib/schema.ts), and its
+// canonical follows its route, so it is ready to be served as utku.space itself.
 import { papers } from '../data/research';
 import { projects, categories, categoryIcon, statusLabel } from '../data/projects';
 import { associations } from '../data/associations';
+import { honours } from '../data/honours';
 import { SITE, articleUrl, formatDate, getArticles } from '../lib/site';
+import { SAME_AS, buildSchema } from '../lib/schema';
 
 const A = SITE;
-const CANONICAL = 'https://cv.utku.space/';
+// utku.space/cv/ here (the cv.utku.space copy points to it too); utku.space/ if this page becomes the homepage
+const canonical = new URL(Astro.url.pathname, SITE).href;
 const title = 'Mehmet Utku Öztürk — unpredictable, unsatisfied, unconventional';
 const description =
-	'The CV of Mehmet Utku Öztürk, machine learning developer and AI researcher in Ankara, printed as an edition of The Utku Times.';
+	'Mehmet Utku Öztürk is a machine learning developer and AI researcher in Ankara, Türkiye: technical co-founder of turkhukuk.ai, first author of HukukBERT, author of LLM Electrodes, and creator of FlyDOOM. His record, printed as an edition of The Utku Times.';
 const articles = await getArticles();
+const schema = buildSchema({ canonical, title, description, articles });
 
 // the paper is set in sentence case; the shared data is lowercase, so it gets its capitals here
 const TERMS: [RegExp, string][] = (
@@ -91,18 +97,6 @@ const index = [
 	{ k: 'Papers', v: String(papers.length), chg: '', cls: '' }
 ];
 
-// honours and associations, one entry each
-const org = (key: string) => associations.find((a) => a.key === key)?.url;
-const honours = [
-	{ year: '2018 · 2023', title: 'eTwinning Quality Labels', note: 'European Union. The Pupil Quality Label in 2018, and the National Quality Label in 2023 for the project “Particle Physics and CERN”.' },
-	{ year: '2025–', title: 'TÜBİTAK', note: 'Backing for LabGPT, his R&D on test result analysis for doctors.', href: 'https://www.tubitak.gov.tr' },
-	{ year: '2026', title: 'ODTÜ Teknokent', note: 'turkhukuk.ai’s R&D, accepted as a research and development project at METU Technopolis, Ankara.', href: 'https://odtuteknokent.com.tr' },
-	{ year: '2024–', title: 'BİLSEM', note: 'Senior student at the government-led program for gifted children (top 2% IQ), and a voluntary mentor there, teaching primary schoolers robotics, AI and software.', href: org('bilsem') },
-	{ year: 'Member', title: 'Mensa International', note: 'The largest and oldest high-IQ society.', href: org('mensa') },
-	{ year: 'Member', title: 'IAAIL', note: 'International Association for Artificial Intelligence and Law.', href: org('iaail') },
-	{ year: 'Volunteer', title: 'Save the Children', note: 'Global charity for children’s rights, health and education.', href: org('stc') },
-	{ year: 'Volunteer', title: 'TEMA Foundation', note: 'Türkiye’s foundation for combating soil erosion, for reforestation and for protecting natural habitats.', href: 'https://www.tema.org.tr' }
-];
 
 // the scrubbable timeline: one entry per year, empty years get a line of their own
 const FIRST = 2008, LAST = 2026;
@@ -152,19 +146,38 @@ const head = `
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<title>{title}</title>
 	<meta name="description" content={description} />
-	<!-- an application file, not a search result: kept out of indexes on purpose -->
-	<meta name="robots" content="noindex, follow" />
-	<link rel="canonical" href={CANONICAL} />
+	<link rel="canonical" href={canonical} />
+	<meta name="author" content="Mehmet Utku Öztürk" />
+	<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+	<link rel="sitemap" type="application/xml" href={`${A}/sitemap.xml`} />
+	<link rel="alternate" type="application/rss+xml" href={`${A}/rss.xml`} title="utku&rsquo;s space — articles" />
+	<link rel="alternate" type="text/plain" href={`${A}/llms.txt`} title="plain-text profile for language models" />
+	{SAME_AS.map((url) => <link rel="me" href={url} />)}
 	<meta name="theme-color" content="#fbfaf6" id="themeColor" />
 	<link rel="icon" type="image/svg+xml" href={`${A}/favicon.svg`} />
 	<link rel="preload" as="font" type="font/woff2" crossorigin href={`${A}/fonts/unifrakturcook-bold-latin.woff2`} />
 	<link rel="preload" as="font" type="font/woff2" crossorigin href={`${A}/fonts/newsreader-normal-latin.woff2`} />
 	<link rel="preload" as="font" type="font/woff2" crossorigin href={`${A}/fonts/playfair-display-normal-latin.woff2`} />
 	<meta property="og:type" content="profile" />
-	<meta property="og:url" content={CANONICAL} />
+	<meta property="og:site_name" content="The Utku Times" />
+	<meta property="og:locale" content="en_GB" />
+	<meta property="og:url" content={canonical} />
 	<meta property="og:title" content={title} />
 	<meta property="og:description" content={description} />
 	<meta property="og:image" content={`${A}/desk.webp`} />
+	<meta property="og:image:width" content="1024" />
+	<meta property="og:image:height" content="682" />
+	<meta property="og:image:alt" content="Ink illustration of a cluttered desk, and Mehmet Utku Öztürk asleep on the floor beneath it" />
+	<meta property="profile:first_name" content="Mehmet Utku" />
+	<meta property="profile:last_name" content="Öztürk" />
+	<meta property="profile:username" content="mutkuoz" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:site" content="@mutkuoz" />
+	<meta name="twitter:creator" content="@mutkuoz" />
+	<meta name="twitter:title" content={title} />
+	<meta name="twitter:description" content={description} />
+	<meta name="twitter:image" content={`${A}/desk.webp`} />
+	<script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
 	<style is:inline set:html={head}></style>
 	<script is:inline>
 	/* the saved theme, before first paint — same storage key as utku.space and news.utku.space */
@@ -230,7 +243,51 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .lamp svg { width: .85rem; height: .85rem; }
 .lamp:hover { text-decoration: none !important; border-color: var(--ink); }
 html:not([data-theme="dark"]) .lamp .icon-moon, [data-theme="dark"] .lamp .icon-sun { display: none; }
-@media (max-width: 700px) { .bar .opt { display: none; } .bar nav { gap: .9rem; } }
+@media (max-width: 860px) { .bar .opt { display: none; } .bar nav { gap: .9rem; } }
+@media (max-width: 560px) { .bar .brand span, .bar .opt-s { display: none; } }
+
+/* ── the music player, as on utku.space: a vinyl record that turns while it plays ── */
+.bar-l { display: flex; align-items: center; min-width: 0; }
+.player { display: flex; align-items: center; gap: .55rem; min-width: 0; margin-left: .9rem; padding-left: .9rem; height: 1.8rem; border-left: 1px solid var(--hair); }
+.disc { position: relative; flex: none; width: 2rem; height: 2rem; margin: 0 .1rem; padding: 0; border-radius: 50%; box-shadow: 0 0 0 1px var(--hair), 0 1px 3px rgba(0,0,0,.25); transition: transform .15s ease, box-shadow .2s ease; }
+.disc:hover { transform: scale(1.06); box-shadow: 0 0 0 1px var(--ink), 0 2px 6px rgba(0,0,0,.3); }
+.disc:active { transform: scale(.94); }
+.disc-icon { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #0c0c0c; pointer-events: none; transition: opacity .2s ease; }
+.disc-icon svg { width: .62rem; height: .62rem; padding: .11rem; border-radius: 50%; background: #f2eee6; }
+.disc-icon .i-play { transform: translateX(.5px); }
+.player.playing .disc-icon { opacity: 0; }
+.player.playing .disc:hover .disc-icon, .player.playing .disc:focus-visible .disc-icon { opacity: 1; }
+.disc-vinyl { display: block; width: 100%; height: 100%; animation: disc-spin 1.8s linear infinite; animation-play-state: paused; }
+.player.playing .disc-vinyl { animation-play-state: running; }
+.disc-sheen { position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
+	background: conic-gradient(from 20deg, transparent 0 8%, rgba(255,255,255,.22) 13%, transparent 20% 52%, rgba(255,255,255,.16) 60%, transparent 68%);
+	-webkit-mask: radial-gradient(circle, transparent 0 41%, #000 42%); mask: radial-gradient(circle, transparent 0 41%, #000 42%); }
+@keyframes disc-spin { to { transform: rotate(360deg); } }
+.player-controls { display: flex; align-items: center; gap: .1rem; flex: none; }
+.player-btn { flex: none; display: flex; align-items: center; justify-content: center; width: 1.6rem; height: 1.6rem; border-radius: 50%; color: var(--ink2); transition: color .18s ease, background-color .18s ease, transform .12s ease; }
+.bar .player-btn:hover { color: var(--ink); background: var(--tint); text-decoration: none; }
+.player-btn:active { transform: scale(.9); }
+.player-btn svg { width: .9rem; height: .9rem; }
+.player .i-pause, .player.playing .i-play { display: none; }
+.player.playing .i-pause { display: block; }
+.player-track { display: flex; flex-direction: column; justify-content: center; width: 9.5rem; min-width: 0; line-height: 1.15; }
+.player-title, .player-artist { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.player-title { font-family: var(--display); font-style: italic; font-weight: 600; font-size: .82rem; color: var(--ink); }
+.player-artist { font-size: .68rem; letter-spacing: .02em; color: var(--muted); }
+.player-vol { display: flex; align-items: center; gap: .2rem; flex: none; }
+.player-mute svg { width: 1rem; height: 1rem; }
+.player-mute .cross, .player.muted .player-mute .wave { display: none; }
+.player.muted .player-mute .cross { display: inline; }
+.vol-wedge { position: relative; display: block; width: 3.2rem; height: .9rem; }
+.vol-wedge::before { content: ''; position: absolute; inset: 0; clip-path: polygon(0 100%, 100% 100%, 100% 0); background: linear-gradient(90deg, var(--ink) var(--v), color-mix(in srgb, var(--ink) 28%, transparent) var(--v)); }
+.player.muted .vol-wedge::before { opacity: .4; }
+.vol-wedge input { position: absolute; inset: -.3rem 0; width: 100%; height: calc(100% + .6rem); margin: 0; opacity: 0; cursor: pointer; }
+.vol-wedge:has(input:focus-visible) { outline: 2px solid var(--ink); outline-offset: 3px; }
+.player-yt { position: fixed; left: -9999px; top: 0; width: 200px; height: 200px; overflow: hidden; pointer-events: none; opacity: 0; }
+[data-konami] .disc { filter: url(#redInk); }
+@media (max-width: 1000px) { .player-vol { display: none; } }
+@media (max-width: 560px) { .player { margin-left: .6rem; padding-left: .6rem; gap: .3rem; } .player-track { width: 5.2rem; } }
+@media (max-width: 380px) { .player-track { width: 3.8rem; } .bar .brand { font-size: .92rem; } }
 
 /* ── the sheets ── */
 .wrap { position: relative; z-index: 1; padding: 1.6rem 1rem 2rem; }
@@ -555,10 +612,39 @@ html.intro-on #intro { display: block; position: fixed; inset: 0; z-index: 10000
 </div>
 
 <header class="bar">
-	<a class="brand" href={`${A}/`}>utku&rsquo;s space <span>/ cv</span></a>
+	<div class="bar-l">
+		<a class="brand" href={`${A}/`}>utku&rsquo;s space <span>/ cv</span></a>
+		<div class="player" id="player" role="group" aria-label="music player">
+			<div class="player-controls">
+				<button class="player-btn" id="playerPrev" type="button" aria-label="previous track"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="5.5" width="2.2" height="13" rx="0.6"/><path d="M19 6.2v11.6a.8.8 0 0 1-1.2.7L9.4 12.7a.8.8 0 0 1 0-1.4l8.4-5.8a.8.8 0 0 1 1.2.7z"/></svg></button>
+				<button class="disc" id="playerPlay" type="button" aria-label="play">
+					<svg class="disc-vinyl" viewBox="0 0 40 40" aria-hidden="true">
+						<circle cx="20" cy="20" r="19.6" fill="#0c0c0c"/>
+						<g fill="none" stroke="#fff" stroke-opacity="0.13" stroke-width="0.35">
+							<circle cx="20" cy="20" r="18.2"/><circle cx="20" cy="20" r="16.9"/><circle cx="20" cy="20" r="15.5"/>
+							<circle cx="20" cy="20" r="14.3"/><circle cx="20" cy="20" r="13"/><circle cx="20" cy="20" r="11.8"/><circle cx="20" cy="20" r="10.6"/>
+						</g>
+						<circle cx="20" cy="20" r="8" fill="#f2eee6"/>
+						<circle cx="20" cy="20" r="7.2" fill="none" stroke="#0c0c0c" stroke-width="0.35"/>
+						<path d="M20 13.6a6.4 6.4 0 0 1 6.4 6.4h-2.2a4.2 4.2 0 0 0-4.2-4.2z" fill="#0c0c0c"/>
+						<circle cx="20" cy="20" r="1.1" fill="#0c0c0c"/>
+					</svg>
+					<span class="disc-sheen"></span>
+					<span class="disc-icon" aria-hidden="true"><svg class="i-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.6v12.8a.9.9 0 0 0 1.4.8l10-6.4a.9.9 0 0 0 0-1.6l-10-6.4A.9.9 0 0 0 8 5.6z"/></svg><svg class="i-pause" viewBox="0 0 24 24" fill="currentColor"><rect x="6.5" y="5.5" width="3.8" height="13" rx="1"/><rect x="13.7" y="5.5" width="3.8" height="13" rx="1"/></svg></span>
+				</button>
+				<button class="player-btn" id="playerNext" type="button" aria-label="next track"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="16.8" y="5.5" width="2.2" height="13" rx="0.6"/><path d="M5 6.2v11.6a.8.8 0 0 0 1.2.7l8.4-5.8a.8.8 0 0 0 0-1.4L6.2 5.5a.8.8 0 0 0-1.2.7z"/></svg></button>
+			</div>
+			<span class="player-track" id="playerTrack" aria-live="polite"><span class="player-title">Fly Me to the Moon</span><span class="player-artist">Frank Sinatra</span></span>
+			<div class="player-vol">
+				<button class="player-btn player-mute" id="playerMute" type="button" aria-label="mute"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.2L12 5.5v13l-4.8-4H4z" fill="currentColor" stroke="none"/><path class="wave" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/><path class="cross" d="M16 9.5l5 5M21 9.5l-5 5"/></svg></button>
+				<span class="vol-wedge" id="playerWedge" style="--v:60%"><input id="playerVol" type="range" min="0" max="100" value="60" aria-label="volume" /></span>
+			</div>
+			<div class="player-yt" aria-hidden="true"><div id="playerYT"></div></div>
+		</div>
+	</div>
 	<nav>
 		<a href="#record" class="opt">the record ↓</a>
-		<a href="#work">the work ↓</a>
+		<a href="#work" class="opt-s">the work ↓</a>
 		<a href="#puzzles" class="opt">puzzles ↓</a>
 		<button type="button" id="printBtn" class="opt">print</button>
 		<a href={`${A}/`} class="opt">utku.space ↗</a>
@@ -1114,6 +1200,98 @@ html.intro-on #intro { display: block; position: fixed; inset: 0; z-index: 10000
 	console.log('%cThe Utku Times', 'font: 700 28px UnifrakturCook, Georgia, serif');
 	console.log('%cYou opened devtools on a CV. Good instinct.\ntry: utku.hire()', 'font: 13px ui-monospace, monospace; color: #888');
 	window.utku = { hire() { egg('hire'); return 'Noted. Now email m@utku.space and make it official.'; }, age() { return age(Date.now()); } };
+})();
+</script>
+
+<script is:inline>
+/* ── music player: youtube iframe api, loaded on first hover or play (same engine as utku.space) ── */
+(function () {
+	const TRACKS = [
+		{ id: 'JYuyWrkwpok', title: 'Fly Me to the Moon', artist: 'Frank Sinatra' },
+		{ id: 'Rbm6GXllBiw', title: 'Paradise City', artist: 'Guns N’ Roses' },
+		{ id: 'fJ9rUzIMcZQ', title: 'Bohemian Rhapsody', artist: 'Queen' },
+		{ id: 'KrZHPOeOxQQ', title: 'You Give Love a Bad Name', artist: 'Bon Jovi' },
+		{ id: '9n-hyA2-FDg', title: 'La Vie en Rose', artist: 'Louis Armstrong' },
+		{ id: 'echO1rg4E08', title: 'Kızılcıklar Oldu mu', artist: 'Kübra Şenyaylar' }
+	];
+	const root = document.getElementById('player');
+	if (!root) return;
+	const playBtn = document.getElementById('playerPlay');
+	const muteBtn = document.getElementById('playerMute');
+	const titleEl = root.querySelector('.player-title');
+	const artistEl = root.querySelector('.player-artist');
+	const wedge = document.getElementById('playerWedge');
+	const vol = document.getElementById('playerVol');
+	let i = 0, yt = null, ready = false, loading = false, wantPlay = false, muted = false;
+	let fails = 0, gaveUp = false;   // youtube refusals in a row; stop once every track has been refused
+
+	function paint() { titleEl.textContent = titleEl.title = TRACKS[i].title; artistEl.textContent = TRACKS[i].artist; }
+	function setPlaying(on) { root.classList.toggle('playing', on); playBtn.setAttribute('aria-label', on ? 'pause' : 'play'); }
+	function applyVolume() {
+		wedge.style.setProperty('--v', vol.value + '%');
+		root.classList.toggle('muted', muted || +vol.value === 0);
+		muteBtn.setAttribute('aria-label', muted ? 'unmute' : 'mute');
+		if (!ready) return;
+		yt.setVolume(+vol.value);
+		muted ? yt.mute() : yt.unMute();
+	}
+	function load() {
+		if (loading) return;
+		loading = true;
+		const prev = window.onYouTubeIframeAPIReady;
+		window.onYouTubeIframeAPIReady = function () {
+			if (prev) prev();
+			yt = new YT.Player('playerYT', {
+				width: 200, height: 200, videoId: TRACKS[i].id,
+				// no autoplay: the player may be created early (on hover), so it only plays when asked
+				playerVars: { autoplay: 0, controls: 0, disablekb: 1, playsinline: 1, rel: 0 },
+				events: {
+					onReady: function () { ready = true; applyVolume(); if (wantPlay) yt.playVideo(); },
+					onStateChange: function (e) {
+						if (e.data === YT.PlayerState.ENDED) go(1);
+						else if (e.data === YT.PlayerState.PLAYING) { fails = 0; setPlaying(true); }
+						else if (e.data === YT.PlayerState.PAUSED) setPlaying(false);
+					},
+					// embedding blocked (101/150) or the video is gone: try the next one, but not forever
+					onError: function () {
+						if (++fails >= TRACKS.length) return giveUp();
+						if (wantPlay) return go(1);
+						// refused while only warming up: line up the next track, quietly
+						i = (i + 1) % TRACKS.length; paint(); yt.cueVideoById(TRACKS[i].id);
+					}
+				}
+			});
+		};
+		const s = document.createElement('script');
+		s.src = 'https://www.youtube.com/iframe_api';
+		document.head.appendChild(s);
+	}
+	function giveUp() {
+		gaveUp = true; wantPlay = false; setPlaying(false);
+		titleEl.textContent = titleEl.title = 'Music unavailable';
+		artistEl.textContent = 'YouTube refused playback';
+	}
+	function go(step) {
+		i = (i + step + TRACKS.length) % TRACKS.length;
+		paint();
+		wantPlay = true; setPlaying(true);
+		if (ready) yt.loadVideoById(TRACKS[i].id); else load();
+	}
+	// warm the player up as soon as someone reaches for it, so the click can start
+	// playback straight away (browsers only allow sound right after a click)
+	root.addEventListener('pointerenter', load, { once: true });
+	root.addEventListener('focusin', load, { once: true });
+	playBtn.addEventListener('click', function () {
+		if (gaveUp) { gaveUp = false; fails = 0; go(0); return; }
+		if (!ready) { wantPlay = !wantPlay; setPlaying(wantPlay); load(); return; }
+		if (root.classList.contains('playing')) { wantPlay = false; yt.pauseVideo(); setPlaying(false); }
+		else { wantPlay = true; yt.playVideo(); setPlaying(true); }
+	});
+	document.getElementById('playerNext').addEventListener('click', function () { gaveUp = false; fails = 0; go(1); });
+	document.getElementById('playerPrev').addEventListener('click', function () { gaveUp = false; fails = 0; go(-1); });
+	muteBtn.addEventListener('click', function () { muted = !muted; applyVolume(); });
+	vol.addEventListener('input', function () { muted = false; applyVolume(); });
+	paint();
 })();
 </script>
 </body>
