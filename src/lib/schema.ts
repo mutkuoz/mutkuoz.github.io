@@ -1,4 +1,4 @@
-// structured data (schema.org json-ld) for the pages that describe the person: the homepage and the cv.
+// structured data (schema.org json-ld) for the homepage, which describes the person.
 // answer engines (chatgpt, perplexity, google ai overviews) read schema.org far more reliably than they
 // read prose, so the facts are stated explicitly, in one @graph whose entities reference each other by @id.
 import { papers } from '../data/research';

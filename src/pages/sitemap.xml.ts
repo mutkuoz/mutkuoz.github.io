@@ -12,12 +12,6 @@ export const GET: APIRoute = async () => {
 			changefreq: 'monthly',
 			priority: '1.0'
 		},
-		{
-			loc: `${SITE}/cv/`,
-			lastmod: latestDate && isoDate(latestDate),
-			changefreq: 'monthly',
-			priority: '0.9'
-		},
 		...articles.map((article) => ({
 			loc: articleUrl(article),
 			lastmod: isoDate(lastModified(article)),
