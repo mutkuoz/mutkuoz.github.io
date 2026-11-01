@@ -1,4 +1,5 @@
 import { papers, type Paper } from '../data/research';
+import { honours } from '../data/honours';
 import {
 	AUTHOR_NAME,
 	SITE,
@@ -93,17 +94,9 @@ const work = `## Work
 - Ananas Studios: Indie game development studio. Founder, 2019–2022.
 - Shoelace: Peer-based encryption algorithm. Creator, 2020.`;
 
-const associations = `## Associations
+const associations = `## Honours & associations
 
-- [BİLSEM](https://turkmaarifansiklopedisi.org.tr/bilim-ve-sanat-merkezleri-bilsem):
-  Senior student and mentor. Government-led special education program for gifted
-  children in Türkiye.
-- [Mensa International](https://www.mensa.org/): Member. The largest and oldest
-  high-IQ society in the world.
-- [IAAIL](https://iaail.org/): Member. International Association for Artificial
-  Intelligence and Law.
-- [Save the Children](https://www.savethechildren.net/): Volunteer. Global charity
-  working for children's rights, health, and education.`;
+${honours.map((h) => `- ${h.href ? `[${h.title}](${h.href})` : h.title} (${h.year}): ${h.note}`).join('\n')}`;
 
 const contact = `## Contact
 
