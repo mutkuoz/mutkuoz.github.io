@@ -22,6 +22,13 @@ export const statusLabel: Record<ProjectStatus, string> = { live: 'active', paus
 
 export const projects: Project[] = [
 	{
+		name: 'llm electrodes',
+		category: 'open-source',
+		status: 'live',
+		role: 'creator · 2026',
+		body: '<p>one neuron is enough to give a language model a new personality. pushed every one of the 294,912 mlp neurons of qwen3.5-4b both ways and had the strongest judged blind next to random controls: 130 passed every check. one thinks it&rsquo;s an iud, one sells made-up legal steroids, one asks for your bank details. no system prompt, no fine-tuning, no change to the weights. the paper, data and a local app to try all 214 interventions are open. <a href="https://github.com/mutkuoz/llm-electrodes" target="_blank" rel="noopener" class="chip">github ↗</a> <a href="https://github.com/mutkuoz/llm-electrodes/blob/master/paper/main.pdf" target="_blank" rel="noopener" class="chip">paper ↗</a> <a href="https://doi.org/10.57967/hf/11353" target="_blank" rel="noopener" class="chip">data ↗</a></p>'
+	},
+	{
 		name: 'flydoom',
 		category: 'open-source',
 		status: 'live',

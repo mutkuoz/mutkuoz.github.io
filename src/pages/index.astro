@@ -11,7 +11,7 @@ const articles = await getArticles();
 const canonical = new URL(Astro.url.pathname, SITE).href;
 const title = 'mehmet utku öztürk — machine learning developer & ai researcher';
 const description =
-	'mehmet utku öztürk is a machine learning developer and ai researcher in ankara, türkiye. technical co-founder of turkhukuk.ai, r&d on LabGPT, creator of FlyDOOM, 007captcha, Topazius and other open-source tools, author of HukukBERT and Octapar. work on artificial consciousness, connectomics, neuro-symbolic ai, and agentic systems.';
+	'mehmet utku öztürk is a machine learning developer and ai researcher in ankara, türkiye. technical co-founder of turkhukuk.ai, r&d on LabGPT, creator of FlyDOOM, LLM Electrodes, 007captcha, Topazius and other open-source tools, author of HukukBERT, LLM Electrodes and Octapar. work on artificial consciousness, connectomics, neuro-symbolic ai, and agentic systems.';
 const ogImage = new URL('/portrait.png', SITE).href;
 const WEBSITE_ID = `${SITE}/#website`;
 
@@ -30,7 +30,7 @@ const person = {
 	description:
 		'Machine learning developer and AI researcher focused on artificial consciousness, neuro-symbolic AI, and agentic "thinking" systems. Started programming at 8, working on machine learning since 13.',
 	disambiguatingDescription:
-		'Machine learning developer from Ankara, Türkiye; technical co-founder of turkhukuk.ai, R&D on LabGPT, creator of FlyDOOM, 007captcha and Topazius, and first author of HukukBERT.',
+		'Machine learning developer from Ankara, Türkiye; technical co-founder of turkhukuk.ai, R&D on LabGPT, creator of FlyDOOM, LLM Electrodes, 007captcha and Topazius, and first author of HukukBERT.',
 	email: 'mailto:m@utku.space',
 	address: {
 		'@type': 'PostalAddress',
@@ -47,6 +47,7 @@ const person = {
 		'LegalTech',
 		'Cognitive Science',
 		'Connectomics',
+		'Interpretability',
 		'Turkish NLP',
 		'Medical AI',
 		'Neuromorphic Computing',
@@ -110,6 +111,14 @@ const projects = [
 		applicationCategory: 'LegalTech',
 		description:
 			'A LegalTech platform for Turkish lawyers covering case research and litigation strategy, built on domain-specific language models trained on Turkish legal corpora.'
+	},
+	{
+		'@type': 'SoftwareSourceCode',
+		name: 'LLM Electrodes',
+		codeRepository: 'https://github.com/mutkuoz/llm-electrodes',
+		programmingLanguage: 'Python',
+		description:
+			'An interpretability study and toolkit showing that stimulating a single MLP neuron of Qwen3.5-4B can give the model a new, nameable personality, with no system prompt or fine-tuning. Releases the full screen of 294,912 neurons, a catalog of 214 interventions and a local app for trying them.'
 	},
 	{
 		'@type': 'SoftwareSourceCode',
@@ -294,7 +303,7 @@ const faq = {
 			name: 'What research has Mehmet Utku Öztürk published?',
 			acceptedAnswer: {
 				'@type': 'Answer',
-				text: 'Mehmet Utku Öztürk is the first author of HukukBERT, the most comprehensive legal language model for Turkish, published in the Journal of Computational Law and Legal Technology (2026; arXiv:2604.04790), which reaches 84.40% Top-1 accuracy on a Legal Cloze Test benchmark. Other research includes Octapar, a framework for balanced multi-modal user grouping using weighted attentional embeddings and the Hungarian method, and Streaming Intelligence, a study of AI and Big Data in digital content platforms.'
+				text: 'Mehmet Utku Öztürk is the first author of HukukBERT, the most comprehensive legal language model for Turkish, published in the Journal of Computational Law and Legal Technology (2026; arXiv:2604.04790), which reaches 84.40% Top-1 accuracy on a Legal Cloze Test benchmark. He also wrote LLM Electrodes (2026), which shows that stimulating a single neuron of Qwen3.5-4B can give the model a new personality: 130 single neurons passed blind judging (https://github.com/mutkuoz/llm-electrodes). Other research includes Octapar, a framework for balanced multi-modal user grouping using weighted attentional embeddings and the Hungarian method, and Streaming Intelligence, a study of AI and Big Data in digital content platforms.'
 			}
 		},
 		{

@@ -15,6 +15,18 @@ export type Paper = {
 
 export const papers: Paper[] = [
 	{
+		name: "LLM Electrodes: Rewriting a Language Model's Behavior Through Single-Neuron Stimulation",
+		venue: 'independent research',
+		year: '2026',
+		summary: 'Single-neuron stimulation of Qwen3.5-4B, with no system prompt, fine-tuning or change to the weights: of all 294,912 MLP neurons, 130 give the model a consistent, nameable new personality under blind judging, and at least 6% of random neurons produce a nameable change too. Drug-like whole-layer interventions barely move it.',
+		abstract: "We ask how much a single neuron can change the behavior of a language model. We pushed each of the 294,912 MLP neurons of Qwen3.5-4B in both directions with a fixed stimulation and measured how far the model's next-token predictions moved. The candidates that moved the model most while it stayed coherent then answered ten prompts they were never selected on, and each candidate was judged anonymized and independently against the unmodified model's answers. The 19 personas that the steering community had already published served as positive controls, and the most distinct randomly chosen neurons served as negative controls. 130 single neurons passed every check, including a second, independent round of judging. The largest group pulls every answer toward one topic (55). Others switch the output language (26), produce altered states (21), or change what the model says it is. Such effects are not limited to the selected candidates, since at least 6.0% of randomly chosen neuron pushes also produce a nameable and coherent change, and the confirmed hits are distinguished mainly by the consistency of their effect. Interventions modeled on drugs are far weaker. Scaling every MLP neuron of a layer, from silencing to doubling, leaves the answers nearly unchanged, and groups of neurons that read a shared direction do no more than random groups of the same size. Silencing or amplifying single neurons fourfold moves the model about a thousand times less than stimulation, and none of 100 gain candidates passed the checks that 10 of 10 stimulation hits passed in the same blind pool. No intervention improved task accuracy, and most reduced it. We release the screen, a catalog of 214 interventions with their doses and evidence, and an interactive tool for trying them.",
+		links: [
+			{ label: 'paper', url: 'https://github.com/mutkuoz/llm-electrodes/blob/master/paper/main.pdf' },
+			{ label: 'github', url: 'https://github.com/mutkuoz/llm-electrodes' },
+			{ label: 'data', url: 'https://doi.org/10.57967/hf/11353' }
+		]
+	},
+	{
 		name: 'HukukBERT: Domain-Specific Language Model for Turkish Law',
 		venue: 'turkhukuk.ai',
 		year: '2026',
