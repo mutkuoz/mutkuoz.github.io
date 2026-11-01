@@ -199,8 +199,10 @@ const head = `
 /* ── the utku times palette ── */
 :root {
 	--paper: #fbfaf6; --ink: #121212; --ink2: #333; --muted: #6b6860; --rule: #121212; --hair: rgba(18,18,18,.22);
-	--sheet: var(--paper); --tint: rgba(18,18,18,.06); --pencil: #1f3a8a; --desk: #e4e0d4; --bar: rgba(228,224,212,.92);
-	--shadow: 0 1px 0 rgba(0,0,0,.08), 0 10px 40px rgba(0,0,0,.18); --img-filter: none; --desk-filter: none;
+	--sheet: rgba(251,250,246,.5); --tint: rgba(18,18,18,.06); --pencil: #1f3a8a; --desk: #e4e0d4; --bar: rgba(251,250,246,.5);
+	/* liquid glass: a frosted pane, a bright rim, light caught along the top edge, a soft drop shadow */
+	--glass-blur: blur(16px) saturate(1.6); --glass-edge: rgba(255,255,255,.75); --glass-shine: rgba(255,255,255,.55); --glass-rim: rgba(255,255,255,.9);
+	--shadow: inset 0 1px 0 rgba(255,255,255,.8), inset 0 0 0 1px rgba(255,255,255,.35), 0 1px 2px rgba(0,0,0,.06), 0 14px 44px rgba(0,0,0,.16); --img-filter: none; --desk-filter: none;
 	--serif: 'Newsreader', Georgia, 'Times New Roman', serif;
 	--display: 'Playfair Display', Georgia, 'Times New Roman', serif;
 	--black: 'UnifrakturCook', 'Playfair Display', Georgia, serif;
@@ -211,9 +213,10 @@ const head = `
 /* the night edition: warm white ink on a sheet of smoked glass, so the fresco, dimmed exactly as on
    utku.space, shows through the whole page the way it does there */
 [data-theme="dark"] {
-	--paper: #111110; --sheet: rgba(17,17,16,.34); --ink: #ece8df; --ink2: #c9c5bc; --muted: #8f8b82; --rule: #ece8df; --hair: rgba(236,232,223,.2);
-	--tint: rgba(236,232,223,.07); --pencil: #9db7ff; --desk: #000; --bar: rgba(0,0,0,.6);
-	--shadow: 0 0 0 1px rgba(236,232,223,.1), 0 10px 40px rgba(0,0,0,.45); --img-filter: brightness(.86) contrast(1.05);
+	--paper: #111110; --sheet: rgba(17,17,16,.42); --ink: #ece8df; --ink2: #c9c5bc; --muted: #8f8b82; --rule: #ece8df; --hair: rgba(236,232,223,.2);
+	--tint: rgba(236,232,223,.07); --pencil: #9db7ff; --desk: #000; --bar: rgba(10,10,9,.45);
+	--glass-blur: blur(12px) saturate(1.3); --glass-edge: rgba(255,255,255,.14); --glass-shine: rgba(255,255,255,.07); --glass-rim: rgba(255,255,255,.28);
+	--shadow: inset 0 1px 0 rgba(255,255,255,.12), inset 0 0 0 1px rgba(255,255,255,.06), 0 14px 44px rgba(0,0,0,.5); --img-filter: brightness(.86) contrast(1.05);
 	--desk-filter: grayscale(1) brightness(.13) contrast(1.2);
 }
 /* konami: red ink */
@@ -234,7 +237,7 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px s
 
 /* ── toolbar (screen only) ── */
 .bar { position: sticky; top: 0; z-index: 50; display: flex; gap: 1.2rem; align-items: center; justify-content: space-between;
-	padding: .55rem 1.2rem; background: var(--bar); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); border-bottom: 1px solid var(--hair); font-size: .86rem; }
+	padding: .55rem 1.2rem; background: var(--bar); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border-bottom: 1px solid var(--glass-edge); box-shadow: 0 1px 0 var(--hair); font-size: .86rem; }
 .bar a, .bar button { color: var(--ink); text-decoration: none; }
 .bar a:hover, .bar button:hover { text-decoration: underline; text-underline-offset: 3px; }
 .bar .brand { font-family: var(--display); font-style: italic; font-weight: 600; white-space: nowrap; }
@@ -291,11 +294,26 @@ html:not([data-theme="dark"]) .lamp .icon-moon, [data-theme="dark"] .lamp .icon-
 
 /* ── the sheets ── */
 .wrap { position: relative; z-index: 1; padding: 1.6rem 1rem 2rem; }
-.sheet { position: relative; background: var(--sheet); max-width: 62rem; margin: 0 auto 2.2rem; padding: 1.5rem 1.6rem 1rem; color: var(--ink);
+.sheet { position: relative; isolation: isolate; background: var(--sheet); max-width: 62rem; margin: 0 auto 2.2rem; padding: 1.5rem 1.6rem 1rem; color: var(--ink);
+	border-radius: 18px; backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
 	box-shadow: var(--shadow); scroll-margin-top: 3.4rem; transition: background-color .35s ease, color .35s ease; }
+/* the light on the glass: a broad sheen that drifts toward the pointer, under the type */
+.sheet::before { content: ''; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none;
+	background: radial-gradient(48rem circle at var(--mx, 18%) var(--my, -8%), var(--glass-shine), transparent 46%),
+		linear-gradient(160deg, var(--glass-shine), transparent 22%); transition: background-position .2s ease; }
+/* the rim: brighter where the light hits, fading round the far side */
+.sheet::after { content: ''; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none;
+	background: linear-gradient(150deg, var(--glass-rim), var(--glass-edge) 18%, transparent 42%, transparent 62%, var(--glass-edge) 88%, var(--glass-rim));
+	-webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
+.plate, .leisure figure img { border-radius: 4px; }
+/* no backdrop blur to lean on: thicken the glass so the type stays readable */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+	:root { --sheet: rgba(251,250,246,.94); --bar: rgba(228,224,212,.94); }
+	[data-theme="dark"] { --sheet: rgba(17,17,16,.9); --bar: rgba(10,10,9,.92); }
+}
 html:not(.intro-on) .sheet.land { animation: land .9s var(--out) both; }
 @keyframes land { from { opacity: 0; transform: translateY(22px) rotate(-.5deg); } }
-@media (max-width: 560px) { .wrap { padding: 1rem .5rem 1.5rem; } .sheet { padding: 1.1rem 1rem .9rem; } }
+@media (max-width: 560px) { .wrap { padding: 1rem .5rem 1.5rem; } .sheet { padding: 1.1rem 1rem .9rem; border-radius: 14px; } }
 
 .flag { text-align: center; }
 .nameplate { font-family: var(--black); font-weight: 700; font-size: clamp(2.8rem, 10.5vw, 5.8rem); line-height: 1.02; margin: 0 0 .2rem; letter-spacing: .005em; }
@@ -491,7 +509,7 @@ html:not(.intro-on) .sheet.land { animation: land .9s var(--out) both; }
 .sdgrid.won .sd { background: var(--ink); color: var(--paper); transition: background .3s calc(var(--i) * 40ms), color .3s calc(var(--i) * 40ms); }
 .sd-msg { min-height: 1.3em; margin-top: .35rem; text-align: center; font-size: .74rem; font-style: italic; color: var(--ink2); }
 /* classifieds, boxed like the times' private box */
-.classifieds { padding: .6rem .8rem .7rem; border: 1px solid var(--rule); box-shadow: 0 0 0 2px var(--paper), 0 0 0 3px var(--rule); }
+.classifieds { padding: .6rem .8rem .7rem; border: 1px solid var(--rule); outline: 1px solid var(--rule); outline-offset: 2px; margin: 3px; }
 .classifieds h4 { font-size: .66rem; letter-spacing: .13em; text-transform: uppercase; border-bottom: 1px solid var(--rule); padding-bottom: .2rem; margin-bottom: .1rem; }
 .ad { padding: .4rem 0; border-top: 1px solid var(--hair); font-size: .8rem; line-height: 1.4; color: var(--ink2); }
 .ad:nth-of-type(1) { border-top: 0; }
@@ -501,7 +519,7 @@ html:not(.intro-on) .sheet.land { animation: land .9s var(--out) both; }
 
 /* ── under the last sheet ── */
 .colophon { max-width: 62rem; margin: -1rem auto 1rem; padding: 0 .4rem; display: flex; flex-wrap: wrap; justify-content: space-between; gap: .4rem 1rem; font-size: .8rem; color: var(--ink); }
-.colophon span { background: color-mix(in srgb, var(--paper) 88%, transparent); padding: .15rem .45rem; }
+.colophon span { background: var(--sheet); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); box-shadow: var(--shadow); border-radius: 999px; padding: .2rem .7rem; }
 .colophon button { border-bottom: 1px solid var(--hair); }
 .colophon button:hover { border-color: var(--ink); }
 
@@ -554,7 +572,8 @@ html.intro-on #intro { display: block; position: fixed; inset: 0; z-index: 10000
 
 /* ── the wire: a teletype terminal ── */
 .term { position: fixed; left: 50%; bottom: 0; z-index: 420; width: min(760px, 100vw); height: min(55vh, 440px); transform: translate(-50%, 100%); visibility: hidden;
-	background: var(--paper); border: 1px solid var(--rule); border-bottom: 0; box-shadow: 0 -8px 30px rgba(0,0,0,.18); display: flex; flex-direction: column;
+	background: color-mix(in srgb, var(--paper) 72%, transparent); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+	border: 1px solid var(--glass-edge); border-bottom: 0; border-radius: 16px 16px 0 0; box-shadow: var(--shadow); display: flex; flex-direction: column;
 	font-family: var(--mono); font-size: .78rem; color: var(--ink); transition: transform .35s var(--ease), visibility 0s .35s; }
 .term.open { transform: translate(-50%, 0); visibility: visible; transition: transform .35s var(--ease); }
 .term-h { display: flex; justify-content: space-between; padding: .4rem .9rem; border-bottom: 3px double var(--rule); font-family: var(--serif); font-size: .66rem; letter-spacing: .12em; text-transform: uppercase; }
@@ -583,7 +602,8 @@ html.intro-on #intro { display: block; position: fixed; inset: 0; z-index: 10000
 	html { font-size: 11px; }
 	#intro, .page-bg, .bar, .colophon, .toast, .term, .fly, .tl-wrap, .abs-btn, .pastimes .act, .pastimes output { display: none !important; }
 	.wrap { padding: 0; }
-	.sheet { box-shadow: none; max-width: none; margin: 0; padding: 0; background: #fff; page-break-after: always; break-after: page; animation: none; }
+	.sheet { box-shadow: none; max-width: none; margin: 0; padding: 0; background: #fff; border-radius: 0; backdrop-filter: none; -webkit-backdrop-filter: none; page-break-after: always; break-after: page; animation: none; }
+	.sheet::before, .sheet::after { display: none; }
 	.sheet:last-of-type { page-break-after: auto; break-after: auto; }
 	.reveal { opacity: 1 !important; transform: none !important; }
 }
@@ -1177,6 +1197,24 @@ html.intro-on #intro { display: block; position: fixed; inset: 0; z-index: 10000
 		if (k === 'd' && kp === 0) flip();
 		if (e.key === '/' || e.key === '`') { e.preventDefault(); openTerm(); }
 	});
+
+	/* ── the glass catches the light where the pointer is ── */
+	if (!reduce && matchMedia('(hover: hover) and (pointer: fine)').matches) {
+		let target = null, px = 0, py = 0, raf = 0;
+		const sheets = $$('.sheet');
+		addEventListener('pointermove', (e) => {
+			px = e.clientX; py = e.clientY;
+			if (raf) return;
+			raf = requestAnimationFrame(() => {
+				raf = 0;
+				target = sheets.find((sh) => { const r = sh.getBoundingClientRect(); return py >= r.top && py <= r.bottom; }) || null;
+				if (!target) return;
+				const r = target.getBoundingClientRect();
+				target.style.setProperty('--mx', ((px - r.left) / r.width * 100).toFixed(1) + '%');
+				target.style.setProperty('--my', (py - r.top) + 'px');
+			});
+		}, { passive: true });
+	}
 
 	/* ── leaving the tab ── */
 	const title0 = document.title;
