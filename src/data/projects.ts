@@ -89,7 +89,7 @@ export const projects: Project[] = [
 		category: 'work',
 		status: 'shelved',
 		role: 'co-founder, ai dev · 2023–24',
-		body: '<p>a personal ai assistant with task execution, extensive integrations, and personalized interaction. held a $21m round. built a self-deciding multi-agent framework in the early days of ai agents, fine-tuned an llm for natural interaction, and shipped custom systems for smart memory, decision-making, and seamless integrations. left in july 2024; shelved shortly after.</p>'
+		body: '<p>a personal ai assistant with task execution, extensive integrations, and personalized interaction. pitched a $21m round. built a self-deciding multi-agent framework in the early days of ai agents, fine-tuned an llm for natural interaction, and shipped custom systems for smart memory, decision-making, and seamless integrations. left in july 2024; shelved shortly after.</p>'
 	},
 	{
 		name: 'mentoring @ bilsem',
