@@ -155,7 +155,7 @@ const head = `
 	<!-- an application file, not a search result: kept out of indexes on purpose -->
 	<meta name="robots" content="noindex, follow" />
 	<link rel="canonical" href={CANONICAL} />
-	<meta name="theme-color" content="#fbfaf6" />
+	<meta name="theme-color" content="#fbfaf6" id="themeColor" />
 	<link rel="icon" type="image/svg+xml" href={`${A}/favicon.svg`} />
 	<link rel="preload" as="font" type="font/woff2" crossorigin href={`${A}/fonts/unifrakturcook-bold-latin.woff2`} />
 	<link rel="preload" as="font" type="font/woff2" crossorigin href={`${A}/fonts/newsreader-normal-latin.woff2`} />
@@ -166,6 +166,10 @@ const head = `
 	<meta property="og:description" content={description} />
 	<meta property="og:image" content={`${A}/desk.webp`} />
 	<style is:inline set:html={head}></style>
+	<script is:inline>
+	/* the saved theme, before first paint — same storage key as utku.space and news.utku.space */
+	(function () { try { if (localStorage.getItem('theme') === 'dark') document.documentElement.setAttribute('data-theme', 'dark'); } catch (e) {} })();
+	</script>
 	<script is:inline>
 	(function () {
 		try {
@@ -181,7 +185,8 @@ const head = `
 /* ── the utku times palette ── */
 :root {
 	--paper: #fbfaf6; --ink: #121212; --ink2: #333; --muted: #6b6860; --rule: #121212; --hair: rgba(18,18,18,.22);
-	--desk-filter: none;
+	--tint: rgba(18,18,18,.06); --pencil: #1f3a8a; --desk: #e4e0d4; --bar: rgba(228,224,212,.92);
+	--shadow: 0 1px 0 rgba(0,0,0,.08), 0 10px 40px rgba(0,0,0,.18); --img-filter: none; --desk-filter: none;
 	--serif: 'Newsreader', Georgia, 'Times New Roman', serif;
 	--display: 'Playfair Display', Georgia, 'Times New Roman', serif;
 	--black: 'UnifrakturCook', 'Playfair Display', Georgia, serif;
@@ -189,14 +194,20 @@ const head = `
 	--ease: cubic-bezier(0.4, 0, 0.2, 1);
 	--out: cubic-bezier(0.2, 0.7, 0.1, 1);
 }
-/* lights off: the desk goes dark, the paper stays paper */
-[data-theme="dark"] { --desk-filter: grayscale(1) brightness(.13) contrast(1.2); --paper: #f3f0e8; }
+/* the night edition: black newsprint, warm white ink, and the fresco dimmed exactly as on utku.space */
+[data-theme="dark"] {
+	--paper: #111110; --ink: #ece8df; --ink2: #c9c5bc; --muted: #8f8b82; --rule: #ece8df; --hair: rgba(236,232,223,.2);
+	--tint: rgba(236,232,223,.07); --pencil: #9db7ff; --desk: #000; --bar: rgba(12,12,11,.88);
+	--shadow: 0 0 0 1px rgba(236,232,223,.07), 0 10px 40px rgba(0,0,0,.6); --img-filter: brightness(.86) contrast(1.05);
+	--desk-filter: grayscale(1) brightness(.13) contrast(1.2);
+}
 /* konami: red ink */
 [data-konami] { --ink: #d3101c; --ink2: rgba(211,16,28,.86); --muted: rgba(211,16,28,.66); --rule: #d3101c; --hair: rgba(211,16,28,.3); --desk-filter: url(#redInk); }
-[data-konami][data-theme="dark"] { --desk-filter: grayscale(1) brightness(.13) contrast(1.2) url(#redInk); }
+[data-konami][data-theme="dark"] { --ink: #ff4d55; --ink2: rgba(255,77,85,.86); --muted: rgba(255,77,85,.66); --rule: #ff4d55; --hair: rgba(255,77,85,.3); --desk-filter: grayscale(1) brightness(.13) contrast(1.2) url(#redInk); }
+.plate img, .leisure figure img { filter: var(--img-filter); }
 [data-konami] img { filter: url(#redInk); }
 
-html { background: #e4e0d4; }
+html { background: var(--desk); transition: background-color .35s ease; }
 body { font-family: var(--serif); color: var(--ink); line-height: 1.42; -webkit-font-smoothing: antialiased; overflow-x: clip; }
 a { color: inherit; }
 button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; text-align: inherit; }
@@ -208,7 +219,7 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px s
 
 /* ── toolbar (screen only) ── */
 .bar { position: sticky; top: 0; z-index: 50; display: flex; gap: 1.2rem; align-items: center; justify-content: space-between;
-	padding: .55rem 1.2rem; background: rgba(228,224,212,.92); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); border-bottom: 1px solid var(--hair); font-size: .86rem; }
+	padding: .55rem 1.2rem; background: var(--bar); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); border-bottom: 1px solid var(--hair); font-size: .86rem; }
 .bar a, .bar button { color: var(--ink); text-decoration: none; }
 .bar a:hover, .bar button:hover { text-decoration: underline; text-underline-offset: 3px; }
 .bar .brand { font-family: var(--display); font-style: italic; font-weight: 600; white-space: nowrap; }
@@ -217,12 +228,13 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .lamp { display: inline-flex; width: 1.7rem; height: 1.7rem; align-items: center; justify-content: center; border: 1px solid var(--hair); border-radius: 50%; }
 .lamp svg { width: .85rem; height: .85rem; }
 .lamp:hover { text-decoration: none !important; border-color: var(--ink); }
+html:not([data-theme="dark"]) .lamp .icon-moon, [data-theme="dark"] .lamp .icon-sun { display: none; }
 @media (max-width: 700px) { .bar .opt { display: none; } .bar nav { gap: .9rem; } }
 
 /* ── the sheets ── */
 .wrap { position: relative; z-index: 1; padding: 1.6rem 1rem 2rem; }
 .sheet { position: relative; background: var(--paper); max-width: 62rem; margin: 0 auto 2.2rem; padding: 1.5rem 1.6rem 1rem; color: var(--ink);
-	box-shadow: 0 1px 0 rgba(0,0,0,.08), 0 10px 40px rgba(0,0,0,.18); scroll-margin-top: 3.4rem; transition: background-color .35s ease; }
+	box-shadow: var(--shadow); scroll-margin-top: 3.4rem; transition: background-color .35s ease, color .35s ease; }
 html:not(.intro-on) .sheet.land { animation: land .9s var(--out) both; }
 @keyframes land { from { opacity: 0; transform: translateY(22px) rotate(-.5deg); } }
 @media (max-width: 560px) { .wrap { padding: 1rem .5rem 1.5rem; } .sheet { padding: 1.1rem 1rem .9rem; } }
@@ -284,7 +296,7 @@ html:not(.intro-on) .sheet.land { animation: land .9s var(--out) both; }
 .mkt td { text-align: right; padding: .13rem 0 .13rem .4rem; font-weight: 600; white-space: nowrap; }
 #idxAge { font-variant-numeric: tabular-nums lining-nums; letter-spacing: -.01em; }
 .mkt tr { border-bottom: 1px dotted var(--hair); transition: background-color .2s ease; }
-.mkt tr:hover { background: rgba(18,18,18,.045); }
+.mkt tr:hover { background: var(--tint); }
 .mkt .chg { font-weight: 500; font-style: italic; min-width: 3.4rem; }
 .mkt .up::before { content: '▲ '; font-size: .6em; vertical-align: .1em; font-style: normal; }
 .mkt .max::before { content: '★ '; font-size: .7em; vertical-align: .05em; font-style: normal; }
@@ -417,11 +429,11 @@ html:not(.intro-on) .sheet.land { animation: land .9s var(--out) both; }
 .sudoku figcaption { display: flex; justify-content: space-between; align-items: baseline; font-size: .72rem; margin-bottom: .3rem; }
 .sudoku figcaption span { font-size: .6rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
 .sdgrid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); width: 100%; max-width: 12.5rem; margin: 0 auto; border: 2px solid var(--ink); }
-.sd { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border: 1px solid var(--hair); font: 700 1.25rem/1 var(--display); color: #1f3a8a; }
+.sd { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border: 1px solid var(--hair); font: 700 1.25rem/1 var(--display); color: var(--pencil); }
 .sd:nth-child(4n+2) { border-right: 2px solid var(--ink); }
 .sd:nth-child(n+5):nth-child(-n+8) { border-bottom: 2px solid var(--ink); }
-.sd.g { background: rgba(18,18,18,.06); color: var(--ink); cursor: default; }
-.sd:not(.g):hover { background: rgba(18,18,18,.04); }
+.sd.g { background: var(--tint); color: var(--ink); cursor: default; }
+.sd:not(.g):hover { background: var(--tint); }
 .sdgrid.won .sd { background: var(--ink); color: var(--paper); transition: background .3s calc(var(--i) * 40ms), color .3s calc(var(--i) * 40ms); }
 .sd-msg { min-height: 1.3em; margin-top: .35rem; text-align: center; font-size: .74rem; font-style: italic; color: var(--ink2); }
 /* classifieds, boxed like the times' private box */
@@ -435,10 +447,9 @@ html:not(.intro-on) .sheet.land { animation: land .9s var(--out) both; }
 
 /* ── under the last sheet ── */
 .colophon { max-width: 62rem; margin: -1rem auto 1rem; padding: 0 .4rem; display: flex; flex-wrap: wrap; justify-content: space-between; gap: .4rem 1rem; font-size: .8rem; color: var(--ink); }
-.colophon span { background: rgba(251,250,246,.85); padding: .15rem .45rem; }
+.colophon span { background: color-mix(in srgb, var(--paper) 88%, transparent); padding: .15rem .45rem; }
 .colophon button { border-bottom: 1px solid var(--hair); }
 .colophon button:hover { border-color: var(--ink); }
-[data-theme="dark"] .colophon span { background: rgba(251,250,246,.92); }
 
 /* ── intro: two halves of the fresco collide, then the machine wakes up (as on utku.space) ── */
 #intro { display: none; }
@@ -513,6 +524,7 @@ html.intro-on #intro { display: block; position: fixed; inset: 0; z-index: 10000
 /* ── print: one sheet per page, like the times ── */
 @page { size: A4; margin: 8mm; }
 @media print {
+	[data-theme] { --paper: #fff; --ink: #121212; --ink2: #333; --muted: #6b6860; --rule: #121212; --hair: rgba(18,18,18,.22); --tint: rgba(18,18,18,.06); --pencil: #1f3a8a; --img-filter: none; }
 	html, body { background: #fff; }
 	html { font-size: 11px; }
 	#intro, .page-bg, .bar, .colophon, .toast, .term, .fly, .tl-wrap, .abs-btn, .pastimes .act, .pastimes output { display: none !important; }
@@ -549,7 +561,7 @@ html.intro-on #intro { display: block; position: fixed; inset: 0; z-index: 10000
 		<a href="#puzzles" class="opt">puzzles ↓</a>
 		<button type="button" id="printBtn" class="opt">print</button>
 		<a href={`${A}/`} class="opt">utku.space ↗</a>
-		<button type="button" class="lamp" id="lamp" aria-label="lights on or off" title="lights (d)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.6.5 1 1.2 1 2V16h5.2v-.2c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"></path></svg></button>
+		<button type="button" class="lamp" id="lamp" aria-label="toggle dark mode" title="day / night (d)"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"></circle><path d="M12 1.5v2.5M12 20v2.5M4.2 4.2l1.8 1.8M18 18l1.8 1.8M1.5 12h2.5M20 12h2.5M4.2 19.8l1.8-1.8M18 6l1.8-1.8"></path></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"></path></svg></button>
 	</nav>
 </header>
 
@@ -838,11 +850,15 @@ html.intro-on #intro { display: block; position: fixed; inset: 0; z-index: 10000
 	}
 	paintEggs();
 
-	/* ── lights: the desk goes dark, the paper stays ── */
+	/* ── day and night editions ── */
 	const html = document.documentElement;
 	// light by default and the same storage key as utku.space, so the fresco shows as it does there
-	const setTheme = (t, keep) => { html.setAttribute('data-theme', t); if (keep !== false) store.set('theme', t); };
-	if (store.get('theme') === 'dark') setTheme('dark', false);
+	const setTheme = (t, keep) => {
+		html.setAttribute('data-theme', t);
+		$('#themeColor').setAttribute('content', t === 'dark' ? '#111110' : '#fbfaf6');
+		if (keep !== false) store.set('theme', t);
+	};
+	setTheme(html.getAttribute('data-theme') === 'dark' ? 'dark' : 'light', false);
 	const flip = () => setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
 	$('#lamp').addEventListener('click', flip);
 	$('#printBtn').addEventListener('click', () => print());
