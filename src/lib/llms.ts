@@ -18,8 +18,9 @@ const intro = `# ${AUTHOR_NAME}
 > Machine learning developer and AI researcher based in Ankara, Türkiye. Focused on
 > artificial consciousness, neuro-symbolic AI, connectomics, and agentic "thinking"
 > systems. Technical co-founder of turkhukuk.ai and R&D on LabGPT (TÜBİTAK-backed);
-> creator of the open-source FlyDOOM, 007captcha, Topazius, trstemmer, and
-> turkic-relevance-laya; author of Octapar; first author of HukukBERT; founder of 23rd
+> creator of the open-source LLM Electrodes, FlyDOOM, 007captcha, Topazius, trstemmer,
+> and turkic-relevance-laya; author of LLM Electrodes and Octapar; first author of
+> HukukBERT; founder of 23rd
 > the company and, earlier, the indie game studio Ananas Studios. Member of
 > Mensa International and the International Association for Artificial Intelligence
 > and Law (IAAIL); Save the Children volunteer; senior student and mentor at BİLSEM.
@@ -36,6 +37,12 @@ const work = `## Work
 
 ### Open source
 
+- [LLM Electrodes](https://github.com/mutkuoz/llm-electrodes): Shows that stimulating a
+  single neuron of Qwen3.5-4B is enough to give the model a new personality, with no
+  system prompt, fine-tuning or weight changes. All 294,912 MLP neurons screened both
+  ways; 130 passed blind judging against random controls. Paper, data
+  (https://doi.org/10.57967/hf/11353) and a local app with 214 interventions are open.
+  Creator, 2026. Active.
 - [FlyDOOM](https://github.com/mutkuoz/flydoom): A real fruit fly connectome playing
   Doom. Feeds game frames through the visual pathway of 139,255 reconstructed neurons
   and roughly 2.7 million synapses, then maps biological motor output back to game

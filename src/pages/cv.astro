@@ -26,19 +26,21 @@ const TERMS: [RegExp, string][] = (
 		['save the children', 'Save the Children'],
 		['hugging face', 'Hugging Face'],
 		['lady lovelace', 'Lady Lovelace'],
-		['tübitak', 'TÜBİTAK'], ['bilsem', 'BİLSEM'], ['iaail', 'IAAIL'],
+		['qwen3.5-4b', 'Qwen3.5-4B'],
+		['tübitak', 'TÜBİTAK'], ['bilsem', 'BİLSEM'], ['iaail', 'IAAIL'], ['mlp', 'MLP'], ['iud', 'IUD'],
 		['21m', '21M'], ['ai', 'AI'], ['llm', 'LLM'], ['llms', 'LLMs'], ['iq', 'IQ'], ['mit', 'MIT'], ['captcha', 'CAPTCHA'],
 		['doom', 'Doom'], ['github', 'GitHub'], ['pypi', 'PyPI'], ['python', 'Python'], ['typescript', 'TypeScript'], ['markdown', 'Markdown'],
 		['turkish', 'Turkish'], ['turkic', 'Turkic'], ['türkiye', 'Türkiye'], ['wikipedia', 'Wikipedia'], ['hungarian', 'Hungarian'], ['july', 'July']
 	] as [string, string][]
 ).map(([k, v]) => [new RegExp(`(?<![\\p{L}\\p{N}.])${k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![\\p{L}\\p{N}])`, 'gu'), v]);
 function newsCase(html: string) {
-	let cap = true;
+	let cap = true, linkStart = false;
 	return html
 		.split(/(<[^>]+>|&[a-z#0-9]+;)/gi)
 		.map((part) => {
-			if (part.startsWith('<a')) cap = false;
+			if (part.startsWith('<a')) { cap = false; linkStart = true; }
 			if (!part || part.startsWith('<') || /^&[a-z#0-9]+;$/i.test(part)) return part;
+			if (linkStart) { linkStart = false; if (!/^\s*[\p{L}\p{N}-]+\.[\p{L}]/u.test(part)) cap = true; }
 			const text = TERMS.reduce((t, [re, v]) => t.replace(re, v), part);
 			let out = '';
 			for (let i = 0; i < text.length; i++) {
@@ -54,7 +56,7 @@ function newsCase(html: string) {
 }
 // project bodies link relative to utku.space; on cv.utku.space they need the full origin
 const absolute = (html: string) => html.replace(/href="\//g, `href="${SITE}/`);
-const NAMES: Record<string, string> = { octapar: 'Octapar', topazius: 'Topazius', labgpt: 'LabGPT', 'clade ai': 'Clade AI', 'mentoring @ bilsem': 'Mentoring at BİLSEM', sorubot: 'Sorubot', 'a.d.a': 'A.D.A', 'founder @ ananas studios': 'Ananas Studios', shoelace: 'Shoelace' };
+const NAMES: Record<string, string> = { 'llm electrodes': 'LLM Electrodes', flydoom: 'FlyDOOM', octapar: 'Octapar', topazius: 'Topazius', labgpt: 'LabGPT', 'clade ai': 'Clade AI', 'mentoring @ bilsem': 'Mentoring at BİLSEM', sorubot: 'Sorubot', 'a.d.a': 'A.D.A', 'founder @ ananas studios': 'Ananas Studios', shoelace: 'Shoelace' };
 const pname = (n: string) => NAMES[n] ?? n;
 const CATS: Record<string, string> = { 'open-source': 'Open source', work: 'Work', unpublished: 'Unpublished' };
 const cats = categories.map((key) => ({ key, title: CATS[key] ?? key, icon: categoryIcon[key], items: projects.filter((p) => p.category === key) }));
@@ -77,34 +79,35 @@ const sat = { math: 800, rw: 710 };
 
 // the utku index: the numbers, listed like a markets table
 const index = [
-	{ k: 'Age', v: age0.toFixed(6), id: 'idxAge', chg: 'live', cls: 'up' },
+	{ k: 'Age', v: age0.toFixed(9), id: 'idxAge', chg: 'live', cls: 'up' },
 	{ k: 'Years coding', v: String(new Date(NOW).getFullYear() - CODING_SINCE), id: 'idxDev', chg: `since ’${String(CODING_SINCE).slice(2)}`, cls: 'up' },
 	{ k: 'GPA, unweighted', v: '4.00', chg: 'max', cls: 'max' },
 	{ k: 'SAT math', v: String(sat.math), chg: 'max', cls: 'max' },
-	{ k: 'SAT reading & writing', v: String(sat.rw), chg: '', cls: '' },
+	{ k: 'SAT R&W', v: String(sat.rw), chg: '', cls: '' },
 	{ k: 'AP Calculus AB', v: '5', chg: 'max', cls: 'max' },
 	{ k: 'AP Calculus BC', v: '5', chg: 'max', cls: 'max' },
 	{ k: 'AP CS Principles', v: '5', chg: 'max', cls: 'max' },
 	{ k: 'AP CS A', v: '5', chg: 'max', cls: 'max' },
-	{ k: 'Papers', v: '4', chg: '', cls: '' }
+	{ k: 'Papers', v: String(papers.length), chg: '', cls: '' }
 ];
 
+// honours and associations, one entry each
+const org = (key: string) => associations.find((a) => a.key === key)?.url;
 const honours = [
-	{ year: '2026', title: 'HukukBERT, first author', note: 'Journal of Computational Law and Legal Technology. The most comprehensive legal language model for Turkish.', href: 'https://doi.org/10.47852/bonviewJCLLT620210346' },
-	{ year: '2025–', title: 'TÜBİTAK-backed R&D', note: 'LabGPT: test result analysis for doctors, with a corpus of years of medical research.' },
-	{ year: '2025', title: 'Octapar, author', note: 'Zenodo. Balanced user grouping with attentional embeddings and the Hungarian method.', href: 'https://zenodo.org/records/17360220' },
-	{ year: '2024–', title: 'BİLSEM, senior student & mentor', note: 'Government-led program for gifted children (top 2% IQ). Voluntarily teaching primary schoolers robotics, AI and software.' },
-	{ year: '2023–24', title: 'Clade AI, co-founder', note: 'Personal AI assistant. Held a $21M round.' },
-	{ year: '2023', title: 'eTwinning National Quality Label', note: 'European Union. Project: “Particle Physics and CERN”.' },
-	{ year: '2018', title: 'eTwinning Pupil Quality Label', note: 'European Union.' },
-	{ year: 'Member', title: 'Mensa International', note: 'The largest and oldest high-IQ society.' },
-	{ year: 'Member', title: 'IAAIL', note: 'International Association for Artificial Intelligence and Law.' }
+	{ year: '2018 · 2023', title: 'eTwinning Quality Labels', note: 'European Union. The Pupil Quality Label in 2018, and the National Quality Label in 2023 for the project “Particle Physics and CERN”.' },
+	{ year: '2025–', title: 'TÜBİTAK', note: 'Backing for LabGPT, his R&D on test result analysis for doctors.', href: 'https://www.tubitak.gov.tr' },
+	{ year: '2026', title: 'ODTÜ Teknokent', note: 'turkhukuk.ai’s R&D, accepted as a research and development project at METU Technopolis, Ankara.', href: 'https://odtuteknokent.com.tr' },
+	{ year: '2024–', title: 'BİLSEM', note: 'Senior student at the government-led program for gifted children (top 2% IQ), and a voluntary mentor there, teaching primary schoolers robotics, AI and software.', href: org('bilsem') },
+	{ year: 'Member', title: 'Mensa International', note: 'The largest and oldest high-IQ society.', href: org('mensa') },
+	{ year: 'Member', title: 'IAAIL', note: 'International Association for Artificial Intelligence and Law.', href: org('iaail') },
+	{ year: 'Volunteer', title: 'Save the Children', note: 'Global charity for children’s rights, health and education.', href: org('stc') },
+	{ year: 'Volunteer', title: 'TEMA Foundation', note: 'Türkiye’s foundation for combating soil erosion, for reforestation and for protecting natural habitats.', href: 'https://www.tema.org.tr' }
 ];
 
 // the scrubbable timeline: one entry per year, empty years get a line of their own
 const FIRST = 2008, LAST = 2026;
 const record: Record<number, string[]> = {
-	2026: ['Co-founded turkhukuk.ai, legaltech for Turkish lawyers', 'HukukBERT published, first author', 'flydoom: a fruit fly connectome playing Doom', '007captcha, Topazius, turkic-relevance-laya'],
+	2026: ['Co-founded turkhukuk.ai, legaltech for Turkish lawyers', 'HukukBERT published, first author', 'LLM Electrodes: one neuron, a new personality', 'FlyDOOM: a fruit fly connectome playing Doom', '007captcha, Topazius, turkic-relevance-laya'],
 	2025: ['LabGPT, TÜBİTAK-backed medical R&D', 'Octapar, the platform and the paper'],
 	2024: ['Started mentoring at BİLSEM', '“Streaming Intelligence” paper, with Plawlabs'],
 	2023: ['eTwinning National Quality Label: “Particle Physics and CERN”', 'Co-founded Clade AI', 'trstemmer, on PyPI'],
@@ -163,6 +166,16 @@ const head = `
 	<meta property="og:description" content={description} />
 	<meta property="og:image" content={`${A}/desk.webp`} />
 	<style is:inline set:html={head}></style>
+	<script is:inline>
+	(function () {
+		try {
+			if (sessionStorage.getItem('cvIntroSeen')) return;
+			if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+			if (navigator.webdriver || location.hash) return;
+			document.documentElement.classList.add('intro-on');
+		} catch (e) {}
+	})();
+	</script>
 	<style is:inline>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 /* ── the utku times palette ── */
@@ -210,7 +223,7 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .wrap { position: relative; z-index: 1; padding: 1.6rem 1rem 2rem; }
 .sheet { position: relative; background: var(--paper); max-width: 62rem; margin: 0 auto 2.2rem; padding: 1.5rem 1.6rem 1rem; color: var(--ink);
 	box-shadow: 0 1px 0 rgba(0,0,0,.08), 0 10px 40px rgba(0,0,0,.18); scroll-margin-top: 3.4rem; transition: background-color .35s ease; }
-.sheet.land { animation: land .9s var(--out) both; }
+html:not(.intro-on) .sheet.land { animation: land .9s var(--out) both; }
 @keyframes land { from { opacity: 0; transform: translateY(22px) rotate(-.5deg); } }
 @media (max-width: 560px) { .wrap { padding: 1rem .5rem 1.5rem; } .sheet { padding: 1.1rem 1rem .9rem; } }
 
@@ -250,10 +263,6 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .lead-body p:first-child { text-indent: 0; }
 .lead-body p:first-child::first-letter { font-family: var(--display); font-weight: 800; float: left; font-size: 3.1em; line-height: .82; padding: .04em .08em 0 0; }
 @media (max-width: 560px) { .lead-body { column-count: 1; } }
-.box { break-inside: avoid; border: 1px solid var(--rule); box-shadow: 0 0 0 2px var(--paper), 0 0 0 3px var(--rule); padding: .55rem .7rem; margin: .5rem 0 .6rem; text-align: left; background: var(--paper); }
-.box h4 { font-size: .66rem; letter-spacing: .12em; text-transform: uppercase; margin-bottom: .3rem; }
-.box ol { padding-left: 1.1rem; font-size: .86rem; line-height: 1.35; }
-.box li { margin-bottom: .3rem; }
 .nb { hyphens: none; white-space: nowrap; }
 .src { font-size: .64rem; color: var(--muted); margin: .3rem 0 .5rem; border-bottom: 1px solid var(--rule); padding-bottom: .5rem; }
 .src a { text-decoration: none; border-bottom: 1px solid var(--hair); }
@@ -273,20 +282,13 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .side table { width: 100%; border-collapse: collapse; font-size: .8rem; font-variant-numeric: tabular-nums lining-nums; }
 .mkt th { text-align: left; font-weight: 500; padding: .13rem 0; }
 .mkt td { text-align: right; padding: .13rem 0 .13rem .4rem; font-weight: 600; white-space: nowrap; }
+#idxAge { font-variant-numeric: tabular-nums lining-nums; letter-spacing: -.01em; }
 .mkt tr { border-bottom: 1px dotted var(--hair); transition: background-color .2s ease; }
 .mkt tr:hover { background: rgba(18,18,18,.045); }
 .mkt .chg { font-weight: 500; font-style: italic; min-width: 3.4rem; }
 .mkt .up::before { content: '▲ '; font-size: .6em; vertical-align: .1em; font-style: normal; }
 .mkt .max::before { content: '★ '; font-size: .7em; vertical-align: .05em; font-style: normal; }
-.mkt tr.flash td:nth-child(2) { animation: tick .6s ease; }
-@keyframes tick { 30% { background: rgba(18,18,18,.1); } }
 .small { font-size: .68rem; color: var(--muted); margin-top: .25rem; line-height: 1.32; }
-.wx-now b { font-family: var(--display); font-size: 1.7rem; font-weight: 800; font-variant-numeric: tabular-nums lining-nums; letter-spacing: -.01em; }
-.wx-now span { font-style: italic; font-size: .8rem; color: var(--ink2); margin-left: .3rem; }
-.wx { margin-top: .4rem; }
-.wx th { text-align: left; font-size: .64rem; letter-spacing: .1em; padding: .14rem 0; width: 2.6rem; }
-.wx td:last-child { text-align: right; }
-.wx tr { border-top: 1px solid var(--hair); }
 .inside { list-style: none; font-size: .78rem; }
 .inside li { border-top: 1px solid var(--hair); }
 .inside li:first-child { border-top: 0; }
@@ -297,13 +299,6 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .inside strong { display: block; font-weight: 600; line-height: 1.22; }
 .inside span { color: var(--muted); font-size: .72rem; line-height: 1.25; display: block; }
 
-.stats { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 3px double var(--rule); border-bottom: 1px solid var(--rule); margin-top: .8rem; }
-.stat { padding: .45rem .9rem .5rem; }
-.stat + .stat { border-left: 1px solid var(--rule); }
-.stat b { display: block; font-family: var(--display); font-weight: 800; font-size: clamp(1.5rem, 4.6vw, 2.4rem); line-height: 1; letter-spacing: -.01em; font-variant-numeric: lining-nums; }
-.stat b i { font-style: normal; }
-.stat span { display: block; font-size: .68rem; color: var(--ink2); line-height: 1.28; margin-top: .22rem; }
-@media (max-width: 560px) { .stats { grid-template-columns: 1fr; } .stat + .stat { border-left: 0; border-top: 1px solid var(--rule); } }
 
 .folio { display: flex; justify-content: space-between; gap: .6rem; margin-top: .55rem; padding-top: .3rem; border-top: 1px solid var(--rule); font-size: .6rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink2); }
 
@@ -331,14 +326,14 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .bsec li:first-child { border-top: 0; }
 .bsec li p { display: inline; }
 .bsec li strong { color: var(--ink); font-weight: 700; }
-.hon li { display: grid; grid-template-columns: 3.6rem minmax(0, 1fr); gap: .5rem; text-align: left; }
+.hon li { display: grid; grid-template-columns: 4.6rem minmax(0, 1fr); gap: .5rem; text-align: left; }
 .hon li > b { font-size: .7rem; letter-spacing: .04em; color: var(--ink); padding-top: .1rem; font-variant-numeric: lining-nums; }
 .hon a { text-decoration: none; border-bottom: 1px solid var(--hair); }
 .hon a:hover { border-color: var(--ink); }
 .work-cols { column-count: 3; column-gap: 1.1rem; column-rule: 1px solid var(--hair); }
 @media (max-width: 900px) { .work-cols { column-count: 2; } }
 @media (max-width: 560px) { .work-cols { column-count: 1; } }
-.work-cols .bsec { break-inside: avoid-column; margin-bottom: .7rem; }
+.work-cols .bsec { margin-bottom: .7rem; }
 .work-cols .bsec li { break-inside: avoid; }
 .pn { display: inline-flex; align-items: baseline; gap: .35rem; font-family: var(--display); font-size: .98rem; }
 .role { font-style: italic; color: var(--muted); font-size: .92em; }
@@ -368,12 +363,12 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px s
 @keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 @media (max-width: 560px) { .tl-tick.has span { opacity: 0; } .tl-tick.on span { opacity: 1; } .tl-panel { grid-template-columns: 1fr; } }
 
-/* research */
-.papers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.paper-col { padding: 0 .9rem; font-size: .84rem; line-height: 1.36; }
-.paper-col:first-child { padding-left: 0; }
-.paper-col:last-child { padding-right: 0; }
-.paper-col + .paper-col { border-left: 1px solid var(--hair); }
+/* research: two by two */
+.papers { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.paper-col { padding: 0 0 .8rem; font-size: .84rem; line-height: 1.36; }
+.paper-col:nth-child(odd) { padding-right: .9rem; }
+.paper-col:nth-child(even) { padding-left: .9rem; border-left: 1px solid var(--hair); }
+.paper-col:nth-child(n+3) { padding-top: .7rem; border-top: 1px solid var(--hair); }
 .paper-col h3 { font-family: var(--display); font-size: 1.02rem; line-height: 1.15; margin: .15rem 0 .3rem; }
 .paper-col .by { font-style: italic; font-size: .76rem; color: var(--muted); margin-bottom: .3rem; }
 .paper-col p { text-align: justify; hyphens: auto; margin-bottom: .35rem; }
@@ -383,7 +378,7 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .abs > div { overflow: hidden; min-height: 0; }
 .abs.open { grid-template-rows: 1fr; }
 .abs p { font-size: .78rem; line-height: 1.38; color: var(--ink2); padding-top: .4rem; }
-@media (max-width: 760px) { .papers { grid-template-columns: 1fr; } .paper-col, .paper-col:first-child, .paper-col:last-child { padding: .7rem 0 0; } .paper-col + .paper-col { border-left: 0; border-top: 1px solid var(--hair); margin-top: .7rem; } }
+@media (max-width: 760px) { .papers { grid-template-columns: 1fr; } .paper-col, .paper-col:nth-child(odd), .paper-col:nth-child(even) { padding: .7rem 0 0; border-left: 0; } .paper-col:first-child { padding-top: 0; } .paper-col + .paper-col { border-top: 1px solid var(--hair); margin-top: .7rem; } }
 
 /* leisure */
 .leisure { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 0 .9rem; align-items: start; }
@@ -393,6 +388,7 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .pastimes li { padding: .32rem 0; border-top: 1px solid var(--hair); }
 .pastimes li:first-child { border-top: 0; padding-top: 0; }
 .pastimes strong { font-family: var(--display); font-size: .92rem; }
+.pastimes a { text-decoration: none; border-bottom: 1px solid var(--hair); }
 .pastimes .act { margin-left: .3rem; font-size: .76rem; font-style: italic; border-bottom: 1px solid var(--hair); color: var(--ink2); white-space: nowrap; }
 .pastimes .act:hover { border-color: var(--ink); }
 .pastimes output { display: block; font-size: .76rem; font-style: italic; color: var(--muted); white-space: pre; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums; }
@@ -444,6 +440,43 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .colophon button:hover { border-color: var(--ink); }
 [data-theme="dark"] .colophon span { background: rgba(251,250,246,.92); }
 
+/* ── intro: two halves of the fresco collide, then the machine wakes up (as on utku.space) ── */
+#intro { display: none; }
+html.intro-on body { overflow: hidden; }
+html.intro-on #intro { display: block; position: fixed; inset: 0; z-index: 10000; background: #e7e4dc; overflow: hidden; cursor: pointer; transition: opacity .6s ease; }
+#intro.out { opacity: 0; pointer-events: none; }
+#intro.log-only .intro-scene { display: none; }
+#intro.out.fast { transition-duration: .3s; }
+.intro-scene { position: absolute; inset: 0; }
+.intro-panel { position: absolute; top: 0; bottom: 0; width: 50%; will-change: transform; }
+.intro-panel-l { left: 0; transform: translateX(-101%); }
+.intro-panel-r { right: 0; transform: translateX(101%); }
+.intro-panel img { --iw: max(125vw, 900px); position: absolute; height: auto; max-width: none; top: calc(50% - var(--iw) * .2495); filter: none; }
+.intro-panel-l img { width: calc(var(--iw) * .51456); right: calc(var(--iw) * -.03301); }
+.intro-panel-r img { width: calc(var(--iw) * .55146); left: calc(var(--iw) * -.03301); }
+.intro-spark { position: absolute; left: 50%; top: 50%; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%; background: #fff; opacity: 0; transform: scale(0);
+	box-shadow: 0 0 10px 3px #fff, 0 0 34px 12px rgba(255,236,200,.75), 0 0 90px 30px rgba(255,220,170,.35); }
+.intro-flash { position: absolute; left: 50%; top: 50%; width: 24px; height: 24px; margin: -12px 0 0 -12px; border-radius: 50%; background: radial-gradient(circle, #fff 0 45%, rgba(255,248,232,0) 70%); opacity: 0; transform: scale(0); pointer-events: none; }
+.intro-log { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(90vw, 48rem); margin: 0; white-space: pre-wrap;
+	font: 400 clamp(.78rem, 2.4vw, 1rem)/1.9 var(--mono); color: #e9e5db; letter-spacing: .01em; }
+.intro-log .dim { color: rgba(233,229,219,.45); }
+.intro-log .caret { display: inline-block; width: .6em; height: 1.05em; margin-left: .1em; vertical-align: -.15em; background: #e9e5db; animation: intro-blink .9s steps(1) infinite; }
+.intro-skip { position: absolute; left: 50%; bottom: 1.6rem; transform: translateX(-50%); font: italic .72rem/1 var(--serif); letter-spacing: .04em; color: rgba(128,122,112,.75); white-space: nowrap; }
+#intro.play { animation: intro-night .01s linear 4.45s forwards; }
+#intro.log-only { background: #000; }
+#intro.play .intro-panel-l { animation: intro-in-l 3.4s cubic-bezier(.5,0,.25,1) .2s forwards; }
+#intro.play .intro-panel-r { animation: intro-in-r 3.4s cubic-bezier(.5,0,.25,1) .2s forwards; }
+#intro.play .intro-spark { animation: intro-spark .6s ease-out 3.5s forwards, intro-hide .01s linear 4.45s forwards; }
+#intro.play .intro-flash { animation: intro-flash 1.3s cubic-bezier(.4,0,.2,1) 3.95s forwards; }
+#intro.play .intro-scene { animation: intro-hide .01s linear 4.45s forwards; }
+@keyframes intro-in-l { to { transform: translateX(0); } }
+@keyframes intro-in-r { to { transform: translateX(0); } }
+@keyframes intro-spark { 0% { opacity: 0; transform: scale(0); } 35% { opacity: 1; transform: scale(1.4); } 60% { transform: scale(.8); } 100% { opacity: 1; transform: scale(1.6); } }
+@keyframes intro-flash { 0% { opacity: 1; transform: scale(0); } 45% { opacity: 1; transform: scale(260); } 100% { opacity: 0; transform: scale(300); } }
+@keyframes intro-hide { to { opacity: 0; } }
+@keyframes intro-night { to { background-color: #000; } }
+@keyframes intro-blink { 50% { opacity: 0; } }
+
 /* ── reveal ── */
 .reveal { opacity: 0; transform: translateY(16px); transition: opacity .7s var(--ease), transform .7s var(--ease); }
 .reveal.visible { opacity: 1; transform: none; }
@@ -482,7 +515,7 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px s
 @media print {
 	html, body { background: #fff; }
 	html { font-size: 11px; }
-	.page-bg, .bar, .colophon, .toast, .term, .fly, .tl-wrap, .abs-btn, .pastimes .act, .pastimes output { display: none !important; }
+	#intro, .page-bg, .bar, .colophon, .toast, .term, .fly, .tl-wrap, .abs-btn, .pastimes .act, .pastimes output { display: none !important; }
 	.wrap { padding: 0; }
 	.sheet { box-shadow: none; max-width: none; margin: 0; padding: 0; background: #fff; page-break-after: always; break-after: page; animation: none; }
 	.sheet:last-of-type { page-break-after: auto; break-after: auto; }
@@ -495,6 +528,18 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px s
 	<filter id="redInk" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0.0368 0.1237 0.0125 0 0.827  0.1992 0.6701 0.0677 0 0.063  0.1892 0.6365 0.0643 0 0.110  0 0 0 1 0" /></filter>
 </svg>
 <div class="page-bg" aria-hidden="true"></div>
+
+<!-- intro: the touch, then a boot log (once per visit, skippable), as on utku.space -->
+<div id="intro" aria-hidden="true">
+	<div class="intro-scene">
+		<div class="intro-panel intro-panel-l"><img alt="" width="1060" height="1060" data-src={`${A}/intro-scene-l.webp`} /></div>
+		<div class="intro-panel intro-panel-r"><img alt="" width="1136" height="1060" data-src={`${A}/intro-scene-r.webp`} /></div>
+	</div>
+	<span class="intro-spark"></span>
+	<span class="intro-flash"></span>
+	<pre class="intro-log"></pre>
+	<span class="intro-skip">click or press any key to skip</span>
+</div>
 
 <header class="bar">
 	<a class="brand" href={`${A}/`}>utku&rsquo;s space <span>/ cv</span></a>
@@ -525,43 +570,35 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px s
 		<div class="cols">
 			<div class="main">
 				<p class="kicker">Profile · Ankara</p>
-				<h2 class="lead-h">Ankara teenager builds machines that think, and wired a fruit fly&rsquo;s brain into Doom</h2>
-				<p class="deck">Mehmet Utku Öztürk has been programming since he was eight. Now a machine learning developer and AI researcher, he works on artificial consciousness and &ldquo;thinking&rdquo; systems, and has the papers, the companies and a fly to show for it.</p>
+				<h2 class="lead-h">Developing story: Mehmet Utku Öztürk</h2>
+				<p class="deck">Programming since eight, working on machine learning since thirteen, and nowhere near finished. The machine learning developer and AI researcher works on artificial consciousness and &ldquo;thinking&rdquo; systems. This story will be updated.</p>
 				<figure class="photo">
 					<div class="plate"><img src={`${A}/desk.webp`} width="1024" height="682" alt="Ink illustration of a cluttered desk with two laptops, and Mehmet Utku Öztürk asleep on the floor beneath it" fetchpriority="high" /></div>
 					<figcaption>The desk in Ankara, and the developer under it. <span class="credit">Illustration: utku.space</span></figcaption>
 				</figure>
 				<div class="lead-body">
 					<p>Mehmet Utku Öztürk wrote his first programs at eight: small apps and scripts. By eleven he was familiar with C++ and C#. At thirteen he started on machine learning, and at fourteen he fine-tuned his first large language model, &ldquo;extremely unsuccessfully,&rdquo; in his own words.</p>
-					<p>The results have improved. In 2026 he co-founded <span class="nb">turkhukuk.ai</span>, a legaltech platform for Turkish lawyers, as its technical co-founder, and published HukukBERT as first author in the Journal of Computational Law and Legal Technology: the most comprehensive legal language model for Turkish.</p>
-					<p>His side projects wander further out. <span class="nb">flydoom</span> feeds the game Doom through the visual pathway of a real fruit fly connectome, 139,255 reconstructed neurons and roughly 2.7 million synapses, and maps the fly&rsquo;s motor output back to the controls. Nothing is trained; the wiring is the fly&rsquo;s.</p>
-					<div class="box">
-						<h4>What to ask him about</h4>
-						<ol>
-							<li>How a fruit fly&rsquo;s connectome plays Doom with no training at all.</li>
-							<li>Building the most comprehensive legal language model for Turkish.</li>
-							<li>Chess, sudoku, or his last lift.</li>
-						</ol>
-					</div>
+					<p>The results have improved. In 2026 he co-founded <span class="nb">turkhukuk.ai</span>, a legaltech platform for Turkish lawyers, as its technical co-founder; its R&amp;D was accepted as a project at ODTÜ Teknokent. The same year he published HukukBERT as first author in the Journal of Computational Law and Legal Technology: the most comprehensive legal language model for Turkish.</p>
+					<p>His experiments wander further out. FlyDOOM feeds the game Doom through the visual pathway of a real fruit fly connectome, 139,255 reconstructed neurons and roughly 2.7 million synapses, and maps the fly&rsquo;s motor output back to the controls. Nothing is trained; the wiring is the fly&rsquo;s. In LLM Electrodes he took the neuroscientist&rsquo;s electrode to a language model, and found that stimulating a single neuron is enough to change who it says it is.</p>
 					<p>Before that he co-founded Clade AI, a personal assistant built on a self-deciding multi-agent framework, which held a $21 million round. He now works on LabGPT, a TÜBİTAK-backed tool that analyses test results for doctors, and mentors primary schoolers at BİLSEM, the government-led program for gifted children where he is a senior student.</p>
-					<p>Away from the keyboard he is a competitive Class II powerlifter, and spends the rest on strongman, martial arts, cognitive science, kinesiology, chess, sudoku and good coffee. He is a member of Mensa International and the International Association for Artificial Intelligence and Law.</p>
+					<p>Away from the keyboard he is a competitive Class II powerlifter, also into strongman, Brazilian jiu-jitsu and kickboxing, and interested in cognitive science, kinesiology, chess, sudoku and good coffee. He is a member of Mensa International and the International Association for Artificial Intelligence and Law.</p>
 				</div>
 				<p class="src">The record continues on <a href="#record">A2</a>; research, leisure and the classifieds on <a href="#research">A3</a>. Full site: <a href={`${A}/`}>utku.space</a></p>
 
 				<div class="secondary">
+					<section class="story">
+						<p class="kicker">Interpretability · AI</p>
+						<h3>One neuron is enough to give a language model a new personality</h3>
+						<p>Öztürk pushed each of the 294,912 MLP neurons of Qwen3.5-4B in both directions and had the strongest judged blind, with random neurons as controls. 130 passed every check. Asked the meaning of life, one replies: &ldquo;The meaning of life is $19.99, but it is now $14.99.&rdquo; No system prompt, no fine-tuning, no change to the weights.</p>
+						<p><a class="chip" href="https://github.com/mutkuoz/llm-electrodes/blob/master/paper/main.pdf" target="_blank" rel="noopener">Paper ↗</a> <a class="chip" href="https://github.com/mutkuoz/llm-electrodes" target="_blank" rel="noopener">Code ↗</a> <a class="chip" href="https://doi.org/10.57967/hf/11353" target="_blank" rel="noopener">Data ↗</a></p>
+					</section>
 					<section class="story">
 						<p class="kicker">Research · Law</p>
 						<h3>HukukBERT beats BERTurk-Legal on a new legal cloze test</h3>
 						<p>Trained on an 18 GB cleaned legal corpus with a 48K WordPiece tokenizer and domain-adaptive pre-training, the model reaches 84.40% top-1 accuracy on a novel Legal Cloze Test benchmark. Written with Tansu Türkoğlu and Buse Buz-Yalug.</p>
 						<p><a class="chip" href="https://doi.org/10.47852/bonviewJCLLT620210346" target="_blank" rel="noopener">JCLLT ↗</a> <a class="chip" href="https://arxiv.org/abs/2604.04790" target="_blank" rel="noopener">arXiv ↗</a></p>
 					</section>
-					<section class="story">
-						<p class="kicker">AI · Platforms</p>
-						<h3>Octapar sorts strangers into perfectly balanced eight-person tribes</h3>
-						<p>Conversational onboarding turns users into semantic tags; a weighted attention mechanism weighs what is rare and what is distinctive; the Hungarian method then guarantees groups of exactly equal size.</p>
-						<p><a class="chip" href="https://zenodo.org/records/17360220" target="_blank" rel="noopener">Zenodo ↗</a></p>
-					</section>
-				</div>
+									</div>
 			</div>
 
 			<aside class="side">
@@ -573,33 +610,19 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px s
 				</table>
 				<p class="small">Age trades live. ★ marks a perfect score.</p>
 
-				<h5>Age · live</h5>
-				<p class="wx-now"><b id="ageBig">{age0.toFixed(8)}</b><span>years old</span></p>
-				<p class="small">Counted from midnight, 29 November 2008, Istanbul time.</p>
-				<table class="wx">
-					<tbody>
-						<tr><th>NEXT</th><td>29 November</td><td id="turns">turns {Math.floor(age0) + 1}</td></tr>
-						<tr><th>IN</th><td colspan="2" id="countdown">&nbsp;</td></tr>
-					</tbody>
-				</table>
 
 				<h5>Inside</h5>
 				<ul class="inside">
-					<li><a href="#record"><b>A2</b><span><strong>The record</strong>Honours, labels, and a timeline you can scrub.</span></a></li>
+					<li><a href="#record"><b>A2</b><span><strong>The record</strong>Honours, associations, and a timeline you can scrub.</span></a></li>
 					<li><a href="#work"><b>A2</b><span><strong>The work</strong>All {projects.length} projects, open source to unpublished.</span></a></li>
 					<li><a href="#research"><b>A3</b><span><strong>Research</strong>Papers, with their abstracts.</span></a></li>
-					<li><a href="#leisure"><b>A3</b><span><strong>Sports &amp; leisure</strong>Powerlifting, chess, coffee.</span></a></li>
+					<li><a href="#leisure"><b>A3</b><span><strong>Interests</strong>Lifting, martial arts, chess, coffee.</span></a></li>
 					<li><a href="#puzzles"><b>A3</b><span><strong>Puzzles</strong>A 4×4 sudoku.</span></a></li>
 					<li><a href="#classifieds"><b>A3</b><span><strong>Classifieds</strong>How to reach him.</span></a></li>
 				</ul>
 			</aside>
 		</div>
 
-		<div class="stats">
-			<div class="stat"><b data-count="139255">139,255</b><span>fruit fly neurons wired into Doom</span></div>
-			<div class="stat"><b>$<i data-count="21">21</i>M</b><span>round held by Clade AI, which he co-founded</span></div>
-			<div class="stat"><b data-count="14244">14,244</b><span>Wikipedia articles his classifier sorted as core Turkic heritage</span></div>
-		</div>
 		<footer class="folio"><span>The Utku Times · CV edition</span><span>A1</span><span>m@utku.space</span></footer>
 	</article>
 
@@ -608,7 +631,7 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px s
 		<header class="back-head"><span class="mini-flag">The Utku Times</span><span>A2 · The record</span><span class="opt date-2">{dateline}</span></header>
 		<div class="split split-a">
 			<section class="bsec hon">
-				<h4>Honours, labels &amp; memberships</h4>
+				<h4>Honours &amp; associations</h4>
 				<ul>
 					{honours.map((h) => (
 						<li><b>{h.year}</b><span><strong>{h.href ? <a href={h.href} target="_blank" rel="noopener">{h.title} ↗</a> : h.title}</strong> — {h.note}</span></li>
@@ -670,29 +693,22 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px s
 
 		<div class="split split-b">
 			<section id="leisure">
-				<div class="puz-head"><h3>Sports &amp; leisure</h3><span>Some of it clicks</span></div>
+				<div class="puz-head"><h3>Interests</h3><span>Off the clock</span></div>
 				<div class="leisure">
 					<figure><img src={`${A}/gym.webp`} width="760" height="760" loading="lazy" alt="Halftone illustration of a gym, Mehmet Utku Öztürk in the mirror" /><figcaption>A competitive Class II powerlifter, in the mirror.</figcaption></figure>
 					<ul class="pastimes">
-						<li><strong>Powerlifting.</strong> Competitive, Class II. <button class="act" id="lift" type="button">load the bar</button><output id="liftOut"></output></li>
-						<li><strong>Strongman &amp; martial arts.</strong> Heavy things, picked up.</li>
+						<li><strong>Powerlifting &amp; strongman.</strong> Competitive, Class II. <button class="act" id="lift" type="button">load the bar</button><output id="liftOut"></output></li>
+						<li><strong>Martial arts.</strong> Brazilian jiu-jitsu &amp; kickboxing.</li>
 						<li><strong>Chess.</strong> <button class="act" id="chess" type="button">move the knight</button><output id="chessOut"></output></li>
-						<li><strong>Cognitive science &amp; kinesiology.</strong> How minds and bodies move.</li>
-						<li><strong>Connectomics.</strong> One fly is loose on this paper. <button class="act" id="flyBtn" type="button">release it</button></li>
+						<li><strong>Sudoku.</strong> There is one <a href="#puzzles">below</a>.</li>
+						<li><strong>Cognitive science.</strong> How minds work.</li>
+						<li><strong>Kinesiology.</strong> How bodies move.</li>
 						<li><strong>Coffee.</strong> Good, only. <button class="act" id="coffee" type="button">pour one</button><output id="coffeeOut"></output></li>
 					</ul>
 				</div>
 			</section>
 			<div>
 				<section class="bsec">
-					<h4>Memberships</h4>
-					<ul class="orgs">
-						{associations.map((a) => (
-							<li><a href={a.url} target="_blank" rel="noopener"><span class="logo" set:html={a.logo} /><span><strong>{newsCase(a.name)}</strong><span>{newsCase(a.role)}. {newsCase(a.desc)}</span></span></a></li>
-						))}
-					</ul>
-				</section>
-				<section class="bsec block">
 					<h4>From utku.space</h4>
 					<ul class="art">
 						{articles.map((a) => (
@@ -735,6 +751,66 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px s
 	<label class="term-in"><span aria-hidden="true">$</span><input id="termIn" autocomplete="off" spellcheck="false" aria-label="terminal command" /></label>
 </div>
 
+<script is:inline>
+/* ── intro: the touch → spark → boot log → the paper (once per visit), as on utku.space ── */
+(function () {
+	const html = document.documentElement;
+	const root = document.getElementById('intro');
+	if (!root || !html.classList.contains('intro-on')) { if (root) root.remove(); return; }
+	try { sessionStorage.setItem('cvIntroSeen', '1'); } catch (e) {}
+	const log = root.querySelector('.intro-log');
+	if (matchMedia('(hover: none)').matches) root.querySelector('.intro-skip').textContent = 'tap to skip';
+	const timers = [];
+	const later = (fn, ms) => timers.push(setTimeout(fn, ms));
+	let done = false;
+	function finish(fast) {
+		if (done) return;
+		done = true;
+		timers.forEach(clearTimeout);
+		removeEventListener('keydown', skip, true);
+		root.classList.add('out');
+		if (fast) root.classList.add('fast');
+		setTimeout(() => { html.classList.remove('intro-on'); root.remove(); document.dispatchEvent(new Event('cv:intro-done')); }, fast ? 320 : 650);
+	}
+	function skip(e) { e.preventDefault(); e.stopImmediatePropagation(); finish(true); }   // keep 'd' and '/' from firing underneath
+	addEventListener('keydown', skip, true);
+	root.addEventListener('pointerdown', () => finish(true));
+	root.addEventListener('wheel', (e) => { if (Math.abs(e.deltaY) > 40) finish(true); }, { passive: true });
+	// the boot log: "~" marks a dim ellipsis beat
+	const LINES = ['> initializing kernel~', '> loading model: utku-quantized-gguf~ ok', '> calibrating curiosity~ ok', '> i think, therefore\u2014'];
+	function type(lineIdx) {
+		if (done) return;
+		if (lineIdx >= LINES.length) { log.insertAdjacentHTML('beforeend', '<span class="caret"></span>'); later(() => finish(false), 1000); return; }
+		const text = LINES[lineIdx];
+		let i = 0;
+		const line = document.createElement('span');
+		log.appendChild(line);
+		(function step() {
+			if (done) return;
+			if (i >= text.length) { log.appendChild(document.createTextNode('\n')); later(() => type(lineIdx + 1), 110); return; }
+			const ch = text[i++];
+			if (ch === '~') { const d = document.createElement('span'); d.className = 'dim'; d.textContent = ' \u2026'; line.appendChild(d); later(step, 220); }
+			else { line.appendChild(document.createTextNode(ch)); later(step, 20); }
+		})();
+	}
+	function play() { if (done || root.classList.contains('play')) return; root.classList.add('play'); later(() => type(0), 5300); }
+	// if the fresco can't load, skip the scene and go straight to the boot log
+	function logOnly() {
+		if (done || root.classList.contains('play') || root.classList.contains('log-only')) return;
+		root.classList.add('log-only');
+		later(() => type(0), 250);
+	}
+	const imgs = [...root.querySelectorAll('img[data-src]')];
+	let pending = imgs.length;
+	imgs.forEach((img) => {
+		img.addEventListener('load', () => { if (--pending === 0) play(); }, { once: true });
+		img.addEventListener('error', logOnly, { once: true });
+		img.src = img.dataset.src;
+	});
+	later(() => { pending > 0 ? logOnly() : play(); }, 2500);
+})();
+</script>
+
 <script type="application/json" id="cvData" set:html={json}></script>
 <script is:inline>
 (function () {
@@ -764,9 +840,9 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px s
 
 	/* ── lights: the desk goes dark, the paper stays ── */
 	const html = document.documentElement;
-	const setTheme = (t, keep) => { html.setAttribute('data-theme', t); if (keep !== false) store.set('cvTheme', t); };
-	const saved = store.get('cvTheme');
-	if (saved === 'dark' || (!saved && matchMedia('(prefers-color-scheme: dark)').matches)) setTheme('dark', false);
+	// light by default and the same storage key as utku.space, so the fresco shows as it does there
+	const setTheme = (t, keep) => { html.setAttribute('data-theme', t); if (keep !== false) store.set('theme', t); };
+	if (store.get('theme') === 'dark') setTheme('dark', false);
 	const flip = () => setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
 	$('#lamp').addEventListener('click', flip);
 	$('#printBtn').addEventListener('click', () => print());
@@ -786,36 +862,23 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px s
 		$('#no').textContent = Math.floor((now - lastBday(now)) / 864e5) + 1;
 		const d = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Istanbul', weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }).format(now);
 		$('#date').textContent = d; $$('.date-2').forEach((e) => { e.textContent = d; });
-		$('#turns').textContent = 'turns ' + (Math.floor(a) + 1);
 		$('#idxDev').textContent = new Date(now).getFullYear() - data.codingSince;
 	})();
 	const ist = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Istanbul', day: '2-digit', month: '2-digit' }).format(new Date());
 	if (ist === '29/11') setTimeout(() => toast('It’s his birthday today. Impeccable timing.', 5000), 3000);
 
-	/* ── live age, the index ticker and the countdown ── */
-	const ageBig = $('#ageBig'), idxAge = $('#idxAge'), ageRow = idxAge.closest('tr'), cd = $('#countdown');
-	let lastIdx = '';
-	(function tick() {
-		const now = Date.now(), a = age(now);
-		ageBig.textContent = a.toFixed(8);
-		const s = a.toFixed(6);
-		if (s !== lastIdx) { idxAge.textContent = s; lastIdx = s; ageRow.classList.remove('flash'); void ageRow.offsetWidth; ageRow.classList.add('flash'); }
-		requestAnimationFrame(tick);
-	})();
-	const pad = (n) => String(n).padStart(2, '0');
-	(function countdown() {
-		const now = Date.now(), next = bday(new Date(lastBday(now)).getUTCFullYear() + 1);
-		let s = Math.max(0, Math.floor((next - now) / 1000));
-		const d = Math.floor(s / 86400); s -= d * 86400;
-		cd.textContent = d + ' day' + (d === 1 ? '' : 's') + ', ' + pad(Math.floor(s / 3600)) + ':' + pad(Math.floor(s % 3600 / 60)) + ':' + pad(s % 60);
-		setTimeout(countdown, 1000 - (now % 1000));
-	})();
+	/* ── live age, nine decimals, every frame ── */
+	const idxAge = $('#idxAge');
+	(function tick() { idxAge.textContent = age(Date.now()).toFixed(9); requestAnimationFrame(tick); })();
 
 	/* ── the tagline types itself ── */
 	const tag = $('#tagline'), tagText = $('#tagText'), line = tag.dataset.text;
-	if (reduce) { tagText.textContent = line; tag.classList.add('done'); }
-	else { let i = 0; setTimeout(function type() { tagText.textContent = line.slice(0, ++i); if (i < line.length) setTimeout(type, line[i - 1] === ',' ? 240 : 24 + Math.random() * 28); else tag.classList.add('done'); }, 700); }
-
+	function typeTagline() {
+		if (reduce) { tagText.textContent = line; tag.classList.add('done'); return; }
+		let i = 0; setTimeout(function type() { tagText.textContent = line.slice(0, ++i); if (i < line.length) setTimeout(type, line[i - 1] === ',' ? 240 : 24 + Math.random() * 28); else tag.classList.add('done'); }, 700);
+	}
+	// after the intro, if there is one
+	if (html.classList.contains('intro-on')) document.addEventListener('cv:intro-done', typeTagline, { once: true }); else typeTagline();
 	/* ── the “un” comes off, the word is struck, then it snaps back ── */
 	$$('.un').forEach((b) => b.addEventListener('click', () => {
 		const w = b.closest('.word'); if (w.classList.contains('off')) return;
@@ -825,20 +888,9 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px s
 		setTimeout(() => w.classList.remove('off'), 1500);
 	}));
 
-	/* ── reveal, counters, the last page ── */
-	function count(el) {
-		if (reduce) return;
-		const to = +el.dataset.count, t0 = performance.now();
-		(function step(t) {
-			const k = Math.min(1, Math.max(0, (t - t0) / 1400)), v = Math.round(to * (1 - Math.pow(1 - k, 3)));
-			el.textContent = v.toLocaleString('en-US');
-			if (k < 1) requestAnimationFrame(step);
-		})(t0);
-	}
+	/* ── reveal, the last page ── */
 	const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { io.unobserve(e.target); e.target.classList.add('visible'); } }), { threshold: 0.04 });
 	$$('.reveal').forEach((el) => io.observe(el));
-	const statsIo = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { statsIo.unobserve(e.target); $$('[data-count]', e.target).forEach(count); } }), { threshold: 0.6 });
-	statsIo.observe($('.stats'));
 	new IntersectionObserver((es, o) => es.forEach((e) => { if (e.isIntersecting) { o.disconnect(); setTimeout(() => egg('end'), 600); } }), { threshold: 1 }).observe($('#lastFolio'));
 
 	/* ── a life in years ── */
@@ -894,11 +946,11 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px s
 	let plates = 0;
 	$('#lift').addEventListener('click', () => {
 		const out = $('#liftOut');
-		if (plates >= 3) { plates = 0; out.textContent = ''; $('#lift').textContent = 'load the bar'; return; }
+		if (plates >= 5) { plates = 0; out.textContent = ''; $('#lift').textContent = 'load the bar'; return; }
 		plates++;
 		const side = '▮'.repeat(plates);
-		out.textContent = side + '━━━━━━━━' + side + (plates === 3 ? '  locked out. PR.' : '  ' + plates + ' plate' + (plates > 1 ? 's' : '') + ' a side');
-		if (plates === 3) { $('#lift').textContent = 'rack it'; if (!egg('lift')) toast('Another PR. The bar is getting nervous.'); }
+		out.textContent = side + '━━━━━━' + side + (plates === 5 ? '  five a side. locked out. PR.' : '  ' + plates + ' plate' + (plates > 1 ? 's' : '') + ' a side');
+		if (plates === 5) { $('#lift').textContent = 'rack it'; if (!egg('lift')) toast('Another PR. The bar is getting nervous.'); }
 	});
 	const FILES = 'abcdefgh'; let kx = 6, ky = 0, hops = 0;
 	$('#chess').addEventListener('click', () => {
@@ -959,7 +1011,6 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px s
 		})(t0);
 	}
 	function schedFly(ms) { clearTimeout(flyTimer); if (reduce && ms === undefined) return; flyTimer = setTimeout(spawnFly, ms !== undefined ? ms : 45000 + Math.random() * 35000); }
-	$('#flyBtn').addEventListener('click', () => { if (flyEl) toast('It’s already out. Look around.'); else spawnFly(); });
 	if (!reduce) schedFly(25000);
 
 	/* ── the wire ── */
@@ -974,7 +1025,7 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px s
 		help: () => 'whoami · age · index · sat · gpa · ap · projects · open &lt;name&gt; · papers · honours · year &lt;yyyy&gt; · contact · coffee · lift · fly · eggs · hire · date · clear · exit',
 		whoami: () => 'Mehmet Utku Öztürk. Machine learning developer and AI researcher, Ankara.\nUnpredictable, unsatisfied, unconventional.',
 		age: () => age(Date.now()).toFixed(12) + ' years. Still compiling.',
-		index: () => ['AGE              ' + age(Date.now()).toFixed(6) + '  ▲ live', 'YEARS CODING     ' + (new Date().getFullYear() - data.codingSince) + '         ▲ since 2016', 'GPA (UNW)        4.00      ★', 'SAT MATH         ' + data.sat.math + '       ★', 'SAT R&amp;W          ' + data.sat.rw, 'AP CALC AB/BC    5 / 5     ★', 'AP CSP / CSA     5 / 5     ★', 'PAPERS           ' + data.papers].join('\n'),
+		index: () => ['AGE              ' + age(Date.now()).toFixed(9) + '  ▲ live', 'YEARS CODING     ' + (new Date().getFullYear() - data.codingSince) + '         ▲ since 2016', 'GPA (UNW)        4.00      ★', 'SAT MATH         ' + data.sat.math + '       ★', 'SAT R&amp;W          ' + data.sat.rw, 'AP CALC AB/BC    5 / 5     ★', 'AP CSP / CSA     5 / 5     ★', 'PAPERS           ' + data.papers_.length].join('\n'),
 		sat: () => 'math                ' + bar(data.sat.math, 800) + ' ' + data.sat.math + '\nreading &amp; writing ' + bar(data.sat.rw, 800) + ' ' + data.sat.rw,
 		gpa: () => data.gpa + '.',
 		ap: () => Object.entries(data.ap).map(([k, v]) => ('ap ' + k).padEnd(22) + v).join('\n'),
@@ -995,7 +1046,7 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px s
 		},
 		contact: () => '<a href="mailto:' + data.email + '">' + data.email + '</a> · github.com/mutkuoz · linkedin.com/in/mutkuoz',
 		coffee: () => { $('#coffee').click(); return 'Poured. Cup #' + cups + '.'; },
-		lift: () => { if (plates >= 3) $('#lift').click(); while (plates < 3) $('#lift').click(); return 'Three plates a side. Locked out.'; },
+		lift: () => { if (plates >= 5) $('#lift').click(); while (plates < 5) $('#lift').click(); return 'Five plates a side. Locked out.'; },
 		fly: () => { if (flyEl) return 'It’s already out. Look around.'; spawnFly(); return 'Released one Drosophila melanogaster.'; },
 		eggs: () => Object.keys(EGGS).map((k) => (found.has(k) ? '✓ ' + EGGS[k] : '<span class="m">· ???</span>')).join('\n') + '\n' + found.size + ' / ' + TOTAL,
 		hire: () => { egg('hire'); return 'Noted. The official channel: <a href="mailto:' + data.email + '?subject=hello%20from%20your%20cv">' + data.email + '</a>'; },
