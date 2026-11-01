@@ -48,7 +48,7 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-  # mirror the cv page (utku.space/cv/) to the repo that serves cv.utku.space. the page is
+  # mirror the homepage (the cv) to the repo that serves cv.utku.space. the page is
   # self-contained, so its one html file plus a CNAME is the whole site. skips quietly until
   # the CV_DEPLOY_TOKEN secret exists: a fine-grained token with contents read & write on
   # mutkuoz/cv only. never blocks a deploy.
@@ -68,9 +68,9 @@ jobs:
       - name: push the cv to mutkuoz/cv
         if: env.CV_TOKEN != ''
         run: |
-          mkdir site && tar -xf artifact.tar -C site ./cv/index.html
+          mkdir site && tar -xf artifact.tar -C site ./index.html
           git clone --depth 1 "https://x-access-token:${CV_TOKEN}@github.com/mutkuoz/cv.git" out
-          cp site/cv/index.html out/index.html
+          cp site/index.html out/index.html
           echo "cv.utku.space" > out/CNAME
           touch out/.nojekyll
           cd out

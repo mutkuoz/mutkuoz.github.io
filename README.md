@@ -11,9 +11,10 @@ src/
 ├── content/
 │   └── articles/          # one Markdown file per article
 ├── content.config.ts      # article frontmatter schema
-├── data/research.ts       # papers: homepage, json-ld, and llms.txt read from here
+├── data/                  # projects, papers, honours, associations: one source for the page, json-ld and llms.txt
 ├── lib/
 │   ├── site.ts            # site constants and article helpers
+│   ├── schema.ts          # the homepage's schema.org json-ld
 │   └── llms.ts            # llms.txt and llms-full.txt builders
 ├── pages/
 │   ├── articles/[id].astro
@@ -25,18 +26,19 @@ src/
 │   └── index.astro
 └── styles/global.css
 public/                    # static assets, robots.txt, indexnow key, and CNAME
+archive/classic-homepage/  # the previous homepage design, parked: not built or linked
 news-site/                 # separate static newsletter
 ```
 
-The homepage opens with a short intro animation (once per visit, skippable), then the biography, (some) work, associations, research, articles, and contact sections. (some) work shows the desk engraving beside the "work" projects and expands, on hover or click, to all projects in three columns: open-source, work, and unpublished.
+The homepage is printed as an edition of The Utku Times, after [news.utku.space/times](https://news.utku.space/times/): three broadsheets on the fresco. It opens with the intro animation (once per visit, skippable). A1 is the front page: the lead profile, two stories, and the Utku Index of numbers with a live age. A2 holds honours & associations, a scrubbable timeline and every project; A3 holds research, interests, articles, a sudoku and the classifieds. It has a day and a night edition, a music player, and easter eggs (the terminal opens with `/`).
 
-Projects live in `src/data/projects.ts`, which the (some) work section and the cv page both render. Two more places describe them in prose and need updating by hand: the `projects` JSON-LD list in `src/pages/index.astro` and the Work section of `src/lib/llms.ts`. Associations live in `src/data/associations.ts`. Article index entries and individual `/articles/<id>/` pages are generated from the Markdown files in `src/content/articles/` during the Astro build.
+The page reads projects from `src/data/projects.ts`, papers from `src/data/research.ts`, honours from `src/data/honours.ts`, associations from `src/data/associations.ts`, and the article collection. The scores and the timeline live in `src/pages/index.astro`. The JSON-LD comes from `src/lib/schema.ts`; its `projects` list and the Work section of `src/lib/llms.ts` describe projects in prose and need updating by hand. Article pages are generated from the Markdown files in `src/content/articles/` during the build.
 
-## The cv page
+The page is self-contained: CSS, JS and data are inline, and fonts and images load from `https://utku.space` by absolute URL (GitHub Pages serves them with `access-control-allow-origin: *`), so the built `index.html` runs unchanged anywhere. The old address `utku.space/cv/` redirects to `/`. The previous homepage design is parked in `archive/classic-homepage/`, with a note on restoring it.
 
-`src/pages/cv.astro` builds the application-file version of the site: utku.space plus honours, SAT scores, a timeline, minigames, and eight easter eggs. It is built to `/cv/index.html` and kept self-contained: CSS, JS, and data are inline, and fonts and images load from `https://utku.space` by absolute URL (GitHub Pages serves them with `access-control-allow-origin: *`). It reads projects from `src/data/projects.ts`, associations from `src/data/associations.ts`, papers from `src/data/research.ts`, and the article collection, so it stays in step with the homepage. It is `noindex` and left out of the sitemap.
+## cv.utku.space
 
-It is served at `utku.space/cv/` and, through the `cv` job in `.github/workflows/astro.yml`, at `cv.utku.space`: after each build the job copies the page into the `mutkuoz/cv` repository with a `CNAME`. One-time setup:
+`cv.utku.space` serves a copy of the homepage. The `cv` job in `.github/workflows/astro.yml` copies the built `index.html` into the `mutkuoz/cv` repository with a `CNAME` after each build; the copy's canonical URL points to `https://utku.space/`. One-time setup:
 
 1. Create an empty public repository `mutkuoz/cv`.
 2. Create a fine-grained personal access token with access to `mutkuoz/cv` only and the permission Contents: read and write. Save it in this repository as the Actions secret `CV_DEPLOY_TOKEN`.
