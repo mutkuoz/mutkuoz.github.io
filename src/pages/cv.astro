@@ -185,7 +185,7 @@ const head = `
 /* ── the utku times palette ── */
 :root {
 	--paper: #fbfaf6; --ink: #121212; --ink2: #333; --muted: #6b6860; --rule: #121212; --hair: rgba(18,18,18,.22);
-	--tint: rgba(18,18,18,.06); --pencil: #1f3a8a; --desk: #e4e0d4; --bar: rgba(228,224,212,.92);
+	--sheet: var(--paper); --tint: rgba(18,18,18,.06); --pencil: #1f3a8a; --desk: #e4e0d4; --bar: rgba(228,224,212,.92);
 	--shadow: 0 1px 0 rgba(0,0,0,.08), 0 10px 40px rgba(0,0,0,.18); --img-filter: none; --desk-filter: none;
 	--serif: 'Newsreader', Georgia, 'Times New Roman', serif;
 	--display: 'Playfair Display', Georgia, 'Times New Roman', serif;
@@ -194,11 +194,12 @@ const head = `
 	--ease: cubic-bezier(0.4, 0, 0.2, 1);
 	--out: cubic-bezier(0.2, 0.7, 0.1, 1);
 }
-/* the night edition: black newsprint, warm white ink, and the fresco dimmed exactly as on utku.space */
+/* the night edition: warm white ink on a sheet of smoked glass, so the fresco, dimmed exactly as on
+   utku.space, shows through the whole page the way it does there */
 [data-theme="dark"] {
-	--paper: #111110; --ink: #ece8df; --ink2: #c9c5bc; --muted: #8f8b82; --rule: #ece8df; --hair: rgba(236,232,223,.2);
-	--tint: rgba(236,232,223,.07); --pencil: #9db7ff; --desk: #000; --bar: rgba(12,12,11,.88);
-	--shadow: 0 0 0 1px rgba(236,232,223,.07), 0 10px 40px rgba(0,0,0,.6); --img-filter: brightness(.86) contrast(1.05);
+	--paper: #111110; --sheet: rgba(17,17,16,.34); --ink: #ece8df; --ink2: #c9c5bc; --muted: #8f8b82; --rule: #ece8df; --hair: rgba(236,232,223,.2);
+	--tint: rgba(236,232,223,.07); --pencil: #9db7ff; --desk: #000; --bar: rgba(0,0,0,.6);
+	--shadow: 0 0 0 1px rgba(236,232,223,.1), 0 10px 40px rgba(0,0,0,.45); --img-filter: brightness(.86) contrast(1.05);
 	--desk-filter: grayscale(1) brightness(.13) contrast(1.2);
 }
 /* konami: red ink */
@@ -233,7 +234,7 @@ html:not([data-theme="dark"]) .lamp .icon-moon, [data-theme="dark"] .lamp .icon-
 
 /* ── the sheets ── */
 .wrap { position: relative; z-index: 1; padding: 1.6rem 1rem 2rem; }
-.sheet { position: relative; background: var(--paper); max-width: 62rem; margin: 0 auto 2.2rem; padding: 1.5rem 1.6rem 1rem; color: var(--ink);
+.sheet { position: relative; background: var(--sheet); max-width: 62rem; margin: 0 auto 2.2rem; padding: 1.5rem 1.6rem 1rem; color: var(--ink);
 	box-shadow: var(--shadow); scroll-margin-top: 3.4rem; transition: background-color .35s ease, color .35s ease; }
 html:not(.intro-on) .sheet.land { animation: land .9s var(--out) both; }
 @keyframes land { from { opacity: 0; transform: translateY(22px) rotate(-.5deg); } }
