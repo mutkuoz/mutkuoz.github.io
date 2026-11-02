@@ -1,0 +1,468 @@
+---
+// hello.utku.space — an easter egg hidden in college applications. a note from utku, five minutes
+// off with a record playing, and a special edition of the utku times printed for whoever found it.
+// not linked from anywhere, not in the sitemap, and kept out of search indexes.
+// everything (css, js) is inline and every asset loads from utku.space by absolute url, so the built
+// html runs unchanged at utku.space/hello/ and, copied, at hello.utku.space.
+import { SITE } from '../lib/site';
+
+const A = SITE;
+const title = 'You found it — The Utku Times';
+const description = 'A note, a five-minute break, and a special edition of The Utku Times, for whoever found this page.';
+
+const head = `
+@font-face { font-family: 'Newsreader'; font-style: normal; font-weight: 400 600; font-display: swap; src: url('${A}/fonts/newsreader-normal-latin.woff2') format('woff2'); }
+@font-face { font-family: 'Newsreader'; font-style: italic; font-weight: 400 500; font-display: swap; src: url('${A}/fonts/newsreader-italic-latin.woff2') format('woff2'); }
+@font-face { font-family: 'Playfair Display'; font-style: normal; font-weight: 500 800; font-display: swap; src: url('${A}/fonts/playfair-display-normal-latin.woff2') format('woff2'); }
+@font-face { font-family: 'Playfair Display'; font-style: italic; font-weight: 500 600; font-display: swap; src: url('${A}/fonts/playfair-display-italic-latin.woff2') format('woff2'); }
+@font-face { font-family: 'UnifrakturCook'; font-style: normal; font-weight: 700; font-display: swap; src: url('${A}/fonts/unifrakturcook-bold-latin.woff2') format('woff2'); }
+.page-bg { background-image: url('${A}/utku-bg.png'); background-image: image-set(url('${A}/utku-bg.webp') type('image/webp'), url('${A}/utku-bg.png') type('image/png')); }`;
+---
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>{title}</title>
+	<meta name="description" content={description} />
+	<!-- an easter egg: found by reading closely, not by searching -->
+	<meta name="robots" content="noindex, nofollow" />
+	<meta name="theme-color" content="#fbfaf6" id="themeColor" />
+	<link rel="icon" type="image/svg+xml" href={`${A}/favicon.svg`} />
+	<link rel="preload" as="font" type="font/woff2" crossorigin href={`${A}/fonts/unifrakturcook-bold-latin.woff2`} />
+	<link rel="preload" as="font" type="font/woff2" crossorigin href={`${A}/fonts/newsreader-normal-latin.woff2`} />
+	<link rel="preload" as="font" type="font/woff2" crossorigin href={`${A}/fonts/playfair-display-normal-latin.woff2`} />
+	<style is:inline set:html={head}></style>
+	<script is:inline>
+	(function () { try { if (localStorage.getItem('theme') === 'dark') document.documentElement.setAttribute('data-theme', 'dark'); } catch (e) {} })();
+	</script>
+	<style is:inline>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* ── the utku times palette, on glass (as on utku.space) ── */
+:root {
+	--paper: #fbfaf6; --ink: #121212; --ink2: #333; --muted: #6b6860; --rule: #121212; --hair: rgba(18,18,18,.22);
+	--sheet: rgba(251,250,246,.5); --tint: rgba(18,18,18,.06); --desk: #e4e0d4; --bar: rgba(251,250,246,.5);
+	--glass-blur: blur(16px) saturate(1.6); --glass-edge: rgba(255,255,255,.75); --glass-shine: rgba(255,255,255,.55); --glass-rim: rgba(255,255,255,.9);
+	--shadow: inset 0 1px 0 rgba(255,255,255,.8), inset 0 0 0 1px rgba(255,255,255,.35), 0 1px 2px rgba(0,0,0,.06), 0 14px 44px rgba(0,0,0,.16);
+	--desk-filter: none;
+	--serif: 'Newsreader', Georgia, 'Times New Roman', serif;
+	--display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+	--black: 'UnifrakturCook', 'Playfair Display', Georgia, serif;
+	--ease: cubic-bezier(.4, 0, .2, 1);
+	--out: cubic-bezier(.2, .7, .1, 1);
+}
+[data-theme="dark"] {
+	--paper: #111110; --sheet: rgba(17,17,16,.42); --ink: #ece8df; --ink2: #c9c5bc; --muted: #8f8b82; --rule: #ece8df; --hair: rgba(236,232,223,.2);
+	--tint: rgba(236,232,223,.07); --desk: #000; --bar: rgba(10,10,9,.45);
+	--glass-blur: blur(12px) saturate(1.3); --glass-edge: rgba(255,255,255,.14); --glass-shine: rgba(255,255,255,.07); --glass-rim: rgba(255,255,255,.28);
+	--shadow: inset 0 1px 0 rgba(255,255,255,.12), inset 0 0 0 1px rgba(255,255,255,.06), 0 14px 44px rgba(0,0,0,.5);
+	--desk-filter: grayscale(1) brightness(.13) contrast(1.2);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+	:root { --sheet: rgba(251,250,246,.94); --bar: rgba(228,224,212,.94); }
+	[data-theme="dark"] { --sheet: rgba(17,17,16,.9); --bar: rgba(10,10,9,.92); }
+}
+html { background: var(--desk); transition: background-color .35s ease; }
+body { font-family: var(--serif); color: var(--ink); line-height: 1.45; -webkit-font-smoothing: antialiased; overflow-x: clip; }
+a { color: inherit; }
+button, input { font: inherit; color: inherit; }
+button { background: none; border: 0; cursor: pointer; }
+button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+::selection { background: var(--ink); color: var(--paper); }
+
+/* ── the fresco; during the break it drifts, slowly ── */
+.page-bg { position: fixed; inset: -4%; z-index: 0; pointer-events: none; background-position: center; background-size: cover; background-repeat: no-repeat; filter: var(--desk-filter); transition: filter .35s ease; }
+body.breaking .page-bg { animation: drift 60s ease-in-out infinite alternate; }
+@keyframes drift { 0% { transform: scale(1) translate(0, 0); } 50% { transform: scale(1.06) translate(-1.2%, .8%); } 100% { transform: scale(1.03) translate(1.2%, -.6%); } }
+
+/* ── toolbar ── */
+.bar { position: sticky; top: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .55rem 1.2rem;
+	background: var(--bar); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border-bottom: 1px solid var(--glass-edge); box-shadow: 0 1px 0 var(--hair); font-size: .86rem; }
+.bar a { text-decoration: none; }
+.bar a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.brand { font-family: var(--display); font-style: italic; font-weight: 600; white-space: nowrap; }
+.bar nav { display: flex; align-items: center; gap: 1.1rem; }
+.lamp { display: inline-flex; width: 1.7rem; height: 1.7rem; align-items: center; justify-content: center; border: 1px solid var(--hair); border-radius: 50%; }
+.lamp:hover { border-color: var(--ink); }
+.lamp svg { width: .85rem; height: .85rem; }
+html:not([data-theme="dark"]) .icon-moon, [data-theme="dark"] .icon-sun { display: none; }
+
+/* ── the glass sheet ── */
+.wrap { position: relative; z-index: 1; padding: 1.6rem 1rem 3rem; }
+.sheet { position: relative; isolation: isolate; max-width: 56rem; margin: 0 auto 2rem; padding: 1.5rem 1.6rem 1.1rem; color: var(--ink);
+	background: var(--sheet); border-radius: 18px; backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); box-shadow: var(--shadow);
+	animation: land .9s var(--out) both; transition: background-color .6s ease; }
+@keyframes land { from { opacity: 0; transform: translateY(22px) rotate(-.4deg); } }
+.sheet::before { content: ''; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none;
+	background: radial-gradient(44rem circle at var(--mx, 18%) var(--my, -8%), var(--glass-shine), transparent 46%), linear-gradient(160deg, var(--glass-shine), transparent 22%); }
+.sheet::after { content: ''; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none;
+	background: linear-gradient(150deg, var(--glass-rim), var(--glass-edge) 18%, transparent 42%, transparent 62%, var(--glass-edge) 88%, var(--glass-rim));
+	-webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
+/* leaning back: during the break the glass clears a little, so the fresco comes forward */
+body.breaking #note { --sheet: color-mix(in srgb, var(--paper) 34%, transparent); }
+@media (max-width: 560px) { .wrap { padding: 1rem .5rem 2rem; } .sheet { padding: 1.1rem 1rem .9rem; border-radius: 14px; } }
+
+.flag { text-align: center; }
+.tagline { font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink2); }
+.nameplate { font-family: var(--black); font-weight: 700; font-size: clamp(2.6rem, 9vw, 5rem); line-height: 1.02; margin: .1rem 0 .35rem; }
+.folio-bar { display: flex; justify-content: space-between; gap: .6rem; padding: .3rem 0; border-top: 3px double var(--rule); border-bottom: 1px solid var(--rule); font-size: .68rem; letter-spacing: .09em; text-transform: uppercase; }
+@media (max-width: 560px) { .folio-bar .opt { display: none; } }
+.kicker { font-size: .66rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink2); font-weight: 600; }
+
+/* ── the note ── */
+.note { max-width: 40rem; margin: 1.3rem auto .4rem; text-align: center; }
+.note h1 { font-family: var(--display); font-weight: 800; font-size: clamp(2.4rem, 6.5vw, 3.8rem); line-height: 1; letter-spacing: -.02em; margin: .25rem 0 .8rem; }
+.note p { font-size: 1.08rem; line-height: 1.65; color: var(--ink2); margin-bottom: .7rem; }
+.note .sig { font-family: var(--display); font-style: italic; font-weight: 600; font-size: 1.3rem; color: var(--ink); margin-top: .2rem; }
+.mention { display: inline-block; margin: .9rem auto .2rem; padding: .5rem 1rem; border: 1px solid var(--rule); outline: 1px solid var(--rule); outline-offset: 2px;
+	font-family: var(--display); font-style: italic; font-weight: 600; font-size: 1.1rem; color: var(--ink); }
+
+/* ── take five, stop the presses ── */
+.gifts { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 1.3rem; margin-top: 1.4rem; border-top: 1px solid var(--rule); padding-top: .9rem; }
+.gifts > section + section { padding-left: 1.3rem; border-left: 1px solid var(--hair); }
+@media (max-width: 720px) { .gifts { grid-template-columns: 1fr; } .gifts > section + section { padding: 1rem 0 0; margin-top: 1rem; border-left: 0; border-top: 1px solid var(--hair); } }
+.puz-head { display: flex; justify-content: space-between; align-items: baseline; gap: .6rem; border-bottom: 1px solid var(--rule); padding-bottom: .2rem; margin-bottom: .6rem; }
+.puz-head h3 { font-family: var(--display); font-size: 1.2rem; }
+.puz-head span { font-size: .64rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.lede { font-size: .95rem; line-height: 1.55; color: var(--ink2); }
+
+/* the break: a record inside a five-minute ring */
+.deck { display: flex; align-items: center; gap: 1.1rem; margin-top: .9rem; }
+.turntable { position: relative; flex: none; width: 7.4rem; height: 7.4rem; }
+.ring { position: absolute; inset: 0; transform: rotate(-90deg); }
+.ring circle { fill: none; stroke-width: 2; }
+.ring .track { stroke: var(--hair); }
+.ring .done { stroke: var(--ink); stroke-linecap: round; stroke-dasharray: 289; stroke-dashoffset: 289; transition: stroke-dashoffset .9s linear; }
+.disc { position: absolute; inset: .55rem; border-radius: 50%; padding: 0; box-shadow: 0 0 0 1px var(--hair), 0 4px 14px rgba(0,0,0,.28); transition: transform .15s ease; }
+.disc:hover { transform: scale(1.03); }
+.disc:active { transform: scale(.97); }
+.disc-vinyl { display: block; width: 100%; height: 100%; animation: spin 1.8s linear infinite; animation-play-state: paused; }
+.player.playing .disc-vinyl { animation-play-state: running; }
+.disc-sheen { position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
+	background: conic-gradient(from 20deg, transparent 0 8%, rgba(255,255,255,.22) 13%, transparent 20% 52%, rgba(255,255,255,.16) 60%, transparent 68%);
+	-webkit-mask: radial-gradient(circle, transparent 0 41%, #000 42%); mask: radial-gradient(circle, transparent 0 41%, #000 42%); }
+.disc-icon { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #0c0c0c; pointer-events: none; transition: opacity .2s ease; }
+.disc-icon svg { width: 1.1rem; height: 1.1rem; padding: .2rem; border-radius: 50%; background: #f2eee6; }
+.player .i-pause, .player.playing .i-play { display: none; }
+.player.playing .i-pause { display: block; }
+.player.playing .disc-icon { opacity: 0; }
+.player.playing .disc:hover .disc-icon { opacity: 1; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.deck-info { min-width: 0; }
+.clock { font-family: var(--display); font-weight: 800; font-size: 2.4rem; line-height: 1; letter-spacing: -.02em; font-variant-numeric: tabular-nums lining-nums; }
+.now { margin-top: .35rem; min-width: 0; }
+.now b { display: block; font-family: var(--display); font-style: italic; font-weight: 600; font-size: .95rem; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.now span { display: block; font-size: .76rem; color: var(--muted); }
+.skip { display: flex; gap: .3rem; margin-top: .4rem; }
+.skip button { width: 1.7rem; height: 1.7rem; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; color: var(--ink2); }
+.skip button:hover { background: var(--tint); color: var(--ink); }
+.skip svg { width: .9rem; height: .9rem; }
+.after { min-height: 1.4em; margin-top: .8rem; font-style: italic; font-size: .92rem; color: var(--ink2); }
+.player-yt { position: fixed; left: -9999px; top: 0; width: 200px; height: 200px; overflow: hidden; pointer-events: none; opacity: 0; }
+
+/* the press */
+.press { display: grid; gap: .55rem; margin-top: .9rem; }
+.press label { display: grid; gap: .15rem; font-size: .66rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink2); font-weight: 600; }
+.press input { width: 100%; padding: .45rem .6rem; border: 1px solid var(--rule); background: color-mix(in srgb, var(--paper) 55%, transparent); border-radius: 6px;
+	font-size: 1rem; letter-spacing: 0; text-transform: none; font-weight: 400; }
+.press input::placeholder { color: var(--muted); font-style: italic; }
+.stop { justify-self: start; margin-top: .2rem; padding: .5rem 1.1rem; border-radius: 999px; background: var(--ink); color: var(--paper); font-family: var(--display); font-weight: 700; letter-spacing: .01em; transition: transform .12s ease, opacity .2s ease; }
+.stop:hover { opacity: .88; }
+.stop:active { transform: scale(.97); }
+
+/* ── the special edition ── */
+#editionWrap[hidden] { display: none; }
+.edition { max-width: 46rem; margin: 0 auto; padding: 1.3rem 1.5rem 1rem; background: var(--paper); color: var(--ink); border-radius: 4px;
+	box-shadow: 0 1px 0 rgba(0,0,0,.08), 0 18px 50px rgba(0,0,0,.28); }
+.edition.spin { animation: spin-in 1.25s var(--out) both; }
+@keyframes spin-in { from { transform: rotate(-720deg) scale(.04); opacity: 0; } 60% { opacity: 1; } to { transform: none; opacity: 1; } }
+.edition .nameplate { font-size: clamp(2.1rem, 7vw, 3.6rem); }
+.edition h2 { font-family: var(--display); font-weight: 800; font-size: clamp(1.6rem, 4.4vw, 2.5rem); line-height: 1.06; letter-spacing: -.01em; margin: .2rem 0 .35rem; }
+.edition .deck-line { font-style: italic; font-size: 1rem; color: var(--ink2); margin-bottom: .6rem; }
+.edition .body { column-count: 2; column-gap: 1.1rem; column-rule: 1px solid var(--hair); text-align: justify; hyphens: auto; font-size: .93rem; line-height: 1.42; }
+.edition .body p { margin-bottom: .5rem; text-indent: 1em; }
+.edition .body p:first-child { text-indent: 0; }
+.edition .body p:first-child::first-letter { font-family: var(--display); font-weight: 800; float: left; font-size: 3.1em; line-height: .82; padding: .04em .08em 0 0; }
+@media (max-width: 560px) { .edition { padding: 1rem .9rem .8rem; } .edition .body { column-count: 1; } }
+.edition .box { margin: .6rem 0 .3rem; padding: .6rem .8rem; border: 1px solid var(--rule); outline: 1px solid var(--rule); outline-offset: 2px; text-align: center; }
+.edition .box b { display: block; font-family: var(--display); font-style: italic; font-size: 1.25rem; }
+.edition .box span { font-size: .8rem; color: var(--ink2); }
+.edition .folio { display: flex; justify-content: space-between; gap: .6rem; margin-top: .6rem; padding-top: .3rem; border-top: 1px solid var(--rule); font-size: .6rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink2); }
+.edition-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: .6rem; margin-top: 1rem; }
+.edition-actions button { padding: .4rem .95rem; border-radius: 999px; border: 1px solid var(--rule); background: color-mix(in srgb, var(--paper) 50%, transparent); font-size: .86rem; }
+.edition-actions button:hover { background: var(--ink); color: var(--paper); }
+
+.colophon { max-width: 56rem; margin: -.6rem auto 0; padding: 0 .4rem; text-align: center; font-size: .8rem; }
+.colophon span { display: inline-block; background: var(--sheet); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); box-shadow: var(--shadow); border-radius: 999px; padding: .2rem .8rem; }
+.colophon a { text-decoration: none; border-bottom: 1px solid var(--hair); }
+
+.toast { position: fixed; left: 50%; bottom: 2rem; transform: translateX(-50%) translateY(1.5rem); z-index: 60; padding: .5rem 1rem; max-width: min(92vw, 30rem);
+	background: var(--ink); color: var(--paper); font-size: .8rem; font-style: italic; opacity: 0; visibility: hidden; pointer-events: none;
+	transition: opacity .25s ease, transform .3s cubic-bezier(.34,1.4,.64,1), visibility 0s .3s; }
+.toast.show { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); transition: opacity .25s ease, transform .3s cubic-bezier(.34,1.4,.64,1); }
+
+@media (prefers-reduced-motion: reduce) {
+	*, *::before, *::after { animation-duration: .001s !important; animation-iteration-count: 1 !important; transition-duration: .001s !important; }
+}
+/* ── print: the edition alone, on white ── */
+@page { margin: 14mm; }
+@media print {
+	html, body { background: #fff; }
+	:root, [data-theme] { --paper: #fff; --ink: #121212; --ink2: #333; --muted: #6b6860; --rule: #121212; --hair: rgba(18,18,18,.22); }
+	.page-bg, .bar, .colophon, .toast, .edition-actions { display: none !important; }
+	.wrap { padding: 0; }
+	body.has-edition #note { display: none; }
+	#note { box-shadow: none; background: #fff; backdrop-filter: none; -webkit-backdrop-filter: none; animation: none; }
+	#note::before, #note::after { display: none; }
+	.edition { box-shadow: none; max-width: none; animation: none !important; }
+}
+	</style>
+</head>
+<body>
+<div class="page-bg" aria-hidden="true"></div>
+
+<header class="bar">
+	<a class="brand" href={`${A}/`}>utku&rsquo;s space</a>
+	<nav>
+		<a href={`${A}/`}>the full paper ↗</a>
+		<button type="button" class="lamp" id="lamp" aria-label="toggle dark mode" title="day / night (d)"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"></circle><path d="M12 1.5v2.5M12 20v2.5M4.2 4.2l1.8 1.8M18 18l1.8 1.8M1.5 12h2.5M20 12h2.5M4.2 19.8l1.8-1.8M18 6l1.8-1.8"></path></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"></path></svg></button>
+	</nav>
+</header>
+
+<main class="wrap">
+	<article class="sheet" id="note">
+		<header class="flag">
+			<p class="tagline">For the one who read closely</p>
+			<p class="nameplate">The Utku Times</p>
+			<div class="folio-bar"><span>Special edition</span><span id="today">&nbsp;</span><span class="opt">hello.utku.space</span></div>
+		</header>
+
+		<section class="note">
+			<p class="kicker">A note from the applicant</p>
+			<h1>You found it.</h1>
+			<p>I hid this address in my application and hoped that one careful reader would type it in. You did, and I&rsquo;m very glad you found it.</p>
+			<p>Reading applications is long, quiet work, so this page is a small thank-you: five minutes off with a record playing, and a newspaper with your name on the front page.</p>
+			<p class="sig">— Utku</p>
+			<p class="mention">Mention this if we ever talk.</p>
+		</section>
+
+		<div class="gifts">
+			<section aria-labelledby="takeFive">
+				<div class="puz-head"><h3 id="takeFive">Take five</h3><span>On the house</span></div>
+				<p class="lede">You&rsquo;ve read a lot today. Press the record: five minutes of music, and the fresco behind this page will drift a little while you lean back.</p>
+				<div class="deck player" id="player" role="group" aria-label="five-minute break with music">
+					<div class="turntable">
+						<svg class="ring" viewBox="0 0 100 100" aria-hidden="true"><circle class="track" cx="50" cy="50" r="46"/><circle class="done" id="ring" cx="50" cy="50" r="46"/></svg>
+						<button class="disc" id="playerPlay" type="button" aria-label="start the break">
+							<svg class="disc-vinyl" viewBox="0 0 40 40" aria-hidden="true">
+								<circle cx="20" cy="20" r="19.6" fill="#0c0c0c"/>
+								<g fill="none" stroke="#fff" stroke-opacity="0.13" stroke-width="0.35">
+									<circle cx="20" cy="20" r="18.2"/><circle cx="20" cy="20" r="16.9"/><circle cx="20" cy="20" r="15.5"/>
+									<circle cx="20" cy="20" r="14.3"/><circle cx="20" cy="20" r="13"/><circle cx="20" cy="20" r="11.8"/><circle cx="20" cy="20" r="10.6"/>
+								</g>
+								<circle cx="20" cy="20" r="8" fill="#f2eee6"/>
+								<circle cx="20" cy="20" r="7.2" fill="none" stroke="#0c0c0c" stroke-width="0.35"/>
+								<path d="M20 13.6a6.4 6.4 0 0 1 6.4 6.4h-2.2a4.2 4.2 0 0 0-4.2-4.2z" fill="#0c0c0c"/>
+								<circle cx="20" cy="20" r="1.1" fill="#0c0c0c"/>
+							</svg>
+							<span class="disc-sheen"></span>
+							<span class="disc-icon" aria-hidden="true"><svg class="i-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.6v12.8a.9.9 0 0 0 1.4.8l10-6.4a.9.9 0 0 0 0-1.6l-10-6.4A.9.9 0 0 0 8 5.6z"/></svg><svg class="i-pause" viewBox="0 0 24 24" fill="currentColor"><rect x="6.5" y="5.5" width="3.8" height="13" rx="1"/><rect x="13.7" y="5.5" width="3.8" height="13" rx="1"/></svg></span>
+						</button>
+					</div>
+					<div class="deck-info">
+						<p class="clock" id="clock" aria-live="off">5:00</p>
+						<p class="now" aria-live="polite"><b id="trackTitle">Fly Me to the Moon</b><span id="trackArtist">Frank Sinatra</span></p>
+						<div class="skip">
+							<button type="button" id="playerPrev" aria-label="previous track"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="5.5" width="2.2" height="13" rx="0.6"/><path d="M19 6.2v11.6a.8.8 0 0 1-1.2.7L9.4 12.7a.8.8 0 0 1 0-1.4l8.4-5.8a.8.8 0 0 1 1.2.7z"/></svg></button>
+							<button type="button" id="playerNext" aria-label="next track"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="16.8" y="5.5" width="2.2" height="13" rx="0.6"/><path d="M5 6.2v11.6a.8.8 0 0 0 1.2.7l8.4-5.8a.8.8 0 0 0 0-1.4L6.2 5.5a.8.8 0 0 0-1.2.7z"/></svg></button>
+						</div>
+					</div>
+					<div class="player-yt" aria-hidden="true"><div id="playerYT"></div></div>
+				</div>
+				<p class="after" id="after" aria-live="polite"></p>
+			</section>
+
+			<section aria-labelledby="press">
+				<div class="puz-head"><h3 id="press">Stop the presses</h3><span>Your edition</span></div>
+				<p class="lede">Tell the press who you are, and The Utku Times will print a special edition with you on the front page.</p>
+				<form class="press" id="pressForm" autocomplete="off">
+					<label>Your name<input id="fName" name="for" maxlength="40" required placeholder="e.g. Alex Morgan" /></label>
+					<label>Where you&rsquo;re reading from<input id="fFrom" name="from" maxlength="60" placeholder="e.g. a college, optional" /></label>
+					<button class="stop" type="submit">Stop the presses</button>
+				</form>
+			</section>
+		</div>
+	</article>
+
+	<section id="editionWrap" hidden aria-live="polite">
+		<div id="edition"></div>
+		<div class="edition-actions">
+			<button type="button" id="savePdf">Save as PDF</button>
+			<button type="button" id="copyLink">Copy a link to this edition</button>
+			<button type="button" id="again">Print another</button>
+		</div>
+	</section>
+
+	<p class="colophon" style="margin-top: 1.6rem"><span>The rest of the paper is at <a href={`${A}/`}>utku.space</a></span></p>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script is:inline>
+(function () {
+	const $ = (s) => document.querySelector(s);
+	const html = document.documentElement, body = document.body;
+	const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+	const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
+	const toastEl = $('#toast'); let toastT = 0;
+	const toast = (msg, ms) => { toastEl.textContent = msg; toastEl.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => toastEl.classList.remove('show'), ms || 2600); };
+
+	/* ── day and night, same key as utku.space ── */
+	const setTheme = (t, keep) => { html.setAttribute('data-theme', t); $('#themeColor').setAttribute('content', t === 'dark' ? '#111110' : '#fbfaf6'); if (keep !== false) store.set('theme', t); };
+	setTheme(html.getAttribute('data-theme') === 'dark' ? 'dark' : 'light', false);
+	const flip = () => setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+	$('#lamp').addEventListener('click', flip);
+	addEventListener('keydown', (e) => { const t = e.target; if (t && (t.tagName === 'INPUT' || t.isContentEditable) || e.metaKey || e.ctrlKey || e.altKey) return; if (e.key.toLowerCase() === 'd') flip(); });
+
+	/* ── today, in the reader's own calendar ── */
+	const longDate = (d) => new Intl.DateTimeFormat('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }).format(d);
+	$('#today').textContent = longDate(new Date());
+
+	/* ── the glass catches the light where the pointer is ── */
+	if (!reduce && matchMedia('(hover: hover) and (pointer: fine)').matches) {
+		const note = $('#note'); let raf = 0, px = 0, py = 0;
+		addEventListener('pointermove', (e) => { px = e.clientX; py = e.clientY; if (raf) return; raf = requestAnimationFrame(() => { raf = 0; const r = note.getBoundingClientRect(); note.style.setProperty('--mx', ((px - r.left) / r.width * 100).toFixed(1) + '%'); note.style.setProperty('--my', (py - r.top) + 'px'); }); }, { passive: true });
+	}
+
+	/* ── take five: a five-minute break, a record, and the fresco drifting ── */
+	const TRACKS = [
+		{ id: 'JYuyWrkwpok', title: 'Fly Me to the Moon', artist: 'Frank Sinatra' },
+		{ id: '9n-hyA2-FDg', title: 'La Vie en Rose', artist: 'Louis Armstrong' },
+		{ id: 'fJ9rUzIMcZQ', title: 'Bohemian Rhapsody', artist: 'Queen' },
+		{ id: 'Rbm6GXllBiw', title: 'Paradise City', artist: 'Guns N’ Roses' },
+		{ id: 'KrZHPOeOxQQ', title: 'You Give Love a Bad Name', artist: 'Bon Jovi' },
+		{ id: 'echO1rg4E08', title: 'Kızılcıklar Oldu mu', artist: 'Kübra Şenyaylar' }
+	];
+	const BREAK = 5 * 60 * 1000;
+	const player = $('#player'), playBtn = $('#playerPlay'), clockEl = $('#clock'), ring = $('#ring'), afterEl = $('#after');
+	const titleEl = $('#trackTitle'), artistEl = $('#trackArtist');
+	let i = 0, yt = null, ready = false, loading = false, wantPlay = false, fails = 0, gaveUp = false;
+	let left = BREAK, running = false, lastT = 0, ticker = 0;
+	const paintTrack = () => { titleEl.textContent = TRACKS[i].title; artistEl.textContent = TRACKS[i].artist; };
+	const fmt = (ms) => { const s = Math.ceil(ms / 1000); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+	function paintClock() { clockEl.textContent = fmt(left); ring.style.strokeDashoffset = String(289 * left / BREAK); }
+	function setPlaying(on) { player.classList.toggle('playing', on); playBtn.setAttribute('aria-label', on ? 'pause the break' : (left < BREAK ? 'resume the break' : 'start the break')); }
+	function tick() {
+		const now = performance.now(); left = Math.max(0, left - (now - lastT)); lastT = now; paintClock();
+		if (left <= 0) return endBreak();
+		ticker = setTimeout(tick, 250);
+	}
+	function startBreak() { if (running) return; running = true; lastT = performance.now(); body.classList.add('breaking'); afterEl.textContent = ''; setPlaying(true); tick(); }
+	function pauseBreak() { running = false; clearTimeout(ticker); setPlaying(false); }
+	function endBreak() {
+		running = false; clearTimeout(ticker); setPlaying(false); body.classList.remove('breaking');
+		afterEl.textContent = 'That’s five. Thank you for reading so carefully.';
+		// let the music out gently
+		if (ready && yt.getPlayerState && yt.getPlayerState() === 1) {
+			let v = yt.getVolume ? yt.getVolume() : 60;
+			const fade = setInterval(() => { v -= 6; if (v <= 0) { clearInterval(fade); yt.pauseVideo(); yt.setVolume(60); } else yt.setVolume(v); }, 250);
+		}
+		wantPlay = false; left = BREAK; setTimeout(paintClock, 1500);
+	}
+	function load() {
+		if (loading) return;
+		loading = true;
+		window.onYouTubeIframeAPIReady = function () {
+			yt = new YT.Player('playerYT', {
+				width: 200, height: 200, videoId: TRACKS[i].id,
+				playerVars: { autoplay: 0, controls: 0, disablekb: 1, playsinline: 1, rel: 0 },
+				events: {
+					onReady: function () { ready = true; yt.setVolume(60); if (wantPlay) yt.playVideo(); },
+					onStateChange: function (e) {
+						if (e.data === YT.PlayerState.ENDED) go(1);
+						else if (e.data === YT.PlayerState.PLAYING) fails = 0;
+					},
+					// embedding refused or the video is gone: try the next; if every track is refused, the break goes on in silence
+					onError: function () {
+						if (++fails >= TRACKS.length) { gaveUp = true; artistEl.textContent = 'music unavailable here; the break goes on'; return; }
+						i = (i + 1) % TRACKS.length; paintTrack();
+						if (wantPlay) yt.loadVideoById(TRACKS[i].id); else yt.cueVideoById(TRACKS[i].id);
+					}
+				}
+			});
+		};
+		const s = document.createElement('script'); s.src = 'https://www.youtube.com/iframe_api'; document.head.appendChild(s);
+	}
+	function go(step) { i = (i + step + TRACKS.length) % TRACKS.length; paintTrack(); fails = 0; gaveUp = false; if (ready) { wantPlay ? yt.loadVideoById(TRACKS[i].id) : yt.cueVideoById(TRACKS[i].id); } }
+	player.addEventListener('pointerenter', load, { once: true });
+	player.addEventListener('focusin', load, { once: true });
+	playBtn.addEventListener('click', () => {
+		if (running) { pauseBreak(); wantPlay = false; if (ready) yt.pauseVideo(); return; }
+		startBreak(); wantPlay = !gaveUp;
+		if (ready) { if (wantPlay) yt.playVideo(); } else load();
+	});
+	$('#playerNext').addEventListener('click', () => go(1));
+	$('#playerPrev').addEventListener('click', () => go(-1));
+	paintTrack(); paintClock();
+
+	/* ── stop the presses: a special edition, printed for the reader ── */
+	const WORDS = ['espresso', 'knight', 'neuron', 'barbell', 'sudoku', 'fresco', 'vinyl', 'drosophila', 'electrode', 'deadlift', 'checkmate', 'ankara'];
+	const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+	const clean = (s, n) => String(s || '').replace(/\s+/g, ' ').trim().slice(0, n);
+	function hash(s) { let h = 2166136261; for (let k = 0; k < s.length; k++) { h ^= s.charCodeAt(k); h = Math.imul(h, 16777619); } return h >>> 0; }
+	function edition(name, from, when) {
+		const n = esc(name), f = esc(from), h = hash(name.toLowerCase() + '|' + from.toLowerCase());
+		const no = 1000 + (h % 9000), word = WORDS[(h >>> 8) % WORDS.length];
+		const heads = from
+			? [`${n} of ${f} finds hidden page; applicant “very glad”`, `Sharp-eyed ${n} of ${f} uncovers a secret address`, `${f} reader ${n} types in the address nobody else noticed`]
+			: [`${n} finds hidden page; applicant “very glad”`, `Sharp-eyed ${n} uncovers a secret address`, `Reader ${n} types in the address nobody else noticed`];
+		const head = heads[(h >>> 4) % heads.length];
+		const day = new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(when);
+		const time = new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit' }).format(when);
+		return `<article class="edition${reduce ? '' : ' spin'}">
+			<header class="flag">
+				<p class="tagline">Special edition · printed for ${n}</p>
+				<p class="nameplate">The Utku Times</p>
+				<div class="folio-bar"><span>No. ${no}</span><span>${esc(longDate(when))}</span><span class="opt">${f || 'hello.utku.space'}</span></div>
+			</header>
+			<p class="kicker" style="margin-top:.6rem">Exclusive · ${f || 'The reader’s desk'}</p>
+			<h2>${head}</h2>
+			<p class="deck-line">At ${esc(time)} on ${esc(day)}, ${n} typed hello.utku.space into a browser. The applicant who hid it there says he is very glad, and has asked that ${n} take five minutes off.</p>
+			<div class="body">
+				<p>The address had been tucked into an application by Mehmet Utku Öztürk, a machine learning developer and AI researcher from Ankara, in the hope that one careful reader would notice it and type it in. ${n}${from ? ` of ${f}` : ''} did.</p>
+				<p>&ldquo;I&rsquo;m very glad you found it,&rdquo; the applicant said. A record has been left on the turntable, and a five-minute break has been set aside, to be taken before returning to the pile.</p>
+				<p>The press, which does not stop for just anyone, stopped.</p>
+			</div>
+			<div class="box"><b>Mention this if we ever talk.</b><span>Edition No. ${no} &middot; codeword &ldquo;${word}&rdquo;</span></div>
+			<footer class="folio"><span>The Utku Times</span><span>Special edition</span><span>utku.space</span></footer>
+		</article>`;
+	}
+	const wrap = $('#editionWrap'), out = $('#edition'), form = $('#pressForm'), fName = $('#fName'), fFrom = $('#fFrom');
+	let current = null;
+	function printEdition(name, from, scroll) {
+		name = clean(name, 40); from = clean(from, 60);
+		if (!name) return;
+		current = { name, from };
+		out.innerHTML = edition(name, from, new Date());
+		wrap.hidden = false; body.classList.add('has-edition');
+		if (scroll) setTimeout(() => wrap.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }), 60);
+	}
+	form.addEventListener('submit', (e) => { e.preventDefault(); printEdition(fName.value, fFrom.value, true); });
+	$('#savePdf').addEventListener('click', () => window.print());
+	$('#copyLink').addEventListener('click', async () => {
+		if (!current) return;
+		const u = new URL(location.href); u.search = ''; u.hash = '';
+		u.searchParams.set('for', current.name); if (current.from) u.searchParams.set('from', current.from);
+		try { await navigator.clipboard.writeText(u.toString()); toast('Link copied. Pass it around the office.'); } catch (e) { prompt('Copy this link:', u.toString()); }
+	});
+	$('#again').addEventListener('click', () => { wrap.hidden = true; body.classList.remove('has-edition'); out.innerHTML = ''; current = null; fName.value = ''; fFrom.value = ''; $('#note').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' }); setTimeout(() => fName.focus(), 400); });
+	// a shared link prints its edition straight away
+	const q = new URLSearchParams(location.search);
+	if (q.get('for')) { fName.value = clean(q.get('for'), 40); fFrom.value = clean(q.get('from'), 60); printEdition(fName.value, fFrom.value, true); }
+
+	console.log('%cThe Utku Times', 'font: 700 26px UnifrakturCook, Georgia, serif');
+	console.log('%cA second easter egg inside the first. Mention this one too.', 'font: 13px ui-monospace, monospace; color: #888');
+})();
+</script>
+</body>
+</html>

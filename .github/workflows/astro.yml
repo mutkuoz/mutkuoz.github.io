@@ -81,6 +81,40 @@ jobs:
           git commit -m "cv from mutkuoz.github.io@${GITHUB_SHA::7}"
           git push origin HEAD:main
 
+  # mirror the hello page (an easter egg, utku.space/hello/) to the repo that serves
+  # hello.utku.space. same mechanism as the cv job: one self-contained html file plus a
+  # CNAME. uses HELLO_DEPLOY_TOKEN, or the cv token if that one is also granted mutkuoz/hello.
+  # skips quietly until a token exists. never blocks a deploy.
+  hello:
+    needs: build
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    env:
+      HELLO_TOKEN: ${{ secrets.HELLO_DEPLOY_TOKEN || secrets.CV_DEPLOY_TOKEN }}
+    steps:
+      - name: download built site
+        if: env.HELLO_TOKEN != ''
+        uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+
+      - name: push the hello page to mutkuoz/hello
+        if: env.HELLO_TOKEN != ''
+        run: |
+          mkdir site && tar -xf artifact.tar -C site ./hello/index.html
+          git clone --depth 1 "https://x-access-token:${HELLO_TOKEN}@github.com/mutkuoz/hello.git" out
+          cp site/hello/index.html out/index.html
+          echo "hello.utku.space" > out/CNAME
+          touch out/.nojekyll
+          printf 'User-agent: *\nDisallow: /\n' > out/robots.txt
+          cd out
+          git config user.name "utku.space deploy"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then echo "hello unchanged"; exit 0; fi
+          git commit -m "hello from mutkuoz.github.io@${GITHUB_SHA::7}"
+          git push origin HEAD:main
+
   # tell bing, yandex, seznam, and naver that pages changed instead of waiting for
   # the next crawl. bing's index feeds chatgpt search and copilot. never blocks a deploy.
   indexnow:
