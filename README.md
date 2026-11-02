@@ -52,13 +52,7 @@ Until the secret exists the job skips itself, and it never blocks the main deplo
 
 `src/pages/hello.astro` is an easter egg hidden in college applications: a note ("You found it."), a five-minute break with the record player and a drifting fresco, and a special edition of The Utku Times printed for the reader, with their name in the headline, a "mention this if we ever talk" box, an edition number and a codeword. It can be saved as a PDF, and a link with `?for=<name>&from=<place>` prints the same edition. It is self-contained like the homepage, `noindex`, left out of the sitemap, and linked from nowhere.
 
-It is built to `utku.space/hello/` and mirrored to `hello.utku.space` by the `hello` job in `.github/workflows/astro.yml`, the same way as cv.utku.space. One-time setup:
-
-1. Create an empty public repository `mutkuoz/hello`.
-2. Give a fine-grained token Contents: read and write on `mutkuoz/hello`. Either add the repository to the `CV_DEPLOY_TOKEN` token, or create a new token and save it as the Actions secret `HELLO_DEPLOY_TOKEN`.
-3. Re-run the deploy workflow (or push to `main`). The job pushes `index.html`, `CNAME`, `.nojekyll`, and a `robots.txt` that disallows crawling to `mutkuoz/hello`.
-4. In `mutkuoz/hello`, Settings → Pages: deploy from the `main` branch, root folder.
-5. At the DNS provider, add a `CNAME` record for `hello` pointing to `mutkuoz.github.io`, then tick Enforce HTTPS once the certificate is issued.
+It is built to `utku.space/hello/`. The repository [mutkuoz/hello](https://github.com/mutkuoz/hello) serves it at `hello.utku.space`: its own `sync` workflow copies the page from `utku.space/hello/` every six hours (or on demand from its Actions tab) with that repository's `GITHUB_TOKEN`, so no deploy secret is needed. It also holds the `CNAME` and a `robots.txt` that keeps search engines out. GitHub Pages serves its `main` branch from the root, and DNS has a `CNAME` record for `hello` pointing to `mutkuoz.github.io`.
 
 ## Publishing an article
 
