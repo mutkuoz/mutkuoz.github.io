@@ -598,11 +598,15 @@ html.intro-on #intro { display: block; position: fixed; inset: 0; z-index: 10000
 @page { size: A4; margin: 8mm; }
 @media print {
 	[data-theme] { --paper: #fff; --ink: #121212; --ink2: #333; --muted: #6b6860; --rule: #121212; --hair: rgba(18,18,18,.22); --tint: rgba(18,18,18,.06); --pencil: #1f3a8a; --img-filter: none; }
-	html, body { background: #fff; }
+	html, body { background: #fff !important; overflow: visible !important; height: auto !important; }
 	html { font-size: 11px; }
+	body, .wrap, .sheet { overflow: visible !important; }
+	.abs, .modal, #intro, .page-bg { display: none !important; }
+	* { animation: none !important; transition: none !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 	#intro, .page-bg, .bar, .colophon, .toast, .term, .fly, .tl-wrap, .abs-btn, .pastimes .act, .pastimes output { display: none !important; }
 	.wrap { padding: 0; }
-	.sheet { box-shadow: none; max-width: none; margin: 0; padding: 0; background: #fff; border-radius: 0; backdrop-filter: none; -webkit-backdrop-filter: none; page-break-after: always; break-after: page; animation: none; }
+	.sheet { position: static; isolation: auto; box-shadow: none; max-width: none; margin: 0; padding: 0; background: #fff; border-radius: 0; page-break-after: always; break-after: page; }
+	.work-cols .bsec li, .paper-col, .ad, .hon li, .tl-list li { break-inside: avoid; }
 	.sheet::before, .sheet::after { display: none; }
 	.sheet:last-of-type { page-break-after: auto; break-after: auto; }
 	.reveal { opacity: 1 !important; transform: none !important; }
@@ -795,7 +799,7 @@ html.intro-on #intro { display: block; position: fixed; inset: 0; z-index: 10000
 						{p.coAuthors && <p class="by">With {p.coAuthors.join(' and ')}</p>}
 						<p>{p.summary}</p>
 						<p>
-							{p.links.map((l) => <><a class="chip" href={l.url} target="_blank" rel="noopener">{l.label === 'jcllt' ? 'JCLLT' : l.label === 'arxiv' ? 'arXiv' : newsCase(l.label)} ↗</a>{' '}</>)}
+							{p.links.map((l) => <><a class="chip" href={l.url} target="_blank" rel="noopener">{l.label === 'jcllt' ? 'JCLLT' : l.label === 'arxiv' ? 'arXiv' : l.label === 'pdf' ? 'PDF' : newsCase(l.label)} ↗</a>{' '}</>)}
 							<button class="abs-btn" type="button" data-abs={`abs${i}`} aria-expanded="false" aria-controls={`abs${i}`}>read the abstract</button>
 						</p>
 						<div class="abs" id={`abs${i}`}><div><p>{p.abstract}</p></div></div>
@@ -853,7 +857,7 @@ html.intro-on #intro { display: block; position: fixed; inset: 0; z-index: 10000
 		<footer class="folio" id="lastFolio"><span>The Utku Times · CV edition</span><span>A3</span><span>m@utku.space</span></footer>
 	</article>
 
-	<p class="colophon"><span id="eggs">Easter eggs found: 0 / 8</span><span><button type="button" id="termBtn" title="or press /">the wire (terminal)</button></span></p>
+	<p class="colophon"><span id="eggs">Easter eggs found: 0 / 8</span><span><button type="button" id="termBtn" title="or press /">the wire (terminal)</button> &nbsp; <button type="button" id="printBtn2">save as PDF</button></span></p>
 </main>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -962,7 +966,7 @@ html.intro-on #intro { display: block; position: fixed; inset: 0; z-index: 10000
 	setTheme(html.getAttribute('data-theme') === 'dark' ? 'dark' : 'light', false);
 	const flip = () => setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
 	$('#lamp').addEventListener('click', flip);
-	$('#printBtn').addEventListener('click', () => print());
+	$$('#printBtn, #printBtn2').forEach((b) => b.addEventListener('click', () => window.print()));
 
 	/* ── the edition: volume is the age, number is the day of it, the date is today in ankara ── */
 	const bday = (y) => Date.UTC(y, 10, 29) - (y <= 2015 ? 2 : 3) * 3600e3;   // utc+2 in winter until 2016, utc+3 since
