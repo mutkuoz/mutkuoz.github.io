@@ -610,6 +610,32 @@ html.intro-on #intro { display: block; position: fixed; inset: 0; z-index: 10000
 	.sheet::before, .sheet::after { display: none; }
 	.sheet:last-of-type { page-break-after: auto; break-after: auto; }
 	.reveal { opacity: 1 !important; transform: none !important; }
+	/* a printed page is as narrow as a phone, so the phone layouts would kick in: pin the full layout instead */
+	.cols { grid-template-columns: minmax(0, 2.15fr) minmax(0, 1fr); }
+	.main { padding-right: 1.1rem; border-right: 1px solid var(--rule); }
+	.side { padding-left: 1.1rem; margin-top: 0; border-top: 0; padding-top: 0; }
+	.lead-body { column-count: 2; }
+	.secondary { grid-template-columns: 1fr 1fr; }
+	.story { padding: 0 .9rem 0 0; }
+	.story + .story { padding: 0 0 0 .9rem; border-left: 1px solid var(--hair); border-top: 0; margin-top: 0; }
+	.folio-bar .opt, .back-head .opt { display: inline; }
+	.split { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+	.split-a { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); }
+	.split-b { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); }
+	.split-c { grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); }
+	.split > * + * { padding-left: 1.1rem; border-left: 1px solid var(--hair); margin-top: 0; }
+	.work-cols { column-count: 3; }
+	.papers { grid-template-columns: 1fr 1fr; }
+	.paper-col, .paper-col:first-child, .paper-col:last-child { padding: 0 0 .8rem; border-left: 0; border-top: 0; margin-top: 0; }
+	.paper-col:nth-child(odd) { padding-right: .9rem; }
+	.paper-col:nth-child(even) { padding-left: .9rem; border-left: 1px solid var(--hair); }
+	.paper-col:nth-child(n+3) { padding-top: .7rem; border-top: 1px solid var(--hair); }
+	.leisure { grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); }
+	.leisure figure { max-width: none; margin-bottom: 0; }
+	/* the sudoku: fixed square cells, never split across pages */
+	.split, .sudoku, .classifieds, .leisure, .papers { break-inside: avoid; page-break-inside: avoid; }
+	.sdgrid { width: 9.5rem; max-width: none; }
+	.sd { aspect-ratio: auto; height: 2.375rem; min-width: 0; padding: 0; margin: 0; -webkit-appearance: none; appearance: none; border-radius: 0; box-sizing: border-box; }
 }
 	</style>
 </head>
