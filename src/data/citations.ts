@@ -17,5 +17,10 @@ export const citations: Citation[] = [
 		title: 'A Short Survey of Viewing Large Language Models in Legal Aspect',
 		venue: 'arXiv',
 		doi: '10.48550/arXiv.2303.09136'
+	},
+	{
+		title: 'Zero-Shot vs. Few-Shot Question Extraction from Turkish Tax Rulings: A Comparison of Open-Weight LLM Families',
+		venue: 'IEEE ASYU 2026',
+		doi: '10.1109/ASYU71790.2026.11772186'
 	}
 ];
