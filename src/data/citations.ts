@@ -22,5 +22,10 @@ export const citations: Citation[] = [
 		title: 'Zero-Shot vs. Few-Shot Question Extraction from Turkish Tax Rulings: A Comparison of Open-Weight LLM Families',
 		venue: 'IEEE ASYU 2026',
 		doi: '10.1109/ASYU71790.2026.11772186'
+	},
+	{
+		title: 'A Comparative Benchmark for Structured Legal Reference Extraction from Turkish Tax Rulings',
+		venue: 'IEEE ASYU 2026',
+		doi: '10.1109/ASYU71790.2026.11772258'
 	}
 ];
